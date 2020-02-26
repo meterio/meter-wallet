@@ -1,0 +1,186 @@
+<template>
+  <v-layout column align-center>
+    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+      <div class="subheading py-4"></div>
+      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
+      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="subheading">List this account as staking candidate</v-card-title>
+        <v-card-text>
+          <v-form ref="form">
+            <!--<v-select :items="items" label="Token" v-model="token"></v-select>-->
+            <v-text-field
+              validate-on-blur
+              type="number"
+              label="Amount"
+              v-bind:suffix="token"
+              :rules="amountRules"
+              v-model="amount"
+            />
+
+            <v-text-field
+              ref="name"
+              label="Name"
+              :rules="nameRules"
+              validate-on-blur
+              v-model="name"
+            ></v-text-field>
+
+            <v-text-field ref="ip" label="IP" :rules="ipRules" validate-on-blur v-model="ip"></v-text-field>
+            <v-text-field
+              ref="port"
+              type="number"
+              :rules="portRules"
+              validate-on-blur
+              label="Port"
+              v-model="port"
+            ></v-text-field>
+
+            <v-textarea
+              ref="pubkey"
+              label="Public Key"
+              :rules="pubkeyRules"
+              validate-on-blur
+              v-model="pubkey"
+              outline
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <div class="error--text">{{errMsg}}</div>
+          <v-spacer />
+          <v-btn flat class="primary" @click="send">Send</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-layout>
+  </v-layout>
+</template>
+<script lang="ts">
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
+import BigNumber from "bignumber.js";
+import { cry } from "meter-devkit";
+import {
+  generateCandidateData,
+  OpCode,
+  Token
+} from "@/common/scriptengine-utils";
+
+@Component
+export default class StakingCandidate extends Vue {
+  @State
+  wallets!: entities.Wallet[];
+  amount = "";
+  name = "";
+  pubkey = "";
+  ip = "";
+  port = "8670";
+  from = 0;
+  errMsg = "";
+  token = "MTRG";
+  /*
+  items = [
+    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
+    { text: "Meter Token", value: "MTR" }
+  ];
+  */
+  readonly addressRules = [
+    (v: string) => !!v || "Input address here",
+    (v: string) => {
+      if (!cry.isAddress(v)) {
+        return "Invalid address";
+      }
+      if (v !== v.toLowerCase() && cry.toChecksumAddress(v) !== v) {
+        return "Checksum incorrect";
+      }
+      return true;
+    }
+  ];
+  readonly amountRules = [
+    (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
+  ];
+
+  readonly nameRules = [(v: string) => !!v || "Input name here"];
+  readonly pubkeyRules = [
+    (v: string) => !!v || "Input public key here",
+    (v: string) => {
+      let pk = Buffer.from(v, "base64").toString("hex");
+      let formattedPubKey = Buffer.from(v, "base64").toString("base64");
+      if (formattedPubKey != v.trim())
+        return "Invalid public key, unncessary suffix characters";
+      return pk.length == 130 || "Invalid public key";
+    }
+  ];
+  readonly ipRules = [
+    (v: string) => !!v || "Input ip here",
+    (v: string) => !!v.match(/\d+[.]\d+[.]\d+[.]\d+/) || "Invalid IPv4 Address"
+  ];
+  readonly portRules = [
+    (v: string) =>
+      (0 < parseInt(v) && parseInt(v) <= 65535) ||
+      "Invalid port number (1-65535)"
+  ];
+
+  created() {
+    let fromAddr = this.$route.query["from"];
+    if (fromAddr) {
+      fromAddr = fromAddr.toLowerCase();
+      const index = this.wallets.findIndex(
+        wallet => wallet.address === fromAddr
+      );
+      if (index >= 0) {
+        this.from = index;
+      }
+    }
+  }
+
+  async send() {
+    this.errMsg = "";
+    if (!(this.$refs.form as any).validate()) {
+      return;
+    }
+    try {
+      const value = new BigNumber("1" + "0".repeat(18))
+        .times(this.amount!)
+        .integerValue()
+        .toString(10);
+      let tokenVal = this.token == "MTRG" ? Token.METER_GOV : Token.METER;
+
+      let fromAddr = this.wallets[this.from].address!;
+      let formattedPubKey = Buffer.from(this.pubkey, "base64").toString(
+        "base64"
+      );
+      let data = generateCandidateData(
+        fromAddr,
+        fromAddr,
+        this.name,
+        formattedPubKey,
+        // this.pubkey,
+        this.ip,
+        parseInt(this.port),
+        parseInt(value),
+        tokenVal
+      );
+      await connex.vendor
+        .sign("tx")
+        .signer(this.wallets[this.from].address!)
+        .request([
+          {
+            to: fromAddr,
+            value: "0",
+            token: tokenVal,
+            data: "0x" + data
+          }
+        ]);
+      this.$router.back();
+    } catch (err) {
+      this.errMsg = `${err.name}: ${err.message}`;
+    }
+  }
+}
+</script>
+
+<style scoped>
+.unset-cursor >>> * {
+  cursor: unset;
+}
+</style>

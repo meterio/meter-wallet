@@ -1,0 +1,163 @@
+{
+  "name": "meter-wallet",
+  "version": "1.1.3",
+  "author": "meter.io",
+  "description": "An electron-vue project",
+  "license": "LGPL-3.0",
+  "main": "./dist/electron/main.js",
+  "scripts": {
+    "build": "node .electron-vue/build.js && electron-builder",
+    "build:all": "node .electron-vue/build.js && electron-builder -w -l -m",
+    "publish": "node .electron-vue/build.js && electron-builder build -w -l -m --publish always",
+    "build:dir": "node .electron-vue/build.js && electron-builder --dir",
+    "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
+    "dev": "node .electron-vue/dev-runner.js",
+    "e2e": "npm run pack && mocha test/e2e",
+    "pack": "npm run pack:main && npm run pack:renderer && npm run pack:preload",
+    "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
+    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
+    "pack:preload": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.preload.config.js",
+    "test": "npm run unit && npm run e2e",
+    "unit": "karma start test/unit/karma.conf.js",
+    "postinstall": "electron-rebuild"
+  },
+  "build": {
+    "productName": "meterWallet",
+    "appId": "org.dfinlab.wallet",
+    "directories": {
+      "output": "build"
+    },
+    "publish": {
+      "provider": "github"
+    },
+    "files": [
+      "dist/electron/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "protocols": {
+      "name": "Dfinlab App Protocol",
+      "schemes": [
+        "dfinlab-app"
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "win": {
+      "icon": "build/icons/icon.ico"
+    },
+    "linux": {
+      "icon": "build/icons"
+    }
+  },
+  "dependencies": {
+    "electron-context-menu": "^0.10.0",
+    "electron-unhandled": "^2.1.0",
+    "electron-updater": "^4.2.2",
+    "meter-connex": "^1.0.9",
+    "meter-devkit": "^0.1.1",
+    "moment": "^2.24.0",
+    "rlp": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/bignumber.js": "^5.0.0",
+    "@types/chai": "^4.1.4",
+    "@types/color": "^3.0.0",
+    "@types/lodash.clonedeep": "^4.5.4",
+    "@types/lodash.debounce": "^4.0.4",
+    "@types/lru-cache": "^4.1.1",
+    "@types/mersenne-twister": "^1.1.2",
+    "@types/mocha": "^5.2.5",
+    "@types/mousetrap": "^1.6.0",
+    "@types/node": "^10.5.5",
+    "@types/qs": "^6.5.1",
+    "@types/uuid": "^3.4.4",
+    "bignumber.js": "7.2.1",
+    "cfonts": "^1.1.3",
+    "chai": "^4.0.0",
+    "chalk": "^2.1.0",
+    "compare-versions": "^3.4.0",
+    "color": "^3.1.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.4",
+    "del": "^3.0.0",
+    "devtron": "^1.4.0",
+    "dexie": "^2.0.4",
+    "draggabilly": "2.2.0",
+    "electron": "3.0.13",
+    "electron-builder": "^20.28.4",
+    "electron-debug": "^1.4.0",
+    "electron-devtools-installer": "^2.2.0",
+    "electron-rebuild": "^1.8.2",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "fork-ts-checker-webpack-plugin": "^0.4.9",
+    "html-webpack-plugin": "^2.30.1",
+    "inject-loader": "^3.0.0",
+    "karma": "^2.0.5",
+    "karma-chai": "^0.1.0",
+    "karma-electron": "^5.1.1",
+    "karma-mocha": "^1.2.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "^0.0.31",
+    "karma-webpack": "^2.0.1",
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.debounce": "^4.0.8",
+    "lru-cache": "^4.1.3",
+    "mkdirp": "0.5.1",
+    "uuid": "^3.3.2",
+    "mersenne-twister": "^1.1.0",
+    "mocha": "^5.2.0",
+    "mousetrap": "^1.6.2",
+    "multispinner": "^0.2.1",
+    "node-loader": "^0.6.0",
+    "node-sass": "4.9.2",
+    "qrious": "^4.0.2",
+    "qs": "^6.5.2",
+    "require-dir": "^0.3.0",
+    "sass-loader": "7.0.3",
+    "spectron": "^3.7.1",
+    "style-loader": "^0.18.2",
+    "timeago.js": "^4.0.0-beta.1",
+    "ts-loader": "3.5.0",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths-webpack-plugin": "3.2.0",
+    "tslint": "5.11.0",
+    "tslint-loader": "3.6.0",
+    "typescript": "2.9.2",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "url-loader": "^1.0.1",
+    "vue": "2.5.17",
+    "vue-class-component": "6.2.0",
+    "vue-html-loader": "^1.2.4",
+    "vue-loader": "^13.0.5",
+    "vue-property-decorator": "7.0.0",
+    "vue-router": "3.0.1",
+    "vue-style-loader": "^3.0.1",
+    "vue-template-compiler": "^2.4.2",
+    "vuetify": "1.3.3",
+    "vuex": "^3.0.1",
+    "vuex-class": "^0.3.1",
+    "webpack": "^3.5.2",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-hot-middleware": "^2.18.2",
+    "webpack-merge": "^4.1.0"
+  }
+}
