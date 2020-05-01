@@ -134,17 +134,10 @@ export default class NewNodeDialog extends Mixins(
     this.onCancel();
   }
 
-  getNodeInfo() {
-    return new Promise<Connex.Meter.Block>((resolve, reject) => {
-      this.checkingReject = reject;
-      CLIENT.discoverNode(this.form.rpcUrl)
-        .then(resp => {
-          resolve(resp);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+  async getNodeInfo(): Promise<Flex.Meter.Block> {
+    new URL(this.form.rpcUrl);
+
+    return discoverNode(this.form.rpcUrl);
   }
 
   async save() {
@@ -167,7 +160,7 @@ export default class NewNodeDialog extends Mixins(
         }
       });
     } else {
-      let genesis: Connex.Meter.Block;
+      let genesis: Flex.Meter.Block;
       this.checking = true;
       try {
         genesis = await this.getNodeInfo();
@@ -189,6 +182,29 @@ export default class NewNodeDialog extends Mixins(
         .then(() => {
           this.clear();
         });
+    }
+  }
+}
+
+import { SimpleNet } from "@meterio/flex-framework/dist/driver/simple-net";
+
+async function discoverNode(url: string) {
+  const net = new SimpleNet(url);
+  const genesis = (await net.http("GET", "blocks/0")) || {};
+
+  // TODO full validation
+  if (genesis && !/^0x[0-9a-f]{64}$/i.test(genesis.id)) {
+    throw new NotValidNode("malformed response");
+  }
+  return genesis;
+}
+
+class NotValidNode extends Error {
+  constructor(cause: string) {
+    if (cause) {
+      super(`not a valid VeChain node [${cause}]`);
+    } else {
+      super(`not a valid VeChain node`);
     }
   }
 }

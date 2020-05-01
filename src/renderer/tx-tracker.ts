@@ -1,12 +1,12 @@
 
 async function handleTx(txRow: entities.Activity<'tx'>, dispose: () => void) {
     try {
-        const ticker = connex.meter.ticker()
+        const ticker = flex.meter.ticker()
         for (; ;) {
-            const head = connex.meter.status.head
+            const head = flex.meter.status.head
             if (head.number > 0) {
                 try {
-                    const receipt = await connex.meter.transaction(txRow.data.id).getReceipt()
+                    const receipt = await flex.meter.transaction(txRow.data.id).getReceipt()
                     const confirmed = receipt ? head.number - receipt.meta.blockNumber >= 12 : false
                     const expired = !receipt && (head.timestamp - txRow.data.timestamp > 3600 * 2)
                     await BDB.activities

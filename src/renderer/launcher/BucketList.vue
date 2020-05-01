@@ -172,7 +172,7 @@ export default class BucketList extends Vue {
 
   async refresh() {
     console.log("start refresh");
-    const buckets = await connex.meter.bucketList();
+    const buckets = await flex.meter.buckets();
     this.$store.commit("updateBuckets", buckets);
     console.log("update bucket");
   }

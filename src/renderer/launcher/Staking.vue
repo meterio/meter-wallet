@@ -46,8 +46,8 @@ export default class Staking extends Vue {
   logoUrl = env.logoUrl;
 
   created() {
-    connex.meter
-      .candidateList()
+    flex.meter
+      .candidates()
       .then(res => {
         this.$store.state.candidateList = res;
       })

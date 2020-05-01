@@ -38,8 +38,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "meter-devkit";
-import { generateUnboundData, Token } from "@/common/scriptengine-utils";
+import { cry, ScriptEngine } from "@meterio/devkit";
 
 @Component
 export default class StakingBound extends Vue {
@@ -102,26 +101,21 @@ export default class StakingBound extends Vue {
         .times(this.amount!)
         .integerValue()
         .toString(10);
-      let tokenVal = this.token == "MTRG" ? Token.METER_GOV : Token.METER;
-      console.log("STAKING:", this.stakingID);
       let holderAddr = this.wallets[this.from].address!;
-      console.log(holderAddr, this.stakingID, value, tokenVal);
-      let data = generateUnboundData(
+      let dataBuffer = ScriptEngine.getUnboundData(
         holderAddr,
         this.stakingID,
-        parseInt(value),
-        tokenVal
+        value
       );
-      console.log("DATA: ", data);
-      await connex.vendor
+      await flex.vendor
         .sign("tx")
         .signer(this.wallets[this.from].address!)
         .request([
           {
             to: holderAddr,
             value: "0",
-            token: tokenVal,
-            data: "0x" + data
+            token: ScriptEngine.Token.MeterGov,
+            data: "0x" + dataBuffer.toString("hex")
           }
         ]);
       this.$router.back();

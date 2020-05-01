@@ -1,6 +1,6 @@
 import { Vue } from "vue-property-decorator";
 import { Address, Num, Bucket } from "@/common/formatter";
-import { cry } from "meter-devkit";
+import { cry } from "@meterio/devkit";
 
 function isRegExpArray(v: any): v is RegExpMatchArray {
   return v !== null && v instanceof Array;

@@ -172,7 +172,7 @@ import { Stats } from "fs";
 })
 export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
   walletName?: string;
-  list: Connex.Meter.Transfer[] = [];
+  list: Flex.Meter.Transfer[] = [];
   stick = false;
   snackbar = false;
   errorMessage = "";
@@ -187,7 +187,7 @@ export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
   wallets!: entities.Wallet[];
 
   @State
-  chainHead!: Connex.Meter.Status["head"];
+  chainHead!: Flex.Meter.Status["head"];
 
   @Watch("chainHead")
   onChainHeadChange() {
@@ -252,7 +252,7 @@ export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
     this.$dialog(ExportWalletDialog, this.wallet!);
   }
   async getList() {
-    let list: Connex.Meter.Transfer[] = [];
+    let list: Flex.Meter.Transfer[] = [];
     this.resetPage();
     try {
       this.isloading = true;

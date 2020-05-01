@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
-import { Transaction } from 'meter-devkit'
+import { Transaction } from '@meterio/devkit'
 import { randomBytes } from 'crypto'
-import { cry } from 'meter-devkit'
+import { cry } from '@meterio/devkit'
 
 namespace contracts {
     export namespace params {
@@ -17,7 +17,7 @@ namespace contracts {
         }
 
         export async function get(key: string) {
-            const result = await connex.meter
+            const result = await flex.meter
                 .account(address)
                 .method(abiGet)
                 .call(key)
@@ -46,11 +46,11 @@ export type EstimateGasResult = {
 }
 
 export async function estimateGas(
-    clauses: Connex.Meter.Clause[],
+    clauses: Flex.Meter.Clause[],
     suggestedGas: number,
     caller: string): Promise<EstimateGasResult> {
 
-    const outputs = await connex.meter.explain()
+    const outputs = await flex.meter.explain()
         .caller(caller)
         .gas(2000 * 10000)
         .execute(clauses)
@@ -70,37 +70,47 @@ export async function estimateGas(
 }
 
 export function buildTx(
-    clauses: Connex.Meter.Clause[],
+    clauses: Flex.Meter.Transaction['clauses'],
     gasPriceCoef: number,
-    gas: number) {
+    gas: number,
+    dependsOn: string | null) {
 
-    const genesis = connex.meter.genesis
-    const bestId = connex.meter.status.head.id
-    const tx = new Transaction({
+    const genesis = flex.meter.genesis
+    const bestId = flex.meter.status.head.id
+
+    const txBody: Transaction.Body = {
         chainTag: Number.parseInt(genesis.id.slice(genesis.id.length - 2), 16),
         blockRef: bestId.slice(0, 18),
-        expiration: 720,
+        expiration: 18, // about 3 mins
         clauses,
         gasPriceCoef,
         gas,
-        dependsOn: null,
+        dependsOn,
         nonce: '0x' + randomBytes(8).toString('hex')
-    })
+    }
     return {
-        sign: async (keystore: cry.Keystore, password: string) => {
-            tx.signature = undefined
-            const privateKey = await cry.Keystore.decrypt(keystore, password)
-            tx.signature = cry.secp256k1.sign(cry.blake2b256(tx.encode()), privateKey)
-            let rawTx = '0x' + tx.encode().toString('hex')
-            console.log("BEFORE: ", tx)
-            console.log("RAW TX: ", rawTx);
-            // let tt = Transaction.decode(Buffer.from(rawTx, 'hex'))
-            // console.log("DECODED TX: ", tt)
-
-            return {
-                txid: tx.id!,
-                rawTx: rawTx
+        unsignedTx: (features?: boolean) => {
+            let reserved = {}
+            if (features) {
+                reserved = {
+                    reserved: {
+                        features: 1
+                    }
+                }
             }
+            return new Transaction({...txBody, ...reserved})
+        },
+        signTx: (privateKey: Buffer, delegatorSig?: string) => {
+            let tx
+            if (delegatorSig) {
+                tx = new Transaction({ ...txBody, reserved: { features: 1 } })
+                const originSig = cry.secp256k1.sign(cry.blake2b256(tx.encode()), privateKey)
+                tx.signature = Buffer.concat([originSig, Buffer.from(delegatorSig.slice(2), 'hex')])
+            } else {
+                tx = new Transaction(txBody)
+                tx.signature = cry.secp256k1.sign(cry.blake2b256(tx.encode()), privateKey)
+            }
+            return tx
         }
     }
 }

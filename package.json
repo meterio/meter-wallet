@@ -1,6 +1,6 @@
 {
   "name": "meter-wallet",
-  "version": "1.1.3",
+  "version": "1.1.5",
   "author": "meter.io",
   "description": "An electron-vue project",
   "license": "LGPL-3.0",
@@ -55,7 +55,8 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon.icns",
+      "target": "pkg"
     },
     "win": {
       "icon": "build/icons/icon.ico"
@@ -65,13 +66,15 @@
     }
   },
   "dependencies": {
+    "@meterio/devkit": "^1.2.5",
+    "@meterio/flex": "^0.4.4",
+    "@meterio/flex-framework": "^0.4.5",
     "electron-context-menu": "^0.10.0",
+    "electron-log": "^4.1.1",
     "electron-unhandled": "^2.1.0",
     "electron-updater": "^4.2.2",
-    "meter-connex": "^1.0.9",
-    "meter-devkit": "^0.1.1",
-    "moment": "^2.24.0",
-    "rlp": "^2.2.3"
+    "keythereum": "^1.0.4",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@types/bignumber.js": "^5.0.0",
@@ -83,15 +86,15 @@
     "@types/mersenne-twister": "^1.1.2",
     "@types/mocha": "^5.2.5",
     "@types/mousetrap": "^1.6.0",
-    "@types/node": "^10.5.5",
+    "@types/node": "^10.17.21",
     "@types/qs": "^6.5.1",
     "@types/uuid": "^3.4.4",
     "bignumber.js": "7.2.1",
     "cfonts": "^1.1.3",
     "chai": "^4.0.0",
     "chalk": "^2.1.0",
-    "compare-versions": "^3.4.0",
     "color": "^3.1.0",
+    "compare-versions": "^3.4.0",
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.4",
@@ -100,7 +103,7 @@
     "dexie": "^2.0.4",
     "draggabilly": "2.2.0",
     "electron": "3.0.13",
-    "electron-builder": "^20.28.4",
+    "electron-builder": "^21.2.0",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-rebuild": "^1.8.2",
@@ -121,9 +124,8 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
     "lru-cache": "^4.1.3",
-    "mkdirp": "0.5.1",
-    "uuid": "^3.3.2",
     "mersenne-twister": "^1.1.0",
+    "mkdirp": "0.5.1",
     "mocha": "^5.2.0",
     "mousetrap": "^1.6.2",
     "multispinner": "^0.2.1",
@@ -141,14 +143,15 @@
     "tsconfig-paths-webpack-plugin": "3.2.0",
     "tslint": "5.11.0",
     "tslint-loader": "3.6.0",
-    "typescript": "2.9.2",
+    "typescript": "^3.7.2",
     "uglifyjs-webpack-plugin": "^1.2.7",
     "url-loader": "^1.0.1",
+    "uuid": "^3.3.2",
     "vue": "2.5.17",
     "vue-class-component": "6.2.0",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^13.0.5",
-    "vue-property-decorator": "7.0.0",
+    "vue-property-decorator": "^7.0.0",
     "vue-router": "3.0.1",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.4.2",

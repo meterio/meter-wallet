@@ -21,8 +21,7 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "meter-devkit";
-import { generateUncandidateData, Token } from "@/common/scriptengine-utils";
+import { cry, ScriptEngine } from "@meterio/devkit";
 
 @Component
 export default class StakingUncandidate extends Vue {
@@ -71,16 +70,16 @@ export default class StakingUncandidate extends Vue {
     }
     try {
       let fromAddr = this.wallets[this.from].address!;
-      let data = generateUncandidateData(fromAddr, fromAddr);
-      await connex.vendor
+      const dataBuffer = ScriptEngine.getUncandidateData(fromAddr);
+      await flex.vendor
         .sign("tx")
         .signer(this.wallets[this.from].address!)
         .request([
           {
             to: fromAddr,
             value: "0",
-            token: Token.METER,
-            data: "0x" + data
+            token: ScriptEngine.Token.MeterGov,
+            data: "0x" + dataBuffer.toString("hex")
           }
         ]);
       this.$router.back();

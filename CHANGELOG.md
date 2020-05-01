@@ -1,3 +1,12 @@
+## v1.1.5
+
+Major changes
+
+1. improvement signing user experience, now you can unlock your account for 5 min
+2. re-design signing dialog
+3. replace connex with flex framework
+4. update devkit and relate dependencies
+
 ## v1.0.9
 
 1. added pages for staking candidates and buckets

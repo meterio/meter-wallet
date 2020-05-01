@@ -1,5 +1,5 @@
 import { Vue, Component } from 'vue-property-decorator'
-import { cry } from 'meter-devkit'
+import { cry } from '@meterio/devkit'
 @Component
 export default class AccountMixin extends Vue {
   public error: {

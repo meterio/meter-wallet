@@ -54,7 +54,7 @@ import { State } from "vuex-class";
 import { presets } from "@/node-configs";
 import Store from "@/renderer/store";
 
-type Status = Connex.Meter.Status;
+type Status = Flex.Meter.Status;
 
 @Component
 export default class NodeStatusPanel extends Vue {

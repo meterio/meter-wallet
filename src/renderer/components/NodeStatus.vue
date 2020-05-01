@@ -10,7 +10,7 @@ import { State } from "vuex-class";
 import { remote } from "electron";
 import { nameOfNetwork } from "@/node-configs";
 import Store from "@/renderer/store";
-type Head = Connex.Meter.Status["head"];
+type Head = Flex.Meter.Status["head"];
 
 const nodeConfig = remote.getCurrentWebContents().getWebPreferences()
   .nodeConfig!;

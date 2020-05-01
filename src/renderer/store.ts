@@ -4,7 +4,7 @@ import { stringify } from "querystring";
 
 namespace Store {
   export type Model = {
-    chainHead: Connex.Meter.Status["head"];
+    chainHead: Flex.Meter.Status["head"];
     syncStatus: {
       progress: number;
       flag: "synced" | "syncing" | "outOfSync";
@@ -30,9 +30,9 @@ class Store extends Vuex.Store<Store.Model> {
   constructor() {
     super({
       state: {
-        chainHead: connex.meter.status.head,
+        chainHead: flex.meter.status.head,
         syncStatus: {
-          progress: connex.meter.status.progress,
+          progress: flex.meter.status.progress,
           flag: "syncing"
         },
         shortcuts: [],
@@ -45,7 +45,7 @@ class Store extends Vuex.Store<Store.Model> {
       getters: {},
       mutations: {
         [Store.UPDATE_CHAIN_HEAD](state) {
-          state.chainHead = connex.meter.status.head;
+          state.chainHead = flex.meter.status.head;
         },
         [Store.UPDATE_SYNC_STATUS](state, payload) {
           state.syncStatus = payload;
@@ -61,7 +61,7 @@ class Store extends Vuex.Store<Store.Model> {
         },
         [Store.UPDATE_CANDIDATES](state, payload) {
           console.log('update candidate in store');
-          state.candidates = payload.map(function(c: Connex.Meter.Candidate) {
+          state.candidates = payload.map(function(c: Flex.Meter.Candidate) {
             let t: entities.Candidate = {
               address: c.addr,
               name: c.name,
@@ -121,7 +121,7 @@ class Store extends Vuex.Store<Store.Model> {
   private async monitorAuction() {
     for (;;) {
     try{
-      const present = await connex.meter.auctionPresent();
+      const present = await flex.meter.auction();
       if (present){
         this.commit(Store.UPDATE_PRESENT_AUCTION, present);
       }
@@ -136,7 +136,7 @@ class Store extends Vuex.Store<Store.Model> {
   private async monitorCandidate() {
     for (;;) {
       try{
-      const candidates = await connex.meter.candidateList();
+      const candidates = await flex.meter.candidates();
       if (candidates && candidates.length > 0) {
         this.commit(Store.UPDATE_CANDIDATES, candidates);
       }
@@ -151,7 +151,7 @@ class Store extends Vuex.Store<Store.Model> {
     // console.log("START MONITOR BUCKET");
     for (;;) {
       try{
-      const buckets = await connex.meter.bucketList();
+      const buckets = await flex.meter.buckets();
       // console.log(buckets);
       if (buckets && buckets.length > 0) {
         // console.log(buckets);
@@ -165,11 +165,11 @@ class Store extends Vuex.Store<Store.Model> {
   }
 
   private async monitorChain() {
-    const ticker = connex.meter.ticker();
-    let lastHeadId = connex.meter.status.head.id;
+    const ticker = flex.meter.ticker();
+    let lastHeadId = flex.meter.status.head.id;
     let idleTimes = 0;
     for (;;) {
-      const status = connex.meter.status;
+      const status = flex.meter.status;
       let flag: Store.Model["syncStatus"]["flag"];
       if (lastHeadId !== status.head.id) {
         lastHeadId = status.head.id;

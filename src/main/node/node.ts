@@ -1,7 +1,7 @@
 import * as NodeUrl from "url";
 import { EventEmitter } from "events";
 import { Cache } from "./cache";
-import { Bloom } from "meter-devkit";
+import { Bloom } from "@meterio/devkit";
 import { Net, NetError } from "./net";
 import * as compareVersions from "compare-versions";
 import { TxQueue } from "./tx-queue";
@@ -36,7 +36,7 @@ export class Node {
   }
 
   public readonly cache = new Cache();
-  public headBlock: Connex.Meter.Block | Beat;
+  public headBlock: Flex.Meter.Block | Beat;
   public readonly txQueue: TxQueue;
   public readonly net: Net;
 
@@ -72,7 +72,7 @@ export class Node {
   public get genesis() {
     return this.config.genesis;
   }
-  public get head(): Connex.Meter.Status["head"] {
+  public get head(): Flex.Meter.Status["head"] {
     return {
       id: this.headBlock.id,
       number: this.headBlock.number,
@@ -121,7 +121,7 @@ export class Node {
 
     this.timer = setTimeout(async () => {
       try {
-        const best = await this.net.get<Connex.Meter.Block>("blocks/best");
+        const best = await this.net.get<Flex.Meter.Block>("blocks/best");
         if (flag === this.timer) {
           if (best.id !== this.headBlock.id) {
             this.headBlock = best;

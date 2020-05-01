@@ -7,7 +7,7 @@ export default class TransferMixin extends Vue {
   page = -1;
 
   createFilter(address: string) {
-    this.filter = connex.meter.filter("transfer").criteria([
+    this.filter = flex.meter.filter("transfer").criteria([
       {
         sender: address
       },

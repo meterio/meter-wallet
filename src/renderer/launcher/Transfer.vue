@@ -71,7 +71,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "meter-devkit";
+import { cry } from "@meterio/devkit";
 
 @Component
 export default class Transfer extends Vue {
@@ -135,7 +135,13 @@ export default class Transfer extends Vue {
           .integerValue()
           .toString(16);
       let tokenValue = this.token == "MTRG" ? 1 : 0;
-      await connex.vendor
+      console.log(flex.vendor);
+      console.log(flex.vendor.sign);
+      console.log(flex.vendor.sign("tx"));
+      console.log(
+        flex.vendor.sign("tx").signer(this.wallets[this.from].address!)
+      );
+      await flex.vendor
         .sign("tx")
         .signer(this.wallets[this.from].address!)
         .request([
@@ -148,6 +154,7 @@ export default class Transfer extends Vue {
         ]);
       this.$router.back();
     } catch (err) {
+      console.log("HOLY SHIT", err);
       this.errMsg = `${err.name}: ${err.message}`;
     }
   }

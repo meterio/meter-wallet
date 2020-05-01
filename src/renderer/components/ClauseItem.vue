@@ -3,14 +3,15 @@
     <v-layout column slot="header">
       <v-layout row align-baseline>
         <span class="grey--text caption">Clause {{index+1}}</span>
-        <v-spacer/>
+        <v-spacer />
         <b class="label primary text-uppercase">{{type}}</b>
       </v-layout>
       <v-layout row align-baseline>
-        <span class="caption">To:
+        <span class="caption">
+          To:
           <AddressLabel abbrev placeholder="New contract">{{clause.to}}</AddressLabel>
         </span>
-        <v-spacer/>
+        <v-spacer />
         <Amount v-if="clause.token == 1" sym=" MTRG" class="body-1">{{clause.value}}</Amount>
         <Amount v-if="clause.token == 0" sym=" MTR" class="body-1">{{clause.value}}</Amount>
       </v-layout>
@@ -35,7 +36,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Model, Prop } from "vue-property-decorator";
-type ClauseType = Connex.Vendor.SigningService.TxMessage[number];
+type ClauseType = Flex.Vendor.TxMessage[number];
 
 @Component
 export default class ClauseItem extends Vue {

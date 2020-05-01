@@ -53,12 +53,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "meter-devkit";
-import {
-  generateBoundData,
-  generateDelegateData,
-  Token
-} from "@/common/scriptengine-utils";
+import { cry, ScriptEngine } from "@meterio/devkit";
 
 @Component
 export default class StakingBound extends Vue {
@@ -161,21 +156,19 @@ export default class StakingBound extends Vue {
     if (!(this.$refs.form as any).validate()) {
       return;
     }
-    let data = "";
+    let dataBuffer = Buffer.from("");
     let holderAddr = this.wallets[this.from].address!;
-    let tokenVal = this.token == "MTRG" ? Token.METER_GOV : Token.METER;
     try {
       if (this.source === "bound") {
         const value = new BigNumber("1" + "0".repeat(18))
           .times(this.amount!)
           .integerValue()
           .toString(10);
-        data = generateBoundData(
+        dataBuffer = ScriptEngine.getBoundData(
           this.optionVal,
           holderAddr,
           this.candAddr,
-          parseInt(value),
-          tokenVal
+          value
         );
       } else if (this.source === "delegate") {
         let bucket;
@@ -190,23 +183,23 @@ export default class StakingBound extends Vue {
           return;
         }
         let holderAddr = this.wallets[this.from].address!;
-        data = generateDelegateData(
+
+        dataBuffer = ScriptEngine.getDelegateData(
           holderAddr,
           this.candAddr,
           this.bucketID,
-          bucket.votes,
-          tokenVal
+          bucket.votes
         );
       }
-      await connex.vendor
+      await flex.vendor
         .sign("tx")
         .signer(this.wallets[this.from].address!)
         .request([
           {
             to: holderAddr,
             value: "0",
-            token: tokenVal,
-            data: "0x" + data
+            token: ScriptEngine.Token.MeterGov,
+            data: "0x" + dataBuffer.toString("hex")
           }
         ]);
       this.$router.back();

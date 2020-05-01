@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { cry } from "meter-devkit";
+import { cry } from "@meterio/devkit";
 
 export namespace Address {
   export function isValid(addr: any): addr is string {
@@ -57,7 +57,7 @@ export namespace Num {
   }
 }
 
-export function describeClauses(clauses: Connex.Meter.Clause[]) {
+export function describeClauses(clauses: Flex.Meter.Clause[]) {
   if (clauses.length === 0) {
     return "empty";
   }

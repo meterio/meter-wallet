@@ -1,29 +1,21 @@
 import { remote, ipcRenderer } from 'electron'
-import { create as createConnex } from '@/renderer/connex-impl'
+import {Framework } from "@meterio/flex-framework"
+import {Driver} from "@/renderer/connex-driver/driver"
 
 // create connex on demand
-const getConnex = (() => {
-    let connex: Connex
+const getFlex = (() => {
+    let flex: Flex
     return () => {
-        if (!connex) {
-            const nodeConfig = remote.getCurrentWindow()
-                .webContents
-                .getWebPreferences()
-                .nodeConfig
-
-            const client = remote.app.EXTENSION.connect(
-                remote.getCurrentWebContents().id,
-                nodeConfig!
-            )
-            connex = createConnex(client, 10)
+        if (!flex) {
+            flex = new Framework(new Driver())
         }
-        return connex
+        return flex
     }
 })()
 
-Object.defineProperty(window, 'connex', {
+Object.defineProperty(window, 'flex', {
     enumerable: true,
-    get() { return getConnex() }
+    get() { return getFlex() }
 })
 window.addEventListener('load', () => {
     const bgColor = window.getComputedStyle(document.body).getPropertyValue('background-color')

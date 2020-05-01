@@ -1,43 +1,100 @@
 <template>
-  <div style="position: absolute;left:0;top:0;right:0"></div>
+  <div>
+    <v-snackbar v-model="snack.open" top :timeout="60000" color="info" style="top: 72px;">
+      {{snack.message}}
+      <v-btn flat small dark @click="snack.action">{{snack.actionName}}</v-btn>
+      <v-btn dark icon @click="snack.open=false">
+        <v-icon small>close</v-icon>
+      </v-btn>
+    </v-snackbar>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { remote } from "electron";
 import { TxSigningDialog, CertSigningDialog } from "@/renderer/components";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import * as UrlUtils from "@/common/url-utils";
 import { ipcServe } from "../ipc";
+import { Certificate, cry } from "@meterio/devkit";
+import { getExploreUrl } from "@/explorer-configs";
 
 @Component
 export default class Vendor extends Vue {
   dialogOpened = false;
+  snack = {
+    open: false,
+    message: "",
+    actionName: "",
+    action: () => {}
+  };
+
   @State wallets!: entities.Wallet[];
 
-  mounted() {
-    ipcServe("vendor", async (fromWebContentsId, methodName, arg) => {
-      try {
-        await this.precheck(fromWebContentsId);
-        if (methodName === "sign-tx") {
-          return await this.signTx(arg);
-        } else if (methodName === "sign-cert") {
-          return await this.signCert(arg);
-        }
-        throw new Error(`unexpected method '${methodName}'`);
-      } catch (err) {
-        // it's important to transform error into plain object,
-        // since electron's ipc will json/unjson arguments
-        throw { name: err.name, message: err.message };
+  isAddressOwned(addr: string) {
+    const temp = addr.toLowerCase();
+    return !!this.wallets.find(w => w.address.toLowerCase() === temp);
+  }
+
+  getArgWallets(addr?: string) {
+    if (addr) {
+      let local = this.wallets.find(item => {
+        return item.address.toLowerCase() === addr;
+      });
+      if (!!local) {
+        return [
+          {
+            sectionName: "Local",
+            key: "local",
+            list: this.wallets.slice()
+          }
+        ];
       }
-    });
+    }
+
+    let temp = [];
+    if (this.wallets.length) {
+      temp.push({
+        sectionName: "Local",
+        key: "local",
+        list: this.wallets.slice()
+      });
+    }
+    return [...temp];
+  }
+
+  mounted() {
+    window.VENDOR = {
+      signTx: async (msg, options, caller) => {
+        await this.precheck(caller.webContentsId);
+        return this.signTx(msg, options, caller.referer);
+      },
+      signCert: async (msg, options, caller) => {
+        await this.precheck(caller.webContentsId);
+        return this.signCert(msg, options, caller.referer);
+      },
+      isAddressOwned: addr => {
+        return Promise.resolve(this.isAddressOwned(addr));
+      }
+    };
   }
 
   async precheck(contentsId: number) {
     if (this.dialogOpened) {
-      throw new Rejected("request is in progress");
+      throw new Error("request is in progress");
     }
-    if (this.wallets.length === 0) {
-      throw new Rejected("no wallet available");
+    if (!this.getArgWallets().length) {
+      this.snack.open = true;
+      this.snack.message = "You have no wallet yet";
+      this.snack.actionName = "Create Now";
+      this.snack.action = () => {
+        this.snack.open = false;
+        BUS.$emit("open-tab", {
+          href: "sync://wallets/local",
+          mode: "inplace-builtin"
+        });
+      };
+      throw new Error("no wallet available");
     }
     const callingWebContents = remote.webContents.fromId(contentsId);
     // either focused or dev tools opened
@@ -45,61 +102,77 @@ export default class Vendor extends Vue {
       !remote.webContents.fromId(contentsId).isFocused() &&
       !callingWebContents.isDevToolsOpened()
     ) {
-      throw new Rejected("not in focus");
+      throw new Error("not in focus");
     }
   }
 
   async signTx(
-    arg: SignTxArg
-  ): Promise<Connex.Vendor.SigningService.TxResponse> {
-    let walletIndex = 0;
-    if (arg.options.signer) {
-      walletIndex = this.wallets.findIndex(
-        w => w.address!.toLowerCase() === arg.options.signer!.toLowerCase()
-      );
-      if (walletIndex < 0) {
-        throw new Rejected("required signer unavailable");
+    arg: Flex.Driver.SignTxArg,
+    option: Flex.Driver.SignTxOption,
+    referer: Referer
+  ): Promise<Flex.Vendor.TxResponse> {
+    let enforcedWallet = "";
+    let walletsCollection = this.getArgWallets();
+    if (option.signer) {
+      const signer = option.signer!.toLowerCase();
+      enforcedWallet = this.isAddressOwned(signer) ? signer : "";
+      if (!enforcedWallet) {
+        throw new Error("required signer unavailable");
+      } else {
+        walletsCollection = this.getArgWallets(signer);
       }
     }
 
     try {
       this.dialogOpened = true;
       const result = await this.$dialog(TxSigningDialog, {
-        message: arg.message,
+        message: arg,
         // enforce using wallet
-        wallets: arg.options.signer
-          ? [this.wallets[walletIndex]]
-          : this.wallets.slice(),
-        selectedWallet: arg.options.signer ? 0 : walletIndex,
-        suggestedGas: arg.options.gas || 0,
-        txComment: arg.options.comment || ""
+        wallets: walletsCollection,
+        selectedWallet: enforcedWallet,
+        suggestedGas: option.gas || 0,
+        txComment: option.comment || "",
+        dependsOn: option.dependsOn || null,
+        delegationHandler: option.delegationHandler
       });
+
+      // PREFS.store.put({
+      //   key: flex.meter.genesis.id + "-lastSigner",
+      //   value: result.signer.toLowerCase()
+      // });
 
       await BDB.activities.add({
         type: "tx",
         createdTime: Date.now(),
-        referer: arg.referer,
+        referer,
         closed: 0,
         data: {
           id: result.txid,
-          message: arg.message,
+          message: arg,
           timestamp: result.timestamp,
-          comment: arg.options.comment || "",
+          comment: option.comment || "",
           signer: result.signer,
           estimatedFee: result.estimatedFee,
-          link: arg.options.link || "",
+          link: option.link || "",
           raw: result.rawTx,
           receipt: null
         }
       });
-      CLIENT.txer.send(result.txid, result.rawTx);
-      new Notification("Tx Signed", { body: result.txid }).onclick = () => {
-        BUS.$emit("open-tab", {
-          href: `https://dfinlab.github.io/insight/#/txs/${result.txid}`
-        });
+      remote.app.EXTENSION.txer.enqueue(
+        result.txid,
+        result.rawTx,
+        NODE_CONFIG.url
+      );
+      new Notification("Tx Signed", {
+        body: result.txid
+      }).onclick = () => {
+        const href = getExploreUrl(
+          this.$store.getters.explorer,
+          "tx",
+          result.txid
+        );
+        BUS.$emit("open-tab", { href });
       };
-
-      setTimeout(this.updateLists, 6000);
 
       return {
         txid: result.txid,
@@ -110,79 +183,72 @@ export default class Vendor extends Vue {
     }
   }
 
-  async updateLists() {
-    try {
-      // upate buckets
-      const buckets = await connex.meter.bucketList();
-      if (buckets && buckets.length > 0) {
-        this.$store.commit("updateBuckets", buckets);
-      }
-
-      // update candidates
-      const candidates = await connex.meter.candidateList();
-      if (candidates && candidates.length > 0) {
-        this.$store.commit("updateCandidates", candidates);
-      }
-
-      // update present auction
-      const present = await connex.meter.auctionPresent();
-      if (present) {
-        this.$store.commit("updatePresentAuction", present);
-      }
-    } catch (e) {}
-  }
-
-  async signCert(arg: SignCertArg) {
-    let walletIndex = 0;
-    if (arg.options.signer) {
-      walletIndex = this.wallets.findIndex(
-        w => w.address!.toLowerCase() === arg.options.signer!.toLowerCase()
-      );
-      if (walletIndex < 0) {
-        throw new Rejected("required signer unavailable");
+  async signCert(
+    arg: Flex.Driver.SignCertArg,
+    option: Flex.Driver.SignCertOption,
+    referer: Referer
+  ) {
+    let enforcedWallet = "";
+    let walletsCollection = this.getArgWallets();
+    if (option.signer) {
+      const signer = option.signer!.toLowerCase();
+      enforcedWallet = this.isAddressOwned(signer) ? signer : "";
+      if (!enforcedWallet) {
+        throw new Error("required signer unavailable");
+      } else {
+        walletsCollection = this.getArgWallets(signer);
       }
     }
-
     try {
       this.dialogOpened = true;
       const result = await this.$dialog(CertSigningDialog, {
-        message: arg.message,
+        message: arg,
         // enforce using wallet
-        wallets: arg.options.signer
-          ? [this.wallets[walletIndex]]
-          : this.wallets.slice(),
-        selectedWallet: arg.options.signer ? 0 : walletIndex,
-        domain: UrlUtils.hostnameOf(arg.referer.url)
+        wallets: walletsCollection,
+        selectedWallet: enforcedWallet,
+        domain: UrlUtils.hostnameOf(referer.url)
       });
+
+      // PREFS.store.put({
+      //   key: flex.meter.genesis.id + "-lastSigner",
+      //   value: result.annex.signer.toLowerCase()
+      // });
+
+      const id =
+        "0x" +
+        cry
+          .blake2b256(
+            Certificate.encode({
+              ...arg,
+              ...result.annex,
+              signature: result.signature
+            })
+          )
+          .toString("hex");
 
       await BDB.activities.add({
         type: "cert",
         createdTime: Date.now(),
-        referer: arg.referer,
+        referer,
         closed: 1,
         data: {
-          message: arg.message,
+          id,
+          message: arg,
           timestamp: result.annex.timestamp,
           signer: result.annex.signer,
           domain: result.annex.domain,
-          signature: result.signature
+          signature: result.signature,
+          link: option.link || ""
         }
       });
 
       new Notification("Cert Signed", {
-        body: `${result.annex.domain}: ${arg.message.purpose}`
+        body: `${result.annex.domain}: ${arg.purpose}`
       });
       return result;
     } finally {
       this.dialogOpened = false;
     }
-  }
-}
-
-class Rejected extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = Rejected.name;
   }
 }
 </script>

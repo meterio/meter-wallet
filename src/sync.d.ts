@@ -1,7 +1,7 @@
 type NodeConfig = {
   name: string;
   url: string;
-  genesis: Connex.Meter.Block;
+  genesis: Flex.Meter.Block;
 };
 
 type Referer = {
@@ -33,18 +33,18 @@ declare namespace entities {
   namespace Activity {
     type Tx = {
       id: string;
-      message: Connex.Vendor.SigningService.TxMessage;
+      message: Flex.Vendor.TxMessage;
       comment: string;
       timestamp: number;
       signer: string;
       estimatedFee: string;
       link: string;
       raw: string;
-      receipt: Connex.Meter.Receipt | null;
+      receipt: Flex.Meter.Receipt | null;
     };
 
     type Cert = {
-      message: Connex.Vendor.SigningService.CertMessage;
+      message: Flex.Vendor.CertMessage;
       signer: string;
       timestamp: number;
       domain: string;
@@ -170,72 +170,6 @@ type Beat = {
   obsolete: boolean;
 };
 
-interface Client {
-  readonly genesis: Connex.Meter.Block;
-  readonly head: Connex.Meter.Status["head"];
-  readonly progress: number;
-
-  nextTick(): Promise<void>;
-
-  explain(
-    clauses: Connex.Meter.Clause[],
-    options: {
-      caller?: string;
-      gas?: number;
-      gasPrice?: string;
-    },
-    rev: string
-  ): Promise<Connex.Meter.VMOutput[]>;
-
-  getAccount(addr: string, rev: string): Promise<Connex.Meter.Account>;
-  getCode(addr: string, rev: string): Promise<Connex.Meter.Code>;
-  getStorage(
-    addr: string,
-    key: string,
-    rev: string
-  ): Promise<Connex.Meter.Storage>;
-  call(
-    clause: Connex.Meter.Clause,
-    options: {
-      caller?: string;
-      gas?: number;
-      gasPrice?: string;
-    },
-    rev: string
-  ): Promise<Connex.Meter.VMOutput>;
-
-  getBlock(rev: string | number): Promise<Connex.Meter.Block | null>;
-  getTx(id: string): Promise<Connex.Meter.Transaction | null>;
-  getReceipt(id: string): Promise<Connex.Meter.Receipt | null>;
-  filter<T extends "event" | "transfer">(
-    kind: T,
-    body: {
-      range: Connex.Meter.Filter.Range;
-      order: "asc" | "desc";
-      criteriaSet: Connex.Meter.Filter.Criteria<T>[];
-      options: { offset: number; limit: number };
-    }
-  ): Promise<Connex.Meter.Filter.Result<T>>;
-
-  beat(b: Beat): void;
-  txer: {
-    send(id: string, raw: string): void;
-    status(id: string): "sending" | "sent" | "error" | undefined;
-  };
-  discoverNode(url: string): Promise<Connex.Meter.Block>;
-
-  getCandidateList(): Promise<Connex.Meter.Candidate[]>;
-  getCandidate(addr: string): Promise<Connex.Meter.Candidate | null>;
-  getStakeholderList(): Promise<Connex.Meter.Stakeholder[]>;
-  getStakeholder(addr: string): Promise<Connex.Meter.Stakeholder | null>;
-  getBucketList(): Promise<Connex.Meter.Bucket[]>;
-  getBucket(id: string): Promise<Connex.Meter.Bucket | null>;
-  getDelegateList(): Promise<Connex.Meter.Delegate[]>;
-  getDelegate(addr: string): Promise<Connex.Meter.Delegate | null>;
-  getAuctionPresent(): Promise<Connex.Meter.AuctionCB>;
-  getAuctionSummaryList(): Promise<Connex.Meter.AuctionSummary[]>;
-}
-
 type SignTxOptions = {
   signer?: string;
   gas?: number;
@@ -248,13 +182,13 @@ type SignCertOptions = {
 };
 
 type SignTxArg = {
-  message: Connex.Vendor.SigningService.TxMessage;
+  message: Flex.Vendor.TxMessage;
   options: SignTxOptions;
   referer: Referer;
 };
 
 type SignCertArg = {
-  message: Connex.Vendor.SigningService.CertMessage;
+  message: Flex.Vendor.CertMessage;
   options: SignCertOptions;
   referer: Referer;
 };

@@ -3,40 +3,41 @@ import { remote, ipcRenderer } from "electron";
 import { GlobalDatabase, BoundedDatabase } from "./database";
 import env from "@/env";
 import { trackTxLoop } from "./tx-tracker";
-import { create as createConnex } from "./connex-impl";
-import * as Beater from "./beater";
+import { Framework } from '@meterio/flex-framework'
+import { Driver } from './connex-driver/driver'
 
 // widgets to be bound onto window.
 // widgets names should be full caps.
 declare global {
   interface Window {
+    readonly NODE_CONFIG: NodeConfig
     readonly ENV: typeof env;
     readonly GDB: GlobalDatabase;
     readonly BDB: BoundedDatabase;
     // event bus
     readonly BUS: Vue;
-    readonly CLIENT: Client;
   }
+  const NODE_CONFIG: NodeConfig
   const ENV: typeof env;
   const GDB: GlobalDatabase;
+  // const PREFS: Preferences
   const BDB: BoundedDatabase;
+  // const LDDB: LedgerDatabase
   const BUS: Vue;
-  const CLIENT: Client;
 }
 
-const client = remote.app.EXTENSION.connect(
-  remote.getCurrentWebContents().id,
-  remote.getCurrentWebContents().getWebPreferences().nodeConfig!
-);
-
-Object.defineProperty(window, "connex", {
-  value: createConnex(client, 100),
+Object.defineProperty(window, 'NODE_CONFIG', {
+  value: remote.getCurrentWebContents().getWebPreferences().nodeConfig!,
+  enumerable: true
+})
+Object.defineProperty(window, "flex", {
+  value: new Framework(new Driver()),
   enumerable: true
 });
-Object.defineProperty(window, "CLIENT", {
-  value: client,
-  enumerable: true
-});
+// Object.defineProperty(window, "CLIENT", {
+//   value: client,
+//   enumerable: true
+// });
 // bind widgets
 Object.defineProperty(window, "ENV", {
   value: env,
@@ -106,5 +107,3 @@ ipcRenderer.on("browser-window-event", (_: any, event: string) => {
 // document.addEventListener('drop', ev => ev.preventDefault())
 
 trackTxLoop();
-
-Beater.listen(b => client.beat(b));

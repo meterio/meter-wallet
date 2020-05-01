@@ -2,7 +2,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 
 @Component
 export default class AccountLoader extends Vue {
-  public account: Connex.Meter.Account | null = null;
+  public account: Flex.Meter.Account | null = null;
   // override it to set address
   get address() {
     return "";
@@ -17,7 +17,7 @@ export default class AccountLoader extends Vue {
     const addr = this.address;
     if (addr) {
       try {
-        const acc = await connex.meter.account(addr).get();
+        const acc = await flex.meter.account(addr).get();
         if (addr === this.address) {
           this.account = acc;
         }

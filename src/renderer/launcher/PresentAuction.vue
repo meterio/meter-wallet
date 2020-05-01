@@ -74,7 +74,7 @@ export default class PresentAuction extends Vue {
   presentAuction!: entities.AuctionCB;
 
   @State
-  chainHead!: Connex.Meter.Status["head"];
+  chainHead!: Flex.Meter.Status["head"];
 
   search = "";
   rowsPerPage = [50, 100, 200, { text: "All", value: -1 }];
@@ -110,7 +110,7 @@ export default class PresentAuction extends Vue {
   }
   async refresh() {
     console.log("refresh");
-    const present = await connex.meter.auctionPresent();
+    const present = await flex.meter.auction();
     this.$store.commit("updatePresentAuction", present);
   }
 }

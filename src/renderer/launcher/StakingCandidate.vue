@@ -58,12 +58,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "meter-devkit";
-import {
-  generateCandidateData,
-  OpCode,
-  Token
-} from "@/common/scriptengine-utils";
+import { cry, ScriptEngine } from "@meterio/devkit";
 
 @Component
 export default class StakingCandidate extends Vue {
@@ -103,11 +98,17 @@ export default class StakingCandidate extends Vue {
   readonly pubkeyRules = [
     (v: string) => !!v || "Input public key here",
     (v: string) => {
-      let pk = Buffer.from(v, "base64").toString("hex");
-      let formattedPubKey = Buffer.from(v, "base64").toString("base64");
-      if (formattedPubKey != v.trim())
+      let keys = v.split(":::");
+      if (keys.length != 2) {
+        return "Incomplete key";
+      }
+      const ecdsaPK = keys[0];
+      const blsPK = keys[1];
+      const ecdsaPKHex = Buffer.from(ecdsaPK, "base64").toString("hex");
+      let formattedEcdsaPK = Buffer.from(ecdsaPK, "base64").toString("base64");
+      if (formattedEcdsaPK != ecdsaPK.trim())
         return "Invalid public key, unncessary suffix characters";
-      return pk.length == 130 || "Invalid public key";
+      return ecdsaPKHex.length == 130 || "Invalid public key";
     }
   ];
   readonly ipRules = [
@@ -143,32 +144,26 @@ export default class StakingCandidate extends Vue {
         .times(this.amount!)
         .integerValue()
         .toString(10);
-      let tokenVal = this.token == "MTRG" ? Token.METER_GOV : Token.METER;
 
       let fromAddr = this.wallets[this.from].address!;
-      let formattedPubKey = Buffer.from(this.pubkey, "base64").toString(
-        "base64"
-      );
-      let data = generateCandidateData(
-        fromAddr,
+      let dataBuffer = ScriptEngine.getCandidateData(
+        ScriptEngine.Option.OneWeekLock,
         fromAddr,
         this.name,
-        formattedPubKey,
-        // this.pubkey,
+        this.pubkey,
         this.ip,
         parseInt(this.port),
-        parseInt(value),
-        tokenVal
+        value
       );
-      await connex.vendor
+      await flex.vendor
         .sign("tx")
         .signer(this.wallets[this.from].address!)
         .request([
           {
             to: fromAddr,
             value: "0",
-            token: tokenVal,
-            data: "0x" + data
+            token: ScriptEngine.Token.MeterGov,
+            data: "0x" + dataBuffer.toString("hex")
           }
         ]);
       this.$router.back();

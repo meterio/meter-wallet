@@ -1,9 +1,9 @@
 import * as LRU from "lru-cache";
-import { Bloom } from "meter-devkit";
+import { Bloom } from "@meterio/devkit";
 import BigNumber from "bignumber.js";
 
 type AccountSnapshot = {
-  account: Connex.Meter.Account;
+  account: Flex.Meter.Account;
   timestamp: number;
 };
 
@@ -13,27 +13,27 @@ type Slot = {
   parentID: string;
   timestamp: number;
   bloom?: Bloom;
-  block?: Connex.Meter.Block;
+  block?: Flex.Meter.Block;
   accounts: Map<string, AccountSnapshot>;
-  txs: Map<string, Connex.Meter.Transaction>;
-  receipts: Map<string, Connex.Meter.Receipt>;
+  txs: Map<string, Flex.Meter.Transaction>;
+  receipts: Map<string, Flex.Meter.Receipt>;
   filters: Map<string, { result: any; bloomKeys: string[] }>;
 };
 const WINDOW_LEN = 12;
 
 export class Cache {
-  private readonly blockCache = new LRU<string | number, Connex.Meter.Block>(
+  private readonly blockCache = new LRU<string | number, Flex.Meter.Block>(
     256
   );
-  private readonly txCache = new LRU<string, Connex.Meter.Transaction>(512);
-  private readonly receiptCache = new LRU<string, Connex.Meter.Receipt>(512);
+  private readonly txCache = new LRU<string, Flex.Meter.Transaction>(512);
+  private readonly receiptCache = new LRU<string, Flex.Meter.Receipt>(512);
   private readonly slots = new Map<string, Slot>();
   private readonly window: Slot[] = [];
 
   public advance(
-    head: Connex.Meter.Status["head"],
+    head: Flex.Meter.Status["head"],
     bloom?: Bloom,
-    block?: Connex.Meter.Block
+    block?: Flex.Meter.Block
   ) {
     while (this.window.length > 0) {
       const last = this.window[this.window.length - 1];
@@ -73,7 +73,7 @@ export class Cache {
 
   public async getBlock(
     rev: string | number,
-    fetch: () => Promise<Connex.Meter.Block | null>
+    fetch: () => Promise<Flex.Meter.Block | null>
   ) {
     if (typeof rev === "string") {
       rev = rev.toLowerCase();
@@ -110,7 +110,7 @@ export class Cache {
   public async getAccount(
     addr: string,
     rev: string,
-    fetch: () => Promise<Connex.Meter.Account>
+    fetch: () => Promise<Flex.Meter.Account>
   ) {
     addr = addr.toLowerCase();
     rev = rev.toLowerCase();
@@ -148,7 +148,7 @@ export class Cache {
 
   public async getTx(
     txid: string,
-    fetch: () => Promise<Connex.Meter.Transaction | null>
+    fetch: () => Promise<Flex.Meter.Transaction | null>
   ) {
     txid = txid.toLowerCase();
     {
@@ -184,7 +184,7 @@ export class Cache {
 
   public async getReceipt(
     txid: string,
-    fetch: () => Promise<Connex.Meter.Receipt | null>
+    fetch: () => Promise<Flex.Meter.Receipt | null>
   ) {
     txid = txid.toLowerCase();
     {
@@ -221,8 +221,8 @@ export class Cache {
   public async filter<T extends "event" | "transfer">(
     key: string,
     bloomKeys: () => string[],
-    fetch: () => Promise<Connex.Meter.Filter.Result<T>>
-  ): Promise<Connex.Meter.Filter.Result<T>> {
+    fetch: () => Promise<Flex.Meter.Filter.Result<T>>
+  ): Promise<Flex.Meter.Filter.Result<T>> {
     FETCH: for (let i = this.window.length - 1; i >= 0; i--) {
       const filter = this.window[i].filters.get(key);
       if (filter) {
@@ -271,7 +271,7 @@ function testBytesHex(bloom: Bloom, hex: string) {
 const energyGrowthRate = new BigNumber(5000000000);
 const e18 = new BigNumber("1" + "0".repeat(18));
 
-function computeEnergy(acc: Connex.Meter.Account, initTs: number, ts: number) {
+function computeEnergy(acc: Flex.Meter.Account, initTs: number, ts: number) {
   return acc.energy;
   /*
     if (ts < initTs) {

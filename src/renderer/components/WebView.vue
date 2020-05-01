@@ -48,7 +48,7 @@ import * as AccessRecords from "../access-records";
 
 @Component
 export default class WebView extends Vue {
-  readonly partition = `persist:${connex.meter.genesis.id}`;
+  readonly partition = `persist:${flex.meter.genesis.id}`;
   readonly preload = ENV.preload;
   currentHref = "";
   progress = 0;

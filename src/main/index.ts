@@ -1,15 +1,21 @@
 import { app, CertificateVerifyProcRequest, BrowserWindow } from "electron";
-import { Backend } from "./backend";
 import { setupMenu } from "./menu";
 import WindowManager from "./window-manager";
 import { MQ } from "./mq";
+import { createUpdateChecker } from './update-checker'
+import {Txer} from "./txer";
 import env from "@/env";
 
 declare module "electron" {
   interface App {
     EXTENSION: {
       mq: MQ;
-      connect(contentsId: number, config: NodeConfig): Client;
+      // map window id to known head
+      knownHeads: Map<string, Flex.Meter.Status['head']>;
+      txer: Txer
+
+      // mainSettings: MainSettings
+      updateChecker: ReturnType<typeof createUpdateChecker>;
 
       createWindow(
         config?: NodeConfig,
@@ -47,9 +53,9 @@ if (env.devMode || app.requestSingleInstanceLock()) {
   // for all browserWindow
   contextMenu();
 
+  const updateChecker = createUpdateChecker();
   const mq = new MQ();
   const winMgr = new WindowManager();
-  const backend = new Backend();
   const certs = new Map<string, CertificateVerifyProcRequest>();
 
   let initExternalUrl = (env.devMode ? "" : process.argv[1]) || "";
@@ -68,7 +74,9 @@ if (env.devMode || app.requestSingleInstanceLock()) {
 
   app.EXTENSION = {
     mq,
-    connect: (contentsId, config) => backend.connect(contentsId, config),
+    knownHeads: new Map(),
+    txer: new Txer(),
+    updateChecker,
     createWindow: (config, options) => winMgr.create(config, options),
     showAbout: () => winMgr.showAbout(),
     getCertificate: hostname => certs.get(hostname),

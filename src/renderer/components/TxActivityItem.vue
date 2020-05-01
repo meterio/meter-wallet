@@ -62,10 +62,11 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import { remote } from "electron";
 import { describeClauses } from "@/common/formatter";
 import * as UrlUtils from "@/common/url-utils";
 import TimeAgo from "timeago.js";
-import { Transaction } from "meter-devkit";
+import { Transaction } from "@meterio/devkit";
 import BigNumber from "bignumber.js";
 
 const timeAgo = TimeAgo();
@@ -112,7 +113,7 @@ export default class TxActivityItem extends Vue {
     return (
       "0x" +
       this.item.data.message
-        .reduce((sum, c) => {
+        .reduce((sum: BigNumber, c: any) => {
           return sum.plus(c.value);
         }, new BigNumber(0))
         .toString(16)
@@ -134,7 +135,7 @@ export default class TxActivityItem extends Vue {
       return "dropped";
     }
 
-    const qStatus = CLIENT.txer.status(this.item.data.id);
+    const qStatus = remote.app.EXTENSION.txer.status(this.item.data.id);
     if (!qStatus) {
       return "hanging";
     }
@@ -182,8 +183,15 @@ export default class TxActivityItem extends Vue {
   emitAction() {}
 
   resend() {
-    CLIENT.txer.send(this.item.data.id, this.item.data.raw);
-    this.resendCount++;
+    remote.app.EXTENSION.txer.enqueue(
+      this.item.data.id,
+      this.item.data.raw,
+      NODE_CONFIG.url
+    );
+    this.$store.commit("updateTxResendTime", {
+      id: this.item.data.id,
+      value: Date.now() / 1000
+    });
   }
 
   reveal() {

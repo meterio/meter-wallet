@@ -46,7 +46,7 @@ import { Vue, Component, Watch, Prop, Mixins } from "vue-property-decorator";
 @Component
 export default class TransferItem extends Vue {
   @Prop()
-  item?: Connex.Meter.Transfer | null;
+  item?: Flex.Meter.Transfer | null;
 
   @Prop(Boolean)
   isIn!: boolean;
