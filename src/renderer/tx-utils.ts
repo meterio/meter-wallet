@@ -78,6 +78,8 @@ export function buildTx(
     const genesis = flex.meter.genesis
     const bestId = flex.meter.status.head.id
 
+    console.log("genesis:", genesis.id)
+    console.log("chaintag:", Number.parseInt(genesis.id.slice(genesis.id.length - 2), 16))
     const txBody: Transaction.Body = {
         chainTag: Number.parseInt(genesis.id.slice(genesis.id.length - 2), 16),
         blockRef: bestId.slice(0, 18),

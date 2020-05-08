@@ -45,6 +45,7 @@ class Item {
     private async _send() {
         try {
             this.requesting = true
+            log.info("RAW TX:", this.rawTx)
             const resp = await request({
                 method: 'POST',
                 url: this.url,

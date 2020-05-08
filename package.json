@@ -1,6 +1,6 @@
 {
   "name": "meter-wallet",
-  "version": "1.1.5",
+  "version": "1.1.6-beta1",
   "author": "meter.io",
   "description": "An electron-vue project",
   "license": "LGPL-3.0",
@@ -66,7 +66,7 @@
     }
   },
   "dependencies": {
-    "@meterio/devkit": "^1.2.5",
+    "@meterio/devkit": "^1.2.10",
     "@meterio/flex": "^0.4.4",
     "@meterio/flex-framework": "^0.4.5",
     "electron-context-menu": "^0.10.0",

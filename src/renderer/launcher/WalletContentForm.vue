@@ -31,6 +31,7 @@ import {
 } from "vue-property-decorator";
 import { cry } from "@meterio/devkit";
 import { watch } from "fs";
+import { SigningKey } from "@meterio/ethers/utils/signing-key";
 
 interface IContentForm {
   getPrivateKey(): Promise<Buffer>;

@@ -56,6 +56,34 @@ export const presets: NodeConfig[] = [
     }
   },
   {
+    name: "testnet",
+    url: "http://34.208.100.166:8669",
+    genesis: {
+      number: 0,
+      id: "0x0000000013e5fc5365d3d25a1c3a83fb2aca1000c7877ce7821d4c7a6b41b30e",
+      size: 234,
+      parentID:
+        "0xffffffff00000000000000000000000000000000000000000000000000000000",
+      timestamp: 1530014400,
+      gasLimit: 200000000,
+      beneficiary: "0x0000000000000000000000000000000000000000",
+      gasUsed: 0,
+      totalScore: 0,
+      txsRoot:
+        "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
+      stateRoot:
+        "0x0a2c82200c12f21843fe51cd901ea73ec960cec3d48d941c738b0c5287fe0ae7",
+      receiptsRoot:
+        "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
+      signer: "0x0000000000000000000000000000000000000000",
+      transactions: [],
+      lastKBlockHeight:0,
+      committee: [],
+      qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
+      nonce: 0,
+    }
+  },
+  {
     name: "meter.io",
     url: "https://mainnet.meter.io",
     genesis: {
@@ -88,6 +116,8 @@ export const presets: NodeConfig[] = [
 export function nameOfNetwork(genesisId: string) {
   switch (genesisId) {
     case "0x000000006fc6a7f3571f22424ffc395e40db2a46dd7e18059eeef4f05bf08063":
+      return "testnet";
+    case "0x0000000013e5fc5365d3d25a1c3a83fb2aca1000c7877ce7821d4c7a6b41b30e":
       return "testnet";
     case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a":
       return "mainnet";
