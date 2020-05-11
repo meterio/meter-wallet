@@ -128,7 +128,7 @@ class Store extends Vuex.Store<Store.Model> {
     }catch(e){
       // ignore error
     }
-      await sleep(30000); // update every 30 seconds
+      await sleep(3000); // update every 3 seconds
     }
   }
 
@@ -143,7 +143,7 @@ class Store extends Vuex.Store<Store.Model> {
     }catch(e){
       // ignore errors
     }
-      await sleep(30000); // update every 30 seconds
+      await sleep(3000); // update every 3 seconds
     }
   }
 
@@ -160,7 +160,7 @@ class Store extends Vuex.Store<Store.Model> {
     }catch(e){
       // ignore errors
     }
-      await sleep(30000); // update every 30 seconds
+      await sleep(3000); // update every 3 seconds
     }
   }
 

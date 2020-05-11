@@ -45,7 +45,14 @@
                   tag="span"
                   :to="{name:'uncandidate', params:{}}"
                 >
-                  <v-btn flat small outline color="grey">UNCANDIDATE</v-btn>
+                  <v-btn flat small outline color="grey">Uncandidate</v-btn>
+                </router-link>
+                <router-link
+                  v-if="props.item.owned"
+                  tag="span"
+                  :to="{name:'update-candidate', params:{}}"
+                >
+                  <v-btn flat small outline color="blue">Update</v-btn>
                 </router-link>
               </router-link>
             </td>
