@@ -32,8 +32,8 @@ export const presets: NodeConfig[] = [
     url: "http://warringstakes.meter.io:8669",
     genesis: {
       number: 0,
-      id: "0x000000006fc6a7f3571f22424ffc395e40db2a46dd7e18059eeef4f05bf08063",
-      size: 234,
+      id: "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4",
+      size: 280,
       parentID:
         "0xffffffff00000000000000000000000000000000000000000000000000000000",
       timestamp: 1530014400,
@@ -44,7 +44,7 @@ export const presets: NodeConfig[] = [
       txsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       stateRoot:
-        "0x6562c40f9960f0cccc67a6b76924108989c2c687c1ae56d6e2178c7facca1ebb",
+        "0xf6b1670d60fd79f0fe80502610f70f017eb3116e9e1239c704a6489e7f8eb0ed",
       receiptsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       signer: "0x0000000000000000000000000000000000000000",
@@ -60,8 +60,8 @@ export const presets: NodeConfig[] = [
     url: "http://34.208.100.166:8669",
     genesis: {
       number: 0,
-      id: "0x0000000013e5fc5365d3d25a1c3a83fb2aca1000c7877ce7821d4c7a6b41b30e",
-      size: 234,
+      id: "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4",
+      size: 280,
       parentID:
         "0xffffffff00000000000000000000000000000000000000000000000000000000",
       timestamp: 1530014400,
@@ -72,7 +72,7 @@ export const presets: NodeConfig[] = [
       txsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       stateRoot:
-        "0x0a2c82200c12f21843fe51cd901ea73ec960cec3d48d941c738b0c5287fe0ae7",
+        "0xf6b1670d60fd79f0fe80502610f70f017eb3116e9e1239c704a6489e7f8eb0ed",
       receiptsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       signer: "0x0000000000000000000000000000000000000000",
@@ -91,7 +91,7 @@ export const presets: NodeConfig[] = [
       id: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
       size: 170,
       parentID:
-        "0xffffffff53616c757465202620526573706563742c20457468657265756d2100",
+        "0xffffffff00000000000000000000000000000000000000000000000000000000",
       timestamp: 1530316800,
       gasLimit: 10000000,
       beneficiary: "0x0000000000000000000000000000000000000000",
@@ -117,9 +117,9 @@ export function nameOfNetwork(genesisId: string) {
   switch (genesisId) {
     case "0x000000006fc6a7f3571f22424ffc395e40db2a46dd7e18059eeef4f05bf08063":
       return "testnet";
-    case "0x0000000013e5fc5365d3d25a1c3a83fb2aca1000c7877ce7821d4c7a6b41b30e":
+    case "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4":
       return "testnet";
-    case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a":
+    case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b00":
       return "mainnet";
     case "0x00000000973ceb7f343a58b08f0693d6701a5fd354ff73d7058af3fba222aea4":
       return "devnet";
