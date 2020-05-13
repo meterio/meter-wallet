@@ -1,6 +1,6 @@
 export const presets: NodeConfig[] = [
   {
-    name: "testnet",
+    name: "Herd",
     url: "http://test.meter.io:8669",
     genesis: {
       number: 0,
@@ -28,7 +28,7 @@ export const presets: NodeConfig[] = [
     }
   },
   {
-    name: "testnet",
+    name: "Warringstakes",
     url: "http://warringstakes.meter.io:8669",
     genesis: {
       number: 0,
@@ -56,8 +56,8 @@ export const presets: NodeConfig[] = [
     }
   },
   {
-    name: "testnet",
-    url: "http://34.208.100.166:8669",
+    name: "Tetra",
+    url: "http://tetra.meter.io:8669",
     genesis: {
       number: 0,
       id: "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4",
