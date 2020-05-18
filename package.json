@@ -6,7 +6,7 @@
   "license": "LGPL-3.0",
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "node .electron-vue/build.js && electron-builder",
+    "build": "node .electron-vue/build.js && electron-builder --publish always",
     "build:all": "node .electron-vue/build.js && electron-builder -w -l -m",
     "publish": "node .electron-vue/build.js && electron-builder build -w -l -m --publish always",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
@@ -28,7 +28,10 @@
       "output": "build"
     },
     "publish": {
-      "provider": "github"
+      "provider": "s3",
+      "bucket": "wallet-release",
+      "path": "/download",
+      "region": "ap-southeast-1"
     },
     "files": [
       "dist/electron/**/*"
@@ -55,8 +58,7 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns",
-      "target": "pkg"
+      "icon": "build/icons/icon.icns"
     },
     "win": {
       "icon": "build/icons/icon.ico"
@@ -103,7 +105,7 @@
     "dexie": "^2.0.4",
     "draggabilly": "2.2.0",
     "electron": "3.0.13",
-    "electron-builder": "^20.28.4",
+    "electron-builder": "^22.6.0",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-rebuild": "^1.8.2",
