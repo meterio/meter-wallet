@@ -15,8 +15,9 @@ export default {
       path: electron,
       args: ['dist/electron/main.js'],
       startTimeout: 10000,
-      waitTimeout: 10000
+      waitTimeout: 10000,
     })
+    this.app.commandLine.appendSwitch('disable-web-security'); // disable web security
 
     return this.app.start()
   }

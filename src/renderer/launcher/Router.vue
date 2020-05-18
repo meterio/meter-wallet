@@ -88,7 +88,7 @@ export default class Router extends Vue {
 
   doSomethingCool() {
     BUS.$emit("open-tab", {
-      href: "http://dfinlab.github.io/insight",
+      href: "https://insight.meter.io",
       mode: "inplace"
     });
   }

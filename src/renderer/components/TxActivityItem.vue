@@ -206,7 +206,7 @@ export default class TxActivityItem extends Vue {
   }
 
   insight() {
-    const href = `https://dfinlab.github.io/insight/#/txs/${this.txid}`;
+    const href = `https://insight.meter.io/#/txs/${this.txid}`;
     BUS.$emit("open-tab", { href });
     this.emitAction();
   }

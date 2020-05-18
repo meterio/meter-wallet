@@ -1,13 +1,13 @@
 import { remote, ipcRenderer } from 'electron'
 import {Framework } from "@meterio/flex-framework"
-import {Driver} from "@/renderer/connex-driver/driver"
+import {AppDriver} from "@/renderer/flex-driver/app-driver"
 
 // create connex on demand
 const getFlex = (() => {
     let flex: Flex
     return () => {
         if (!flex) {
-            flex = new Framework(new Driver())
+            flex = new Framework(new AppDriver())
         }
         return flex
     }

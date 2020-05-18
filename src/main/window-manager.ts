@@ -18,7 +18,11 @@ const defaultWindowOptions: BrowserWindowConstructorOptions = {
   minHeight: 600,
   backgroundColor: "#f0f0f0",
   titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "hidden",
-  frame: process.platform === "darwin"
+  frame: process.platform === "darwin",
+  webPreferences:{
+    webSecurity:false,
+    allowRunningInsecureContent:true,
+  }
 };
 
 class WindowManager {
@@ -53,7 +57,7 @@ class WindowManager {
         config.name
       }`;
     }
-
+    console.log(options)
     const win = new BrowserWindow(options);
     win.loadURL(env.index);
     win.once('ready-to-show', () => {

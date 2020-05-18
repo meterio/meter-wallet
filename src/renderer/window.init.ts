@@ -4,7 +4,7 @@ import { GlobalDatabase, BoundedDatabase } from "./database";
 import env from "@/env";
 import { trackTxLoop } from "./tx-tracker";
 import { Framework } from '@meterio/flex-framework'
-import { Driver } from './connex-driver/driver'
+import { Driver } from './flex-driver/driver'
 
 // widgets to be bound onto window.
 // widgets names should be full caps.

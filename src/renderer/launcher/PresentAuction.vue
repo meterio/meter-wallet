@@ -104,7 +104,7 @@ export default class PresentAuction extends Vue {
   created() {}
   jumpToInsight(addr: string) {
     BUS.$emit("open-tab", {
-      href: `https://dfinlab.github.io/insight/#/accounts/${addr}`,
+      href: `https://insight.meter.io/#/accounts/${addr}`,
       mode: "append-active"
     });
   }

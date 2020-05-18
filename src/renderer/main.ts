@@ -40,7 +40,7 @@ if (isFirstTimeRun) {
       });
       GDB.shortcuts.add({
         title: "Explorer",
-        href: "https://dfinlab.github.io/insight/"
+        href: "https://insight.meter.io/"
       });
     },
     true

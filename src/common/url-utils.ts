@@ -14,7 +14,7 @@ export function formalize(input: string, fallbackSearchEngine?: 'duckduckgo' | '
     }
     if (V.isAddress(input) || V.isBytes32(input) ||
         (parseInt(input, 10).toString() === input && V.isUint32(parseInt(input, 10)))) {
-        return `https://dfinlab.github.io/insight/search?q=${input}`
+        return `https://insight.meter.io/search?q=${input}`
     }
 
     let url = NodeUrl.parse(input)

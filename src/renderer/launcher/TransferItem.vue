@@ -53,7 +53,7 @@ export default class TransferItem extends Vue {
 
   jumpToInsight(txID: string) {
     BUS.$emit("open-tab", {
-      href: `https://dfinlab.github.io/insight/#/txs/${txID}`,
+      href: `https://insight.meter.io/#/txs/${txID}`,
       mode: "append-active"
     });
   }
