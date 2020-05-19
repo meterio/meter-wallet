@@ -2,19 +2,16 @@
   <v-layout column>
     <v-subheader>General</v-subheader>
     <v-card>
-      <v-card-text>
-        <span>About Meter</span>
-        <br />
-        <span class="grey--text text--darken-1">Wallet {{getVersion()}} / Flex {{flexVersion}}</span>
-      </v-card-text>
-      <v-divider />
-      <v-list>
+      <v-list two-line class="card-border">
         <v-list-tile>
           <v-list-tile-content>
-            <v-list-tile-title class="grey--text text--darken-3">Check Update</v-list-tile-title>
+            <v-list-tile-title class="grey--text text--darken-3">
+              Version
+              <span class="grey--text ml-2 v-list__tile__sub-title">{{autoUpdateStatusText}}</span>
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Wallet {{walletVersion}} / Flex {{flexVersion}}</v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
-            {{autoUpdateStatusText}}
             <v-btn
               style="text-transform:none"
               flat
@@ -39,15 +36,17 @@ const updateChecker = remote.app.EXTENSION.updateChecker;
 @Component
 export default class AutoUpdate extends Vue {
   name = "auto_update";
-  flexVersion = flex.version;
   updater = {
     status: updateChecker.status,
     newVersion: updateChecker.newVersion,
     error: updateChecker.error
   };
 
-  getVersion() {
+  get walletVersion() {
     return remote.app.getVersion();
+  }
+  get flexVersion() {
+    return flex.version;
   }
 
   get autoUpdateStatusText() {
