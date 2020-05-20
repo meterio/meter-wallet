@@ -6,7 +6,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { generate } from '@/common/ident-svg'
-import * as LRU from 'lru-cache'
+import LRU from 'lru-cache'
 
 @Component
 export default class IdentBox extends Vue {
