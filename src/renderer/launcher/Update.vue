@@ -54,7 +54,7 @@ export default class AutoUpdate extends Vue {
       return `New version ${this.updater.newVersion.version} available!`;
     }
     if (this.updater.error) {
-      return "Error occurred";
+      return "Error occurred:" + this.updater.error.message;
     }
     if (this.updater.status === "idle") {
       return "Already up to date";
