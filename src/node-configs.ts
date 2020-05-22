@@ -60,7 +60,7 @@ export const presets: NodeConfig[] = [
     url: "http://tetra.meter.io:8669",
     genesis: {
       number: 0,
-      id: "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4",
+      id: "0x00000000f109b12aa5a80770631e804b84648c926ad1a8b54817aaa01d054786",
       size: 280,
       parentID:
         "0xffffffff00000000000000000000000000000000000000000000000000000000",

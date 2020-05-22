@@ -52,7 +52,7 @@ export async function estimateGas(
 
     const outputs = await flex.meter.explain()
         .caller(caller)
-        .gas(2000 * 10000)
+        .gas(16000)
         .execute(clauses)
 
     if (!suggestedGas) {
