@@ -72,7 +72,7 @@ export const presets: NodeConfig[] = [
       txsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       stateRoot:
-        "0xf6b1670d60fd79f0fe80502610f70f017eb3116e9e1239c704a6489e7f8eb0ed",
+        "0xab5d20d980331d3e675f18af03e6e208ac5b942f26091810dd823963705fae33",
       receiptsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       signer: "0x0000000000000000000000000000000000000000",
@@ -117,11 +117,9 @@ export function nameOfNetwork(genesisId: string) {
   switch (genesisId) {
     case "0x000000006fc6a7f3571f22424ffc395e40db2a46dd7e18059eeef4f05bf08063":
       return "testnet";
-    case "0x00000000819c8c29bfc40c7a6a608105df96f2f6619a85f9aad99a171ffea4f4":
-      return "testnet";
     case "0x00000000f109b12aa5a80770631e804b84648c926ad1a8b54817aaa01d054786":
       return "testnet"
-    case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b00":
+    case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a":
       return "mainnet";
     case "0x00000000973ceb7f343a58b08f0693d6701a5fd354ff73d7058af3fba222aea4":
       return "devnet";
