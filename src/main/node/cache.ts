@@ -1,4 +1,4 @@
-import * as LRU from "lru-cache";
+import LRU from "lru-cache";
 import { Bloom } from "@meterio/devkit";
 import BigNumber from "bignumber.js";
 

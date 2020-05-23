@@ -34,8 +34,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import TimeAgo from 'timeago.js'
-import * as UrlUtils from '@/common/url-utils'
-const timeAgo = TimeAgo()
+import {hostnameOf} from '@/common/url-utils'
 
 @Component
 export default class CertActivityItem extends Vue {
@@ -47,9 +46,9 @@ export default class CertActivityItem extends Vue {
     get purpose() { return this.item.data.message.purpose }
     get time() {
         this.$store.state.syncStatus // pulse
-        return timeAgo.format(this.item.createdTime)
+        return TimeAgo.format(this.item.createdTime)
     }
-    get hostname() { return UrlUtils.hostnameOf(this.item.referer.url) }
+    get hostname() { return hostnameOf(this.item.referer.url) }
     get signer() { return this.item.data.signer }
     get walletName() {
         const wallets = this.$store.state.wallets as entities.Wallet[]

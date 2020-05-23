@@ -1,9 +1,9 @@
-import * as NodeUrl from "url";
+import NodeUrl from "url";
 import { EventEmitter } from "events";
 import { Cache } from "./cache";
 import { Bloom } from "@meterio/devkit";
 import { Net, NetError } from "./net";
-import * as compareVersions from "compare-versions";
+import compareVersions from "compare-versions";
 import { TxQueue } from "./tx-queue";
 
 export class Node {

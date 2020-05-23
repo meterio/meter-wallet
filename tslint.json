@@ -1,6 +1,6 @@
 {
   "defaultSeverity": "warning",
-  "extends": ["tslint:recommended"],
+  "extends": [],
   "linterOptions": {
     "exclude": ["node_modules/**"]
   },

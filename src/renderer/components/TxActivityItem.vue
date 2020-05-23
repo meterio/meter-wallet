@@ -64,12 +64,11 @@
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import { remote } from "electron";
 import { describeClauses } from "@/common/formatter";
-import * as UrlUtils from "@/common/url-utils";
+import {hostnameOf} from "@/common/url-utils";
 import TimeAgo from "timeago.js";
 import { Transaction } from "@meterio/devkit";
 import BigNumber from "bignumber.js";
 
-const timeAgo = TimeAgo();
 
 @Component
 export default class TxActivityItem extends Vue {
@@ -85,14 +84,14 @@ export default class TxActivityItem extends Vue {
     return this.item.data.comment || describeClauses(this.item.data.message);
   }
   get hostname() {
-    return UrlUtils.hostnameOf(this.item.referer.url);
+    return hostnameOf(this.item.referer.url);
   }
   get reverted() {
     return this.item.data.receipt ? this.item.data.receipt.reverted : false;
   }
   get time() {
     this.$store.state.syncStatus; // pulse
-    return timeAgo.format(this.item.createdTime);
+    return TimeAgo.format(this.item.createdTime);
   }
   get txid() {
     return this.item.data.id;
