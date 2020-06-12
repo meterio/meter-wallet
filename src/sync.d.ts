@@ -95,6 +95,7 @@ declare namespace entities {
     ipAddr: string;
     address: string;
     totalVotes: number;
+    commission: string;
     buckets: string[];
     owned: boolean;
   };

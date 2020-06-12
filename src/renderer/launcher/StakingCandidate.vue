@@ -35,6 +35,15 @@
               v-model="port"
             ></v-text-field>
 
+            <v-text-field
+              type="number"
+              validate-on-blur
+              label="Commission"
+              :rules="commissionRules"
+              v-model="commission"
+              suffix="%"
+            ></v-text-field>
+
             <v-textarea
               ref="pubkey"
               label="Public Key"
@@ -72,6 +81,7 @@ export default class StakingCandidate extends Vue {
   from = 0;
   errMsg = "";
   token = "MTRG";
+  commission = 1;
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
@@ -121,6 +131,12 @@ export default class StakingCandidate extends Vue {
       "Invalid port number (1-65535)"
   ];
 
+  readonly commissionRules = [
+    (v: number) =>
+      (100 <= v * 100 && v * 100 <= 1000) ||
+      "Invalid commssion, must be in range [1,10]"
+  ];
+
   created() {
     let fromAddr = this.$route.query["from"];
     if (fromAddr) {
@@ -147,13 +163,13 @@ export default class StakingCandidate extends Vue {
 
       let fromAddr = this.wallets[this.from].address!;
       let dataBuffer = ScriptEngine.getCandidateData(
-        ScriptEngine.Option.OneWeekLock,
         fromAddr,
         this.name,
         this.pubkey,
         this.ip,
         parseInt(this.port),
-        value
+        value,
+        Math.floor(this.commission * 100)
       );
       await flex.vendor
         .sign("tx")

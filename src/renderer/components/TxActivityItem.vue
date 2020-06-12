@@ -64,11 +64,10 @@
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import { remote } from "electron";
 import { describeClauses } from "@/common/formatter";
-import {hostnameOf} from "@/common/url-utils";
-import TimeAgo from "timeago.js";
+import { hostnameOf } from "@/common/url-utils";
 import { Transaction } from "@meterio/devkit";
 import BigNumber from "bignumber.js";
-
+import { format } from "timeago.js";
 
 @Component
 export default class TxActivityItem extends Vue {
@@ -91,7 +90,7 @@ export default class TxActivityItem extends Vue {
   }
   get time() {
     this.$store.state.syncStatus; // pulse
-    return TimeAgo.format(this.item.createdTime);
+    return format(this.item.createdTime);
   }
   get txid() {
     return this.item.data.id;

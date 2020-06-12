@@ -68,6 +68,7 @@ class Store extends Vuex.Store<Store.Model> {
               ipAddr: c.ipAddr,
               buckets: c.buckets,
               totalVotes: parseInt(c.totalVotes.toString()),
+              commission: `${c.commission/1e7}%`,
 
               owned: false
             };
@@ -137,6 +138,7 @@ class Store extends Vuex.Store<Store.Model> {
     for (;;) {
       try{
       const candidates = await flex.meter.candidates();
+      console.log(candidates);
       if (candidates && candidates.length > 0) {
         this.commit(Store.UPDATE_CANDIDATES, candidates);
       }

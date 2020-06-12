@@ -25,6 +25,15 @@
               v-model="port"
             ></v-text-field>
 
+            <v-text-field
+              type="number"
+              validate-on-blur
+              label="Commission"
+              :rules="commissionRules"
+              v-model="commission"
+              suffix="%"
+            ></v-text-field>
+
             <v-textarea
               ref="pubkey"
               label="Public Key"
@@ -49,6 +58,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
+import { Script } from "vm";
 
 @Component
 export default class StakingCandidateUpdate extends Vue {
@@ -61,6 +71,7 @@ export default class StakingCandidateUpdate extends Vue {
   from = 0;
   errMsg = "";
   token = "MTRG";
+  commission = 1;
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -102,6 +113,12 @@ export default class StakingCandidateUpdate extends Vue {
       "Invalid port number (1-65535)"
   ];
 
+  readonly commissionRules = [
+    (v: number) =>
+      (100 <= v * 100 && v * 100 <= 1000) ||
+      "Invalid commssion, must be in range [1,10]"
+  ];
+
   created() {
     let fromAddr = this.$route.params.addr;
     if (fromAddr) {
@@ -127,7 +144,8 @@ export default class StakingCandidateUpdate extends Vue {
         this.name,
         this.pubkey,
         this.ip,
-        parseInt(this.port)
+        parseInt(this.port),
+        Math.floor(this.commission * 100)
       );
       await flex.vendor
         .sign("tx")

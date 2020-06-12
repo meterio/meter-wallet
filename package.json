@@ -68,9 +68,9 @@
     }
   },
   "dependencies": {
-    "@meterio/devkit": "^1.2.11",
-    "@meterio/flex": "^0.4.4",
-    "@meterio/flex-framework": "^0.4.5",
+    "@meterio/devkit": "^1.2.14",
+    "@meterio/flex": "^0.4.6",
+    "@meterio/flex-framework": "^0.4.8",
     "electron-context-menu": "^0.10.0",
     "electron-log": "^4.1.1",
     "electron-unhandled": "^2.1.0",
@@ -139,7 +139,7 @@
     "sass-loader": "7.0.3",
     "spectron": "^3.7.1",
     "style-loader": "^0.18.2",
-    "timeago.js": "^4.0.0-beta.1",
+    "timeago.js": "^4.0.0-beta.3",
     "ts-loader": "3.5.0",
     "ts-node": "^7.0.1",
     "tsconfig-paths-webpack-plugin": "3.2.0",

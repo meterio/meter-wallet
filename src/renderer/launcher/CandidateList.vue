@@ -26,6 +26,7 @@
             <td>{{ props.item.name }}</td>
             <td>{{ props.item.address }}</td>
             <td>{{ props.item.ipAddr }}</td>
+            <td>{{ props.item.commission }}</td>
             <td>
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
@@ -104,6 +105,7 @@ export default class CandidateList extends Vue {
     { text: "Name", value: "name" },
     { text: "Wallet Address", value: "address" },
     { text: "IP", value: "ipAddr" },
+    { text: "Commission", value: "commission" },
     { text: "Total Votes", value: "totalVotes" },
     { text: "Buckets", value: "buckets" },
     { text: "Action", value: "action" }
