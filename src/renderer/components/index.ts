@@ -41,6 +41,7 @@ import ActivitiesPanel from './ActivitiesPanel.vue'
 import NewNodeDialog from './NewNodeDialog.vue'
 import WindowControls from './WindowControls.vue'
 import WindowMenu from './WindowMenu.vue'
+import ExperimentalMenu from './ExperimentalMenu.vue'
 import UpdateChecker from './UpdateChecker.vue'
 import TxListForDialog from './TxListForDialog.vue'
 import Tooltip from './Tooltip.vue'
@@ -89,6 +90,7 @@ export {
     NewNodeDialog,
     WindowControls,
     WindowMenu,
+    ExperimentalMenu,
     UpdateChecker,
     TxListForDialog,
     Tooltip

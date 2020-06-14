@@ -67,7 +67,7 @@ export default class SlashingBailOut extends Vue {
       let dataBuffer = ScriptEngine.getBailOutData(fromAddr);
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(fromAddr)
         .request([
           {
             to: fromAddr,

@@ -7,7 +7,6 @@
         <v-card-title class="subheading">To</v-card-title>
         <v-card-text>
           <v-form ref="form">
-            <v-select :items="items" label="Token" v-model="token"></v-select>
             <v-menu
               v-model="showHistory"
               style="width:100%;"
@@ -51,11 +50,44 @@
             <v-text-field
               validate-on-blur
               type="number"
-              label="Amount"
-              v-bind:suffix="token"
-              :rules="amountRules"
-              v-model="amount"
+              label="Lock Epoch"
+              :rules="epochRules"
+              v-model="lockEpoch"
             />
+
+            <v-text-field
+              validate-on-blur
+              type="number"
+              label="Release Epoch"
+              :rules="epochRules"
+              v-model="releaseEpoch"
+            />
+
+            <v-text-field
+              validate-on-blur
+              type="number"
+              label="Locked MTR Amount"
+              suffix="MTR"
+              :rules="amountRules"
+              v-model="mtrLocked"
+            />
+            <v-text-field
+              validate-on-blur
+              type="number"
+              label="Locked MTRG Amount"
+              suffix="MTRG"
+              :rules="amountRules"
+              v-model="mtrgLocked"
+            />
+
+            <v-textarea
+              ref="memo"
+              label="Memo"
+              :rules="memoRules"
+              validate-on-blur
+              v-model="memo"
+              outline
+            ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -71,22 +103,22 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry } from "@meterio/devkit";
+import { cry, ScriptEngine } from "@meterio/devkit";
 
 @Component
-export default class Transfer extends Vue {
+export default class LockedTransfer extends Vue {
   @State
   wallets!: entities.Wallet[];
   amount = "";
   to = "";
   from = 0;
   errMsg = "";
-  token = "MTRG";
-  items = [
-    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" }
-  ];
+  lockEpoch = 0;
+  releaseEpoch = 100;
+  mtrLocked = 0;
+  mtrgLocked = 0;
   showHistory = false;
+  memo = "";
   history: {
     addr: string;
     walletName: string | null;
@@ -104,13 +136,17 @@ export default class Transfer extends Vue {
       return true;
     }
   ];
+
   readonly amountRules = [
     (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
   ];
 
+  readonly epochRules = [(v: number) => v > 0 || "Invalid epoch"];
+
+  readonly memoRules = [(v: string) => true || "Invalid memo"];
+
   created() {
     let fromAddr = this.$route.query["from"];
-    console.log("FROM: ", fromAddr);
     if (fromAddr) {
       fromAddr = fromAddr.toLowerCase();
       const index = this.wallets.findIndex(
@@ -134,17 +170,25 @@ export default class Transfer extends Vue {
           .times(this.amount!)
           .integerValue()
           .toString(16);
-      let tokenValue = this.token == "MTRG" ? 1 : 0;
-
+      const dataBuffer = ScriptEngine.getLockedTransferData(
+        this.lockEpoch,
+        this.releaseEpoch,
+        this.wallets[this.from].address!,
+        this.to,
+        this.mtrLocked,
+        this.mtrgLocked,
+        this.memo
+      );
+      const fromAddr = this.wallets[this.from].address!;
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(fromAddr)
         .request([
           {
-            to: this.to,
-            value,
-            token: tokenValue,
-            data: "0x"
+            to: fromAddr,
+            value: "0",
+            token: ScriptEngine.Token.Meter,
+            data: "0x" + dataBuffer.toString("hex")
           }
         ]);
       this.$router.back();
@@ -177,20 +221,22 @@ export default class Transfer extends Vue {
         });
       });
 
-    this.history = addrs.slice(0, 10).map<Transfer["history"][number]>(addr => {
-      const wallet = this.wallets.find(wallet => addr === wallet.address);
-      if (wallet) {
-        return {
-          addr: cry.toChecksumAddress(addr),
-          walletName: wallet.name!
-        };
-      } else {
-        return {
-          addr: cry.toChecksumAddress(addr),
-          walletName: null
-        };
-      }
-    });
+    this.history = addrs
+      .slice(0, 10)
+      .map<LockedTransfer["history"][number]>(addr => {
+        const wallet = this.wallets.find(wallet => addr === wallet.address);
+        if (wallet) {
+          return {
+            addr: cry.toChecksumAddress(addr),
+            walletName: wallet.name!
+          };
+        } else {
+          return {
+            addr: cry.toChecksumAddress(addr),
+            walletName: null
+          };
+        }
+      });
     (this.$refs.address as Vue).$el.querySelector("input")!.focus();
     this.showHistory = true;
   }

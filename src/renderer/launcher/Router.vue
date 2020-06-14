@@ -69,6 +69,7 @@ import StakingVote from "./StakingVote.vue";
 import AuctionBid from "./AuctionBid.vue";
 import PastAuctions from "./PastAuctions.vue";
 import PresentAuction from "./PresentAuction.vue";
+import LockedTransfer from "./LockedTransfer.vue";
 
 @Component
 export default class Router extends Vue {
@@ -278,11 +279,27 @@ const routes: RouteConfig[] = [
     }
   },
   {
+    path: "/slashing/bailout",
+    name: "bailout-without-addr",
+    component: SlashingBailOut,
+    meta: {
+      title: "Bail Out"
+    }
+  },
+  {
     path: "/slashing/bailout/:addr",
     name: "bailout",
     component: SlashingBailOut,
     meta: {
       title: "Bail Out"
+    }
+  },
+  {
+    path: "/locked/transfer",
+    name: "locked-transfer",
+    component: LockedTransfer,
+    meta: {
+      title: "Locked Transfer"
     }
   }
 ];

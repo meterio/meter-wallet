@@ -162,16 +162,29 @@
               />
             </v-layout>
           </div>
-          <!--<ActivitiesPanel>
-                        <v-btn class="my-1" icon small slot="activator" :ripple="false">
-                            <ActivitiesStatus/>
-                        </v-btn>
-          </ActivitiesPanel>-->
+          <!--
+          <ActivitiesPanel>
+            <v-btn class="my-1" icon small slot="activator" :ripple="false" title="activities">
+              <ActivitiesStatus />
+            </v-btn>
+          </ActivitiesPanel>
+          -->
+
           <WindowMenu :items="menuItems">
             <v-btn class="my-1" icon small slot="activator" :ripple="false">
-              <v-icon style="font-size:150%">menu</v-icon>
+              <v-icon style="font-size:150%" title="menu">menu</v-icon>
             </v-btn>
           </WindowMenu>
+
+          <ExperimentalMenu :items="experimentalItems">
+            <v-btn class="my-1" icon small slot="activator" :ripple="false">
+              <v-icon
+                class="mdi mdi-layers-outline"
+                style="font-size:150%"
+                title="experimental features"
+              />
+            </v-btn>
+          </ExperimentalMenu>
         </v-layout>
         <div class="sharp-line" />
       </div>
@@ -437,7 +450,7 @@ export default class Nova extends Vue {
   async created() {
     const mq = remote.app.EXTENSION.mq;
     const tabActionTopic = `TabAction-${remote.getCurrentWindow().id}`;
-    const initTabAction = mq.peek(tabActionTopic) as (TabAction | null);
+    const initTabAction = mq.peek(tabActionTopic) as TabAction | null;
     if (initTabAction && initTabAction.action === "new" && initTabAction.url) {
       this.openTab(initTabAction.url);
     } else {
@@ -664,6 +677,27 @@ export default class Nova extends Vue {
         keys: [],
         action: () => {
           remote.app.EXTENSION.showAbout();
+        }
+      }
+    ];
+  }
+
+  get experimentalItems(): WindowMenu.Item[] {
+    const isDarwin = process.platform === "darwin";
+    return [
+      {
+        label: "Bail Out",
+        keys: [],
+        action: () => {
+          this.openTab("sync://slashing/bailout", "inplace-builtin");
+        },
+        divider: true
+      },
+      {
+        label: "Locked Transfer",
+        keys: [],
+        action: () => {
+          this.openTab("sync://locked/transfer", "inplace-builtin");
         }
       }
     ];

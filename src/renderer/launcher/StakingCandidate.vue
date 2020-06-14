@@ -173,7 +173,7 @@ export default class StakingCandidate extends Vue {
       );
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(fromAddr)
         .request([
           {
             to: fromAddr,

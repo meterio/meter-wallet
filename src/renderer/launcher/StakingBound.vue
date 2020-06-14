@@ -111,7 +111,7 @@ export default class StakingBound extends Vue {
       );
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(holderAddr)
         .request([
           {
             to: holderAddr,
