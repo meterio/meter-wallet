@@ -2,13 +2,33 @@
 
 > An electron-vue project
 
-#### Build Setup
+#### Build Setup with NPM
 
 ``` bash
 # install dependencies
+npm install
+
+# serve with hot reload
+npm run dev
+
+# build electron application for production
+npm run build
+
+# run unit & end-to-end tests
+npm test
+```
+
+#### Build Setup with Yarn
+
+
+```bash
+# install yarn
+sudo npm install -g yarn
+
+# install dependencies
 yarn install
 
-# serve with hot reload at localhost:9080
+# serve with hot reload
 yarn run dev
 
 # build electron application for production
@@ -16,7 +36,6 @@ yarn run build
 
 # run unit & end-to-end tests
 yarn test
-
 
 ```
 
