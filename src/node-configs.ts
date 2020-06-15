@@ -32,7 +32,7 @@ export const presets: NodeConfig[] = [
     url: "http://warringstakes.meter.io:8669",
     genesis: {
       number: 0,
-      id: "0x00000000f109b12aa5a80770631e804b84648c926ad1a8b54817aaa01d054786",
+      id: "0x00000000ed77a5a4cc2cb585ed7fba4200b89751142cd6fe124aecc3d3350e58",
       size: 280,
       parentID:
         "0xffffffff00000000000000000000000000000000000000000000000000000000",
@@ -44,7 +44,7 @@ export const presets: NodeConfig[] = [
       txsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       stateRoot:
-        "0xab5d20d980331d3e675f18af03e6e208ac5b942f26091810dd823963705fae33",
+        "0x978ff5d68fb51e5fa1de610a8fa4f5d410f72f199f536ee06098ff35e404dcb0",
       receiptsRoot:
         "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
       signer: "0x0000000000000000000000000000000000000000",
@@ -117,12 +117,13 @@ export function nameOfNetwork(genesisId: string) {
   switch (genesisId) {
     case "0x000000006fc6a7f3571f22424ffc395e40db2a46dd7e18059eeef4f05bf08063":
       return "testnet";
-    case "0x00000000f109b12aa5a80770631e804b84648c926ad1a8b54817aaa01d054786":
-      return "testnet"
-    case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a":
+      
+   case "0x00000000ed77a5a4cc2cb585ed7fba4200b89751142cd6fe124aecc3d3350e58":
+      return "testnet";
+
+   case "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a":
       return "mainnet";
-    case "0x00000000ed77a5a4cc2cb585ed7fba4200b89751142cd6fe124aecc3d3350e58":
-      return "devnet";
+ 
     default:
       return "unknown";
   }
