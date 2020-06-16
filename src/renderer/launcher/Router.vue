@@ -6,7 +6,7 @@
     >
       <router-view style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:auto" />
     </transition>
-    <v-layout style="position:absolute;left:0;top:0">
+    <v-layout style="position:absolute;left:0;top:0" v-if="!isMainnet">
       <router-link tag="span" to="/candidates">
         <v-btn flat class="ml-0">
           <v-icon small mr-5 style="margin-right:3px">mdi-account-multiple</v-icon>Candidates
@@ -70,6 +70,7 @@ import AuctionBid from "./AuctionBid.vue";
 import PastAuctions from "./PastAuctions.vue";
 import PresentAuction from "./PresentAuction.vue";
 import LockedTransfer from "./LockedTransfer.vue";
+import { nameOfNetwork } from "../../node-configs";
 
 @Component
 export default class Router extends Vue {
@@ -86,6 +87,10 @@ export default class Router extends Vue {
   historyIndex = 0;
   enterClass = "";
   leaveClass = "";
+
+  get isMainnet() {
+    return nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet";
+  }
 
   doSomethingCool() {
     BUS.$emit("open-tab", {
