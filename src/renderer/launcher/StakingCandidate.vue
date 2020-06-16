@@ -33,12 +33,13 @@
               validate-on-blur
               label="Port"
               v-model="port"
+              disabled="true"
             ></v-text-field>
 
             <v-text-field
               type="number"
               validate-on-blur
-              label="Commission"
+              label="Commission Rate"
               :rules="commissionRules"
               v-model="commission"
               suffix="%"
@@ -81,7 +82,7 @@ export default class StakingCandidate extends Vue {
   from = 0;
   errMsg = "";
   token = "MTRG";
-  commission = 1;
+  commission = 10.0;
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
@@ -133,8 +134,8 @@ export default class StakingCandidate extends Vue {
 
   readonly commissionRules = [
     (v: number) =>
-      (100 <= v * 100 && v * 100 <= 1000) ||
-      "Invalid commssion, must be in range [1,10]"
+      (100 <= v * 100 && v * 100 <= 10000) ||
+      "Invalid commission rate, must be in range [1,100] %"
   ];
 
   created() {
