@@ -45,14 +45,15 @@
               suffix="%"
             ></v-text-field>
 
-            <v-textarea
+            <v-text-field
               ref="pubkey"
               label="Public Key"
               :rules="pubkeyRules"
               validate-on-blur
               v-model="pubkey"
               outline
-            ></v-textarea>
+              multi-line
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>

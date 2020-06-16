@@ -80,14 +80,15 @@
               v-model="mtrgLocked"
             />
 
-            <v-textarea
+            <v-text-field
               ref="memo"
               label="Memo"
               :rules="memoRules"
               validate-on-blur
               v-model="memo"
               outline
-            ></v-textarea>
+              multi-line
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
