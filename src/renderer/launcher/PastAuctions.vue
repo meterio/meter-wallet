@@ -14,12 +14,14 @@
           <td>{{props.item.endHeight}}</td>
           <td>{{props.item.auctionID|shortID}}</td>
           <td>
-            <Amount sym="MTRG">{{ props.item.releasedMTRG - props.item.leftoverMTRG }}</Amount>
+            <Amount sym="MTR">{{props.item.receivedMTR }}</Amount>
           </td>
           <td>
-            <Amount sym="MTR">{{ props.item.receivedMTR }}</Amount>
+            <Amount sym="MTR">{{ props.item.actualPrice }}</Amount>
           </td>
-          <td>{{ props.item.actualPrice }}</td>
+          <td>
+            <Amount sym="MTRG">{{ props.item.releasedMTRG - props.item.leftoverMTRG }}</Amount>
+          </td>
           <td>
             <Amount sym="MTRG">{{ props.item.leftoverMTRG }}</Amount>
           </td>
@@ -50,7 +52,7 @@ export default class PastAuctions extends Vue {
     { text: "Received", value: "receivedMTR", sortable: true },
     { text: "Settlement Price", value: "actualPrice", sortable: true },
     { text: "Sold", value: "releasedMTRG", sortable: true },
-    { text: "Unsold", value: "leftoverMTRG", sortable: true },
+    { text: "Leftover", value: "leftoverMTRG", sortable: true },
     { text: "Created At", value: "createTime", sortable: true }
   ];
 
@@ -69,7 +71,7 @@ export default class PastAuctions extends Vue {
         actualPrice: element.actualPrice,
         createTime: element.createTime,
         leftoverMTRG: element.leftoverMTRG,
-        createdAt: moment(element.createTime).format("MM/DD hh:mm")
+        createdAt: moment.unix(element.createTime).format("MM/DD hh:mm")
       };
       return t;
     });
