@@ -33,7 +33,7 @@
               validate-on-blur
               label="Port"
               v-model="port"
-              disabled="true"
+              disabled
             ></v-text-field>
 
             <v-text-field
@@ -45,15 +45,13 @@
               suffix="%"
             ></v-text-field>
 
-            <v-text-field
+            <v-textarea
               ref="pubkey"
               label="Public Key"
               :rules="pubkeyRules"
               validate-on-blur
               v-model="pubkey"
-              outline
-              multi-line
-            ></v-text-field>
+            ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -70,6 +68,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
+import axios from "axios";
 
 @Component
 export default class StakingCandidate extends Vue {
@@ -152,11 +151,43 @@ export default class StakingCandidate extends Vue {
     }
   }
 
+  async checkWithProbe() {
+    const url = `http://${this.ip}:${this.port}/probe`;
+    let data = { pubkey: "" };
+    try {
+      const res = await axios.get(url, { timeout: 2500 });
+      data = res.data;
+    } catch (e) {
+      throw new Error(`port ${this.port} is not open`);
+    }
+    if (
+      !data.hasOwnProperty("bestQC") ||
+      !data.hasOwnProperty("bestBlock") ||
+      !data.hasOwnProperty("pubkey")
+    ) {
+      throw `meter is not correctly running on node ${this.ip}`;
+    }
+    if (data.pubkey != this.pubkey) {
+      throw new Error(
+        `pubkey mismatch with node config, please compare your pubkey with http://${this.ip}:${this.port}/probe`
+      );
+    }
+    return true;
+  }
+
   async send() {
     this.errMsg = "";
     if (!(this.$refs.form as any).validate()) {
       return;
     }
+
+    try {
+      await this.checkWithProbe();
+    } catch (e) {
+      this.errMsg = e.message;
+      return;
+    }
+
     try {
       const value = new BigNumber("1" + "0".repeat(18))
         .times(this.amount!)

@@ -60,7 +60,7 @@ class Store extends Vuex.Store<Store.Model> {
           state.wallets = payload;
         },
         [Store.UPDATE_CANDIDATES](state, payload) {
-          console.log('update candidate in store');
+          // console.log('update candidate in store');
           state.candidates = payload.map(function(c: Flex.Meter.Candidate) {
             let t: entities.Candidate = {
               address: c.addr,
@@ -76,7 +76,7 @@ class Store extends Vuex.Store<Store.Model> {
           });
         },
         [Store.UPDATE_BUCKETS](state, payload) {
-          console.log('update bucket in store');
+          // console.log('update bucket in store');
           state.buckets = payload.map(function(b: any) {
             let t: entities.Bucket = {
               id: b.id,
@@ -107,7 +107,7 @@ class Store extends Vuex.Store<Store.Model> {
           });
         },
         [Store.UPDATE_PRESENT_AUCTION](store, payload){
-          console.log('update present auction in store');
+          // console.log('update present auction in store');
           store.presentAuction = payload;
         }
 
@@ -138,7 +138,6 @@ class Store extends Vuex.Store<Store.Model> {
     for (;;) {
       try{
       const candidates = await flex.meter.candidates();
-      console.log(candidates);
       if (candidates && candidates.length > 0) {
         this.commit(Store.UPDATE_CANDIDATES, candidates);
       }

@@ -23,7 +23,7 @@
               validate-on-blur
               label="Port"
               v-model="port"
-              disabled="true"
+              disabled
             ></v-text-field>
 
             <v-text-field
@@ -35,15 +35,13 @@
               suffix="%"
             ></v-text-field>
 
-            <v-text-field
+            <v-textarea
               ref="pubkey"
               label="Public Key"
               :rules="pubkeyRules"
               validate-on-blur
               v-model="pubkey"
-              outline
-              multi-line
-            ></v-text-field>
+            ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions>
