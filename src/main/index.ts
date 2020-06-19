@@ -106,10 +106,6 @@ if (env.devMode || app.requestSingleInstanceLock()) {
       } else {
         winMgr.create();
       }
-      if (process.env.NODE_ENV === 'production') {
-        updateChecker.check()
-        setInterval(() => updateChecker.check(), 12 * 3600 * 1000)
-    }
     })
     .on("open-url", (ev, externalUrl) => {
       // TODO windows/linux

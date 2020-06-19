@@ -94,6 +94,20 @@ export default class AutoUpdate extends Vue {
     }
   }
 
+  timer: any;
+  created() {
+    this.timer = setInterval(() => {
+      this.updater = {
+        status: updateChecker.status,
+        newVersion: updateChecker.newVersion,
+        error: updateChecker.error
+      };
+    }, 2000);
+  }
+  destroyed() {
+    clearInterval(this.timer);
+  }
+
   @State
   preferencesRevision!: number;
 }

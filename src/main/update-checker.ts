@@ -8,27 +8,33 @@ export function createUpdateChecker() {
     let status: 'idle' | 'checking' | 'downloading' | 'downloaded' = 'idle'
 
     autoUpdater.on('error', err => {
+        console.log("ERROR HAPPENEND: ", err)
         error = err
         status = 'idle'
         downloadProgress = 0
     })
     autoUpdater.on('checking-for-update', () => {
+        console.log("CHECKING FOR UPDATE")
         status = 'checking'
         error = null
         newVersion = null
         downloadProgress = 0
     })
     autoUpdater.on('update-available', info => {
+        console.log("UPDATE AVAILABLE")
         newVersion = info
     })
     autoUpdater.on('update-not-available', () => {
+        console.log("UPDATE NOT AVAILABLE")
         status = 'idle'
     })
     autoUpdater.on('download-progress', info => {
+        console.log("DOWNLOAD PROGRESS", info)
         status = 'downloading'
         downloadProgress = info.percent
     })
     autoUpdater.on('update-downloaded', () => {
+        console.log("DOWNLOADED")
         status = 'downloaded'
     })
 

@@ -1,6 +1,6 @@
 {
   "name": "meter-wallet",
-  "version": "1.1.10",
+  "version": "1.1.12",
   "author": "meter.io",
   "description": "An electron-vue project",
   "license": "LGPL-3.0",
@@ -17,6 +17,7 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "pack:preload": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.preload.config.js",
+    "upload": "aws s3 cp ./build/  s3://wallet-release/download/ --recursive --exclude '*' --include \"*$npm_package_version*\" --include \"latest*\" ",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
     "postinstall": "electron-rebuild"

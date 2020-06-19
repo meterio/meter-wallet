@@ -191,6 +191,7 @@
     </div>
     <v-content>
       <Vendor />
+      <UpdateChecker />
       <Swiper
         ref="swiper"
         style="width:100%;height:100%;"
@@ -233,6 +234,7 @@ import Vendor from "./vendor";
 import Launcher from "./launcher";
 import * as UrlUtils from "@/common/url-utils";
 import { State } from "vuex-class";
+import { UpdateChecker } from "@/renderer/components";
 
 class Page {
   static nextId = 0;
