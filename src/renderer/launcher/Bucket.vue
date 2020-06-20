@@ -12,22 +12,55 @@
           <div>Total Votes:</div>
           <div>Option:</div>
           <div>Created At:</div>
-          <div>Mature At:</div>
           <div>Nonce:</div>
           <div>Unbounded:</div>
+          <div v-if="bucket.unbounded">Mature At:</div>
         </v-flex>
         <v-flex class="pa-4 pl-0">
           <div>{{bucket.id}}</div>
           <div>{{bucket.owner}}</div>
           <div>{{bucket.candidate}}</div>
-          <div>{{bucket.votes/1e18}} MTRG</div>
-          <div>{{bucket.bonus/1e18}} MTRG</div>
-          <div>{{bucket.totalVotes/1e18}} MTRG</div>
+          <div>
+            <Amount sym="MTRG">{{bucket.votes}}</Amount>
+          </div>
+          <div>
+            <Amount sym="MTRG">{{bucket.bonus}}</Amount>
+          </div>
+          <div>
+            <Amount sym="MTRG">{{bucket.totalVotes}}</Amount>
+          </div>
           <div>{{bucket.option}}</div>
           <div>{{bucket.createTime}}</div>
-          <div>{{bucket.matureTime}}</div>
           <div>{{bucket.nonce}}</div>
           <div>{{bucket.unbounded}}</div>
+          <div v-if="bucket.unbounded">{{bucket.matureTime}}</div>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row justify-center>
+        <v-flex class="pa-4">
+          <router-link
+            tag="span"
+            :to="{name:'delegate', params:{id: bucket.id, amount: bucket.votes}}"
+          >
+            <v-btn depressed small color="info">Delegate</v-btn>
+          </router-link>
+
+          <router-link
+            v-if="isZeroCandidate && !bucket.unbounded"
+            tag="span"
+            :to="{name:'unbound', params:{id: bucket.id, amount: bucket.votes}}"
+          >
+            <v-btn depressed small color="primary">Unbound</v-btn>
+          </router-link>
+
+          <router-link
+            v-else
+            tag="span"
+            :to="{name:'undelegate', params:{id: bucket.id, amount: bucket.votes}}"
+          >
+            <v-btn depressed small color="primary">Unvote</v-btn>
+          </router-link>
         </v-flex>
       </v-layout>
     </v-card>
@@ -46,7 +79,13 @@ export default class Bucket extends Vue {
   @State
   candidates!: entities.Candidate[];
   id = "";
-  bucket = {};
+  bucket = {} as entities.Bucket;
+
+  get isZeroCandidate() {
+    return (
+      this.bucket.candidate === "0x0000000000000000000000000000000000000000"
+    );
+  }
 
   created() {
     const id = this.$route.params.id;

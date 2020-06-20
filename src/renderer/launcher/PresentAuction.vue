@@ -13,7 +13,13 @@
             <Amount sym="MTR">{{presentAuction.receivedMTR}}</Amount>
           </div>
         </v-layout>
-        <v-layout class="pt-2 pa-0" justify-space-between>
+        <v-layout class="pt-2 pa-0" justify-space-between v-if="isPast">
+          <div>Start Height: {{presentAuction.startHeight}}</div>
+          <div>Closing Height: {{presentAuction.endHeight}}</div>
+          <div>Current Height: {{chainHead.number}}</div>
+        </v-layout>
+
+        <v-layout class="pt-2 pa-0" justify-space-between v-if="!isPast">
           <div>Height Range: {{presentAuction.startHeight}} - {{presentAuction.endHeight}}</div>
           <div>Current Height: {{chainHead.number}}</div>
         </v-layout>
@@ -89,16 +95,20 @@ export default class PresentAuction extends Vue {
 
   get auctionTxs() {
     return this.presentAuction.auctionTxs.map(tx => {
-      tx.createdAt = moment(tx.lastTime).format("MM/DD hh:mm");
+      tx.createdAt = moment.unix(tx.lastTime).format("MM/DD hh:mm");
       return tx;
     });
+  }
+
+  get isPast() {
+    return this.chainHead.number > this.presentAuction.endHeight;
   }
 
   headers = [
     { text: "Address", value: "addr", sortable: true },
     { text: "Amount", value: "amount", sortable: true },
     { text: "Tx count", value: "count", sortable: true },
-    { text: "Auction Start", value: "createTime", sortable: true }
+    { text: "Created At", value: "createTime", sortable: true }
   ];
 
   created() {}
