@@ -39,7 +39,8 @@ export default class AutoUpdate extends Vue {
   updater = {
     status: updateChecker.status,
     newVersion: updateChecker.newVersion,
-    error: updateChecker.error
+    error: updateChecker.error,
+    progress: updateChecker.downloadProgress
   };
 
   get walletVersion() {
@@ -68,7 +69,7 @@ export default class AutoUpdate extends Vue {
       case "checking":
         return "Checking…";
       case "downloading":
-        return "Downloading…";
+        return `Downloading… ${Math.floor(this.updater.progress * 100) / 100}%`;
       case "downloaded":
         return "Quit and Install";
     }
@@ -82,7 +83,8 @@ export default class AutoUpdate extends Vue {
           this.updater = {
             status: updateChecker.status,
             newVersion: updateChecker.newVersion,
-            error: updateChecker.error
+            error: updateChecker.error,
+            progress: updateChecker.downloadProgress
           };
         };
       case "checking":
@@ -100,7 +102,8 @@ export default class AutoUpdate extends Vue {
       this.updater = {
         status: updateChecker.status,
         newVersion: updateChecker.newVersion,
-        error: updateChecker.error
+        error: updateChecker.error,
+        progress: updateChecker.downloadProgress
       };
     }, 2000);
   }
