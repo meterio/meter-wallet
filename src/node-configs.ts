@@ -29,7 +29,7 @@ export const presets: NodeConfig[] = [
   },
   {
     name: "Warringstakes",
-    url: "http://warringstakes.meter.io:8669",
+    url: "https://warringstakes.meter.io:8667",
     genesis: {
       number: 0,
       id: "0x00000000ed77a5a4cc2cb585ed7fba4200b89751142cd6fe124aecc3d3350e58",
