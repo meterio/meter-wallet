@@ -135,6 +135,7 @@ export default class Transfer extends Vue {
           .integerValue()
           .toString(16);
       let tokenValue = this.token == "MTRG" ? 1 : 0;
+      console.log("TOKEN_VAL=", tokenValue);
 
       await flex.vendor
         .sign("tx")

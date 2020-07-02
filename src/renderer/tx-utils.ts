@@ -49,7 +49,7 @@ export async function estimateGas(
     clauses: Flex.Meter.Clause[],
     suggestedGas: number,
     caller: string): Promise<EstimateGasResult> {
-
+    
     const outputs = await flex.meter.explain()
         .caller(caller)
         .gas(16000)

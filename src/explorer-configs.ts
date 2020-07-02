@@ -3,8 +3,8 @@ import { nameOfNetwork } from './node-configs'
 const explorers = [
     {
         name: 'insight',
-        testUrl: 'https://insight.vecha.in/#',
-        url: 'https://insight.vecha.in/#',
+        testUrl: 'https://insight.meter.io/#',
+        url: 'https://insight.meter.io/#',
         paths: {
             tx: '/txs/%s',
             block: '/blocks/%s',
@@ -12,22 +12,10 @@ const explorers = [
             transfer: '/accounts/%s/transfers',
             search: '/search?q=%s'
         }
-    },
-    {
-        name: 'vechain-explorer',
-        testUrl: 'https://explore-testnet.vechain.org',
-        url: 'https://explore.vechain.org',
-        paths: {
-            tx: '/transactions/%s',
-            block: '/blocks/%s',
-            account: '/accounts/%s',
-            transfer: '/accounts/%s/transfer',
-            search: '/search?content=%s'
-        }
     }
 ]
 
-export function getExploreUrl(name: 'insight' | 'vechain-explorer', path: string, params: string) {
+export function getExploreUrl(name: 'insight' , path: string, params: string) {
     const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
     const isMain = networkName === 'mainnet'
     const isMustInsight = ['mainnet', 'testnet'].indexOf(networkName) < 0
