@@ -115,6 +115,10 @@ export default class CandidateList extends Vue {
     const candidates = await flex.meter.candidates();
     this.$store.commit("updateCandidates", candidates);
   }
+
+  async created() {
+    await this.refresh();
+  }
 }
 </script>
 

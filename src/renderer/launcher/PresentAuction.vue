@@ -111,15 +111,18 @@ export default class PresentAuction extends Vue {
     { text: "Created At", value: "createTime", sortable: true }
   ];
 
-  created() {}
+  async created() {
+    await this.refresh();
+  }
+
   jumpToInsight(addr: string) {
     BUS.$emit("open-tab", {
       href: `https://insight.meter.io/#/accounts/${addr}`,
       mode: "append-active"
     });
   }
+
   async refresh() {
-    console.log("refresh");
     const present = await flex.meter.auction();
     this.$store.commit("updatePresentAuction", present);
   }

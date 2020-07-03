@@ -57,9 +57,7 @@ export default class PastAuctions extends Vue {
   ];
 
   async created() {
-    console.log("past auctions ");
     let data = await flex.meter.auctionSummaries();
-    console.log(data);
     this.auctions = data.map(element => {
       let t: entities.AuctionSummary = {
         auctionID: element.auctionID,

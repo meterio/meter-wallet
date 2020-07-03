@@ -113,9 +113,9 @@ class Store extends Vuex.Store<Store.Model> {
 
       }
     });
-    this.monitorAuction();
-    this.monitorCandidate();
-    this.monitorBucket();
+    // this.monitorAuction();
+    // this.monitorCandidate();
+    // this.monitorBucket();
     this.monitorChain();
     this.monitorDB();
   }
