@@ -43,7 +43,7 @@
 
   <body>
     <div class="fadein" style="height:100%;text-align: center;">
-      <img src="/static/logo.png" width="64" height="64" />
+      <img src="logo.png" width="64" height="64" />
       <div>
         <span style="font-size:1.4rem;font-weight:200;">Meter</span>
         <span style="font-size:1.5rem;">Wallet</span>
@@ -58,7 +58,7 @@
   </body>
   <script>
     const remote = require("electron").remote;
-    const connexVersion = require("meter-connex/package.json").version;
+    const flexVersion = require("@meterio/flex/package.json").version;
     document.querySelector(
       "#version"
     ).innerText = `v${remote.app.getVersion()}`;
@@ -67,7 +67,7 @@
     ).innerText = `${new Date().getFullYear()} meter.io`;
     document.querySelector(
       "#otherVersion"
-    ).innerText = `  Flex:  ${connexVersion}
+    ).innerText = `    Flex:  ${flexVersion}
 Electron:  ${process.versions.electron}
   Chrome:  ${process.versions.chrome}
       V8:  ${process.versions.v8}`;
