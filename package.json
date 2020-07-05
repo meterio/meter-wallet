@@ -24,7 +24,7 @@
   },
   "build": {
     "productName": "meterWallet",
-    "appId": "com.meter.wallet",
+    "appId": "io.meter.wallet",
     "directories": {
       "output": "build"
     },
