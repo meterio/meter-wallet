@@ -61,6 +61,8 @@ export default class NodeStatusPanel extends Vue {
   config = remote.getCurrentWebContents().getWebPreferences().nodeConfig!;
 
   get configs() {
+    console.log("configs:", this.$store.state.nodes);
+    console.log("config: ", this.config);
     const nodes = this.$store.state.nodes as entities.Node[];
     return [...presets, ...nodes];
   }
@@ -111,6 +113,9 @@ export default class NodeStatusPanel extends Vue {
   onSettings() {
     BUS.$emit("open-tab", { href: "sync://settings", mode: "inplace-builtin" });
     this.opened = false;
+  }
+  created() {
+    console.log(this.$store.state.nodes);
   }
 }
 </script>
