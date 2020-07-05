@@ -43,13 +43,13 @@ class WindowManager {
         presets.find(
           n =>
             nameOfNetwork(n.genesis.id) ===
-            (env.devMode ? "testnet" : "testnet")
+            (env.devMode ? "testnet" : "mainnet")
         )!)();
     options = { ...defaultWindowOptions, ...(options || {}) };
     options.webPreferences = options.webPreferences || {
       navigateOnDragDrop: false
     };
-    options.webPreferences.partition = `persist:${env.devMode ? "dev" : "dev"}`;
+    options.webPreferences.partition = `persist:${env.devMode ? "dev" : "pro"}`;
 
     options.webPreferences.nodeConfig = config;
     if (!options.title) {
