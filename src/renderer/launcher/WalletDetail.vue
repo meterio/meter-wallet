@@ -93,10 +93,10 @@
                 <v-list-tile-content>
                   <v-layout column style="width: 100%;">
                     <v-flex class="text-xs-right">
-                      <Amount sym=" MTRG ">{{balance}}</Amount>
+                      <Amount sym=" MTRG ">{{mtrgBalance}}</Amount>
                     </v-flex>
                     <v-flex class="text-xs-right">
-                      <Amount sym=" MTR">{{energy}}</Amount>
+                      <Amount sym=" MTR">{{mtrBalance}}</Amount>
                     </v-flex>
                   </v-layout>
                 </v-list-tile-content>
@@ -268,11 +268,11 @@ export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
     this.list = list;
   }
 
-  get balance() {
+  get mtrgBalance() {
     return this.account && this.account.balance;
   }
 
-  get energy() {
+  get mtrBalance() {
     return this.account && this.account.energy;
   }
 }

@@ -15,10 +15,10 @@
     </IdentBox>
     <v-card-text class="py-1">
       <v-layout column align-end :style="{'line-height': compact ? '120%':'inherit'}">
-        <Amount sym=" MTRG">{{balance}}</Amount>
-        <Amount sym=" MTR ">{{energy}}</Amount>
+        <Amount sym=" MTRG">{{mtrgBalance}}</Amount>
+        <Amount sym=" MTR ">{{mtrBalance}}</Amount>
         <hr />
-        <Amount sym=" MTRG" :bounded="true">{{boundBalance}}</Amount>
+        <Amount sym=" MTRG" :bounded="true">{{boundMTRGBalance}}</Amount>
       </v-layout>
     </v-card-text>
   </v-card>
@@ -37,16 +37,16 @@ export default class WalletCard extends Mixins(AccountLoader) {
   get address() {
     return this.wallet.address!;
   }
-  get balance() {
+  get mtrgBalance() {
     return this.account && this.account.balance;
   }
-  get energy() {
+  get mtrBalance() {
     return this.account && this.account.energy;
   }
-  get boundBalance() {
+  get boundMTRGBalance() {
     return this.account && this.account.boundbalance;
   }
-  get boundEnergy() {
+  get boundMTRBalance() {
     return this.account && this.account.boundenergy;
   }
 }

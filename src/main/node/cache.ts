@@ -115,34 +115,9 @@ export class Cache {
     addr = addr.toLowerCase();
     rev = rev.toLowerCase();
 
-    const slot = this.slots.get(rev);
-    if (slot) {
-      let pSlot: Slot | undefined = slot;
-      while (pSlot) {
-        const snapshot = pSlot.accounts.get(addr);
-        if (snapshot) {
-          slot.accounts.set(addr, snapshot);
-          const energy = computeEnergy(
-            snapshot.account,
-            snapshot.timestamp,
-            slot.timestamp
-          );
-          return { ...snapshot.account, energy };
-        }
-        if (!pSlot.bloom) {
-          // always invalidate account when bloom unavailable
-          break;
-        } else if (testBytesHex(pSlot.bloom, addr)) {
-          // account might be dirty
-          break;
-        }
-        pSlot = this.slots.get(pSlot.parentID);
-      }
-    }
+   
     const acc = await fetch();
-    if (slot) {
-      slot.accounts.set(addr, { account: acc, timestamp: slot.timestamp });
-    }
+    
     return acc;
   }
 
@@ -268,21 +243,7 @@ function testBytesHex(bloom: Bloom, hex: string) {
   return bloom.test(buf);
 }
 
-const energyGrowthRate = new BigNumber(5000000000);
-const e18 = new BigNumber("1" + "0".repeat(18));
 
 function computeEnergy(acc: Flex.Meter.Account, initTs: number, ts: number) {
   return acc.energy;
-  /*
-    if (ts < initTs) {
-        return acc.energy
-    }
-
-    return '0x' + new BigNumber(acc.balance)
-        .times(ts - initTs)
-        .times(energyGrowthRate)
-        .dividedToIntegerBy(e18)
-        .plus(new BigNumber(acc.energy))
-        .toString(16)
-        */
 }

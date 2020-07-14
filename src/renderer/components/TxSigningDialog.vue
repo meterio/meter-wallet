@@ -35,8 +35,8 @@
               </v-layout>
               <i>{{estimation.error}}</i>
             </Tip>
-            <Tip v-if="insufficientEnergy" class="ma-1" type="warning">
-              <strong>Insufficient energy</strong>
+            <Tip v-if="insufficientMTR" class="ma-1" type="warning">
+              <strong>Insufficient MTR balance</strong>
             </Tip>
             <Tip v-if="estimation.reverted" class="ma-1" type="warning">
               <strong>Transaction may fail/revert</strong>
@@ -382,7 +382,7 @@ export default class TxSigningDialog extends Mixins(
       return v.plus(c.value);
     }, new BigNumber(0));
   }
-  get energy() {
+  get mtrBalance() {
     return this.account
       ? new BigNumber(this.account.energy)
       : new BigNumber(NaN);
@@ -391,9 +391,11 @@ export default class TxSigningDialog extends Mixins(
     let val = this.clauses[0].token;
     return val;
   }
-  get insufficientEnergy() {
+  get insufficientMTR() {
     return (
-      !this.fee.isNaN() && !this.energy.isNaN() && this.fee.gt(this.energy)
+      !this.fee.isNaN() &&
+      !this.mtrBalance.isNaN() &&
+      this.fee.gt(this.mtrBalance)
     );
   }
   get readyToSign() {
