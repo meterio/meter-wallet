@@ -70,12 +70,19 @@
             <span>{{textTip}}</span>
           </v-tooltip>
         </div>
+        <div v-show="!!errorMessage" class="error--text" style="font-size:12px;">
+          <v-icon style="font-size:12px;color:currentColor">mdi-alert</v-icon>
+          {{errorMessage}}
+        </div>
+
+        <!--
         <div v-show="!!hostname" class="py-1">
           <a class="caption text-truncate" @click="reveal">
             <v-icon style="font-size:100%;color:currentColor">mdi-link-variant</v-icon>
             {{hostname}}
           </a>
         </div>
+        -->
       </v-card-text>
     </v-card>
   </v-expansion-panel-content>
@@ -168,6 +175,14 @@ export default class TxActivityItem extends Vue {
 
     return "sending";
   }
+
+  get errorMessage() {
+    if (this.status in ["confirmed", "confirming", "dropped"]) {
+      return "";
+    }
+    return remote.app.EXTENSION.txer.errorMessage(this.item.data.id);
+  }
+
   get icon() {
     switch (this.status) {
       case "confirmed":

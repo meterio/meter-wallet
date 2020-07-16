@@ -7,6 +7,7 @@ class Item {
     private static readonly MAX_RETRIES = 5
 
     public sent = false
+    public errMsg = ""
 
     private retries = 0
     private requesting = false
@@ -53,11 +54,14 @@ class Item {
                 body: Buffer.from(JSON.stringify({ raw: this.rawTx }))
             })
             if (resp.statusCode < 200 || resp.statusCode >= 300) {
-                throw new NetError(`${resp.statusCode} ${resp.statusMessage}`)
+                console.log('set errMsg')
+                this.errMsg = `${resp.statusCode} ${resp.statusMessage} ${resp.body.toString()}`
+                throw new NetError(`${resp.statusCode} ${resp.statusMessage} ${resp.body.toString()}`)
             }
             const obj = JSON.parse(resp.body.toString('utf8'))
             log.debug('TxQueue:', `tx sent ${obj.id}`)
             this.sent = true
+            this.errMsg = ""
         } catch (err) {
             log.warn('TxQueue:', `tx send error ${err}`)
             this.retries++
@@ -88,5 +92,11 @@ export class Txer {
     public status(id: string) {
         const item = this.map.get(id)
         return item ? item.status : undefined
+    }
+
+    public errorMessage(id: string){
+        const item = this.map.get(id)
+        console.log(item);
+        return item ? item.errMsg: ""
     }
 }
