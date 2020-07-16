@@ -2,25 +2,30 @@
   <v-expansion-panel-content v-bind="$attrs" v-on="$listeners" expand-icon>
     <v-layout row slot="header" align-center>
       <v-layout column>
-        <div class="text-truncate">{{comment}}</div>
         <v-layout row align-center>
-          <b class="label primary mr-1">TX</b>
+          <b class="label primary mr-2">TX</b>
+          <div class="text-truncate">{{comment}}</div>
           <b v-show="reverted" class="label warning">Reverted</b>
           <v-spacer />
           <span class="caption grey--text">{{time}}</span>
         </v-layout>
       </v-layout>
-      <v-btn
-        icon
-        small
-        flat
-        @click.stop="resend"
-        class="my-0"
-        style="margin-right:-8px;"
-        :style="{'pointer-events': canResend? '':'none'}"
-      >
-        <v-icon small :color="iconColor">{{icon}}</v-icon>
-      </v-btn>
+
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          icon
+          small
+          flat
+          @click.stop="resend"
+          class="my-0"
+          style="margin-right:-8px;"
+          :style="{'pointer-events': canResend? '':'none'}"
+        >
+          <v-icon small :color="iconColor">{{icon}}</v-icon>
+        </v-btn>
+        <span>{{statusTip}}</span>
+      </v-tooltip>
     </v-layout>
     <v-card class="text-truncate">
       <v-card-text class="pt-1">
@@ -49,6 +54,21 @@
             <v-icon style="font-size:110%;color:currentColor">search</v-icon>
             {{txid | shortTxId}}
           </a>
+          <v-tooltip bottom>
+            <v-btn
+              flat
+              small
+              icon
+              slot="activator"
+              class="ma-0 ml-3"
+              v-clipboard="txid"
+              @click="textTip = 'Copied'"
+              @mouseover="textTip = 'Copy Tx Id'"
+            >
+              <v-icon small style="font-size:12px">mdi-content-copy</v-icon>
+            </v-btn>
+            <span>{{textTip}}</span>
+          </v-tooltip>
         </div>
         <div v-show="!!hostname" class="py-1">
           <a class="caption text-truncate" @click="reveal">
@@ -62,7 +82,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
-import { remote } from "electron";
+import { remote, clipboard } from "electron";
 import { describeClauses } from "@/common/formatter";
 import { hostnameOf } from "@/common/url-utils";
 import { Transaction } from "@meterio/devkit";
@@ -75,6 +95,7 @@ export default class TxActivityItem extends Vue {
   item!: entities.Activity<"tx">;
 
   resendCount = 0;
+  textTip = "";
 
   get txObject() {
     return Transaction.decode(Buffer.from(this.item.data.raw.slice(2), "hex"));
@@ -159,6 +180,17 @@ export default class TxActivityItem extends Vue {
         return "mdi-alert-circle-outline";
       default:
         return "mdi-restart";
+    }
+  }
+  get statusTip() {
+    switch (this.status) {
+      case "confirmed":
+      case "confirming":
+      case "sending":
+      case "dropped":
+        return this.status;
+      default:
+        return "error happened, you can click to resend it";
     }
   }
   get iconColor() {

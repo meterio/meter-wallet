@@ -66,7 +66,13 @@ export function describeClauses(clauses: Flex.Meter.Clause[]) {
       return "create a contract";
     }
     if (clauses[0].data === "0x") {
+      if (clauses[0].token === 1){
       return "transfer MTRG";
+      } else if (clauses[0].token === 0){
+        return "transfer MTR";
+      } else{
+        return "transfer";
+      }
     }
     return "make contract call";
   }

@@ -162,13 +162,11 @@
               />
             </v-layout>
           </div>
-          <!--
           <ActivitiesPanel>
             <v-btn class="my-1" icon small slot="activator" :ripple="false" title="activities">
               <ActivitiesStatus />
             </v-btn>
           </ActivitiesPanel>
-          -->
 
           <WindowMenu :items="menuItems">
             <v-btn class="my-1" icon small slot="activator" :ripple="false">
