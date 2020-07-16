@@ -115,9 +115,34 @@ export class Cache {
     addr = addr.toLowerCase();
     rev = rev.toLowerCase();
 
-   
+    // const slot = this.slots.get(rev);
+    // if (slot) {
+    //   let pSlot: Slot | undefined = slot;
+    //   while (pSlot) {
+    //     const snapshot = pSlot.accounts.get(addr);
+    //     if (snapshot) {
+    //       slot.accounts.set(addr, snapshot);
+    //       const energy = computeEnergy(
+    //         snapshot.account,
+    //         snapshot.timestamp,
+    //         slot.timestamp
+    //       );
+    //       return { ...snapshot.account, energy };
+    //     }
+    //     if (!pSlot.bloom) {
+    //       // always invalidate account when bloom unavailable
+    //       break;
+    //     } else if (testBytesHex(pSlot.bloom, addr)) {
+    //       // account might be dirty
+    //       break;
+    //     }
+    //     pSlot = this.slots.get(pSlot.parentID);
+    //   }
+    // }
     const acc = await fetch();
-    
+    // if (slot) {
+    //   slot.accounts.set(addr, { account: acc, timestamp: slot.timestamp });
+    // }
     return acc;
   }
 
