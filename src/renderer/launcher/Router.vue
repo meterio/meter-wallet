@@ -6,18 +6,24 @@
     >
       <router-view style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:auto" />
     </transition>
-    <v-layout style="position:absolute;left:0;top:0" v-if="!isMainnet">
-      <router-link tag="span" to="/candidates">
+    <v-layout style="position:absolute;left:0;top:0">
+      <router-link tag="span" to="/bridge/transfer">
+        <v-btn flat class="ml-0">
+          <v-icon small mr-5 style="margin-right:3px">mdi-bridge</v-icon>Bridge
+        </v-btn>
+      </router-link>
+
+      <router-link v-if="!isMainnet" tag="span" to="/candidates">
         <v-btn flat class="ml-0">
           <v-icon small mr-5 style="margin-right:3px">mdi-account-multiple</v-icon>Candidates
         </v-btn>
       </router-link>
-      <router-link tag="span" to="/buckets">
+      <router-link v-if="!isMainnet" tag="span" to="/buckets">
         <v-btn flat class="ml-0">
           <v-icon small mr-5 style="margin-right:3px">mdi-lock-outline</v-icon>Buckets
         </v-btn>
       </router-link>
-      <router-link tag="span" to="/auction/present">
+      <router-link v-if="!isMainnet" tag="span" to="/auction/present">
         <v-btn flat class="ml-0">
           <v-icon small mr-5 style="margin-right:3px">mdi-timelapse</v-icon>Auction
         </v-btn>
@@ -64,6 +70,7 @@ import StakingCandidateUpdate from "./StakingCandidateUpdate.vue";
 import SlashingBailOut from "./SlashingBailOut.vue";
 import CandidateList from "./CandidateList.vue";
 import BucketList from "./BucketList.vue";
+import BridgeTransfer from "./BridgeTransfer.vue";
 import Bucket from "./Bucket.vue";
 import StakingVote from "./StakingVote.vue";
 import AuctionBid from "./AuctionBid.vue";
@@ -79,8 +86,8 @@ export default class Router extends Vue {
       store: target.$store,
       router: new VueRouter({
         mode: "abstract",
-        routes: routes
-      })
+        routes: routes,
+      }),
     });
   }
   items = ["1", "2", "3"];
@@ -95,7 +102,7 @@ export default class Router extends Vue {
   doSomethingCool() {
     BUS.$emit("open-tab", {
       href: "https://insight.meter.io",
-      mode: "inplace"
+      mode: "inplace",
     });
   }
 
@@ -124,189 +131,197 @@ const routes: RouteConfig[] = [
     name: "portal",
     component: Portal,
     meta: {
-      title: "Home"
-    }
+      title: "Home",
+    },
   },
   {
     path: "/staking",
     name: "staking",
     component: Staking,
     meta: {
-      title: "Staking Home"
-    }
+      title: "Staking Home",
+    },
   },
   {
     path: "/wallets",
     name: "wallets",
     component: Wallets,
     meta: {
-      title: "Wallets"
-    }
+      title: "Wallets",
+    },
   },
   {
     path: "/wallets/:address",
     name: "wallet-detail",
     component: WalletDetail,
     meta: {
-      title: "Wallet Detail"
-    }
+      title: "Wallet Detail",
+    },
   },
   {
     path: "/settings",
     name: "settings",
     component: Settings,
     meta: {
-      title: "Settings"
-    }
+      title: "Settings",
+    },
   },
   {
     path: "/candidates",
     name: "candidates",
     component: CandidateList,
-    meta: { title: "Staking Candidates" }
+    meta: { title: "Staking Candidates" },
   },
   {
     path: "/buckets",
     name: "buckets",
     component: BucketList,
-    meta: { title: "Staking Bucket" }
+    meta: { title: "Staking Bucket" },
   },
   {
     path: "/transfer",
     name: "transfer",
     component: Transfer,
     meta: {
-      title: "Transfer"
-    }
+      title: "Transfer",
+    },
+  },
+  {
+    path: "/bridge/transfer",
+    name: "bridge transfer",
+    component: BridgeTransfer,
+    meta: {
+      title: "Bridge Transfer",
+    },
   },
   {
     path: "/staking/candidate",
     name: "candidate",
     component: StakingCandidate,
     meta: {
-      title: "Staking Candidate"
-    }
+      title: "Staking Candidate",
+    },
   },
   {
     path: "/staking/uncandidate",
     name: "uncandidate",
     component: StakingUncandidate,
     meta: {
-      title: "Staking Uncandidate"
-    }
+      title: "Staking Uncandidate",
+    },
   },
   {
     path: "/staking/bound",
     name: "bound",
     component: StakingBound,
     meta: {
-      title: "Staking Bound"
-    }
+      title: "Staking Bound",
+    },
   },
   {
     path: "/staking/unbound/:id/:amount",
     name: "unbound",
     component: StakingUnbound,
     meta: {
-      title: "Staking Unbound"
-    }
+      title: "Staking Unbound",
+    },
   },
   {
     path: "/staking/delegate/:id/:amount",
     name: "delegate",
     component: StakingDelegate,
     meta: {
-      title: "Staking Delegate"
-    }
+      title: "Staking Delegate",
+    },
   },
   {
     path: "/staking/undelegate/:id/:amount",
     name: "undelegate",
     component: StakingUndelegate,
     meta: {
-      title: "Staking Undelegate"
-    }
+      title: "Staking Undelegate",
+    },
   },
   {
     path: "/staking/vote/:candidateAddress",
     name: "vote",
     component: StakingVote,
     meta: {
-      title: "Staking Vote"
-    }
+      title: "Staking Vote",
+    },
   },
   {
     path: "/staking/vote/create",
     name: "create-vote",
     component: StakingVote,
     meta: {
-      title: "Staking Vote"
-    }
+      title: "Staking Vote",
+    },
   },
   {
     path: "/auction/bid",
     name: "auction-bid",
     component: AuctionBid,
     meta: {
-      title: "Auction Bid"
-    }
+      title: "Auction Bid",
+    },
   },
   {
     path: "/auction/present",
     name: "auction-present",
     component: PresentAuction,
     meta: {
-      title: "Present Auction"
-    }
+      title: "Present Auction",
+    },
   },
   {
     path: "/auction/past",
     name: "past-auctions",
     component: PastAuctions,
     meta: {
-      title: "Past Auctions"
-    }
+      title: "Past Auctions",
+    },
   },
   {
     path: "/bucket/:id",
     name: "bucket",
     component: Bucket,
     meta: {
-      title: "Buckets"
-    }
+      title: "Buckets",
+    },
   },
   {
     path: "/staking/candidate/:addr/update",
     name: "update-candidate",
     component: StakingCandidateUpdate,
     meta: {
-      title: "Edit Candidate"
-    }
+      title: "Edit Candidate",
+    },
   },
   {
     path: "/slashing/bailout",
     name: "bailout-without-addr",
     component: SlashingBailOut,
     meta: {
-      title: "Bail Out"
-    }
+      title: "Bail Out",
+    },
   },
   {
     path: "/slashing/bailout/:addr",
     name: "bailout",
     component: SlashingBailOut,
     meta: {
-      title: "Bail Out"
-    }
+      title: "Bail Out",
+    },
   },
   {
     path: "/locked/transfer",
     name: "locked-transfer",
     component: LockedTransfer,
     meta: {
-      title: "Locked Transfer"
-    }
-  }
+      title: "Locked Transfer",
+    },
+  },
 ];
 </script>
 <style>

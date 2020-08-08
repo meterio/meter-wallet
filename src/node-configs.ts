@@ -55,34 +55,34 @@ export const presets: NodeConfig[] = [
       nonce: 0,
     }
   },
-  // {
-  //   name: "Tetra",
-  //   url: "http://tetra.meter.io:8669",
-  //   genesis: {
-  //     number: 0,
-  //     id: "0x000000003383aa3278b83f8c66d7ec335d5b1409fc832b8dd627c55dd8213665",
-  //     size: 280,
-  //     parentID:
-  //       "0xffffffff00000000000000000000000000000000000000000000000000000000",
-  //     timestamp: 1530014400,
-  //     gasLimit: 200000000,
-  //     beneficiary: "0x0000000000000000000000000000000000000000",
-  //     gasUsed: 0,
-  //     totalScore: 0,
-  //     txsRoot:
-  //       "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
-  //     stateRoot:
-  //       "0x1edc14ab2aa8f0e63ddb4213354bc85b6f51448d146a2f6a648e433eb1733ed5",
-  //     receiptsRoot:
-  //       "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
-  //     signer: "0x0000000000000000000000000000000000000000",
-  //     transactions: [],
-  //     lastKBlockHeight:0,
-  //     committee: [],
-  //     qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
-  //     nonce: 0,
-  //   }
-  // }
+  {
+    name: "Tetra",
+    url: "http://tetra.meter.io:8669",
+    genesis: {
+      number: 0,
+      id: "0x000000003383aa3278b83f8c66d7ec335d5b1409fc832b8dd627c55dd8213665",
+      size: 280,
+      parentID:
+        "0xffffffff00000000000000000000000000000000000000000000000000000000",
+      timestamp: 1530014400,
+      gasLimit: 200000000,
+      beneficiary: "0x0000000000000000000000000000000000000000",
+      gasUsed: 0,
+      totalScore: 0,
+      txsRoot:
+        "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
+      stateRoot:
+        "0x1edc14ab2aa8f0e63ddb4213354bc85b6f51448d146a2f6a648e433eb1733ed5",
+      receiptsRoot:
+        "0x45b0cfc220ceec5b7c1c62c4d4193d38e4eba48e8815729ce75f9c0ab0e4c1c0",
+      signer: "0x0000000000000000000000000000000000000000",
+      transactions: [],
+      lastKBlockHeight:0,
+      committee: [],
+      qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
+      nonce: 0,
+    }
+  }
 ];
 
 export function nameOfNetwork(genesisId: string) {
