@@ -3,8 +3,9 @@ import { remote, ipcRenderer } from "electron";
 import { GlobalDatabase, BoundedDatabase } from "./database";
 import env from "@/env";
 import { trackTxLoop } from "./tx-tracker";
-import { Framework } from '@meterio/flex-framework'
+import { Framework, SimpleNet } from '@meterio/flex-framework'
 import { Driver } from './flex-driver/driver'
+import {Bridge} from "./flex-driver/bridge"
 
 // widgets to be bound onto window.
 // widgets names should be full caps.
@@ -34,6 +35,10 @@ Object.defineProperty(window, "flex", {
   value: new Framework(new Driver()),
   enumerable: true
 });
+Object.defineProperty(window, "bridge", {
+  value: new Bridge(new SimpleNet("")),
+  enumerable: true
+})
 // Object.defineProperty(window, "CLIENT", {
 //   value: client,
 //   enumerable: true

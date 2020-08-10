@@ -4,18 +4,19 @@
       <div class="subheading py-4">Transfer from</div>
       <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
 
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+      <v-card flat tile style="width:700px;" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading">
           <v-layout row wrap>
             <v-flex xs12>
               <h3>Bridge Exchange Rules</h3>
             </v-flex>
             <v-flex xs-12 style="marginTop:20px;">
-              <ul>
-                <li>Toll rate is 0.5%, minimum toll is 10 MTRG or 20 MTR (depend on which token you choose)</li>
-                <li>Please backup your private key, and import it in Ethereum wallet (such as Metamask) to receive ERC20 fund</li>
-                <li>Please allow up to 5 minutes to let the fund settle, if you didn't receive the fund within 5 minutes, please save your Meter network transaction hash and contact the admin</li>
-              </ul>
+              <ol style="fontSize:90%">
+                <li>This bridge functionality is still under beta test. By clicking the “Send” button, you agree that you understand and accept all risks involved, including without limitation any loss of funds, errors or bugs in the relevant smart contract, calculation mistakes, delay of receiving funds etc.</li>
+                <li>To avoid abusing the bridge and cover the ETH gas cost. We currently charge a fee of 0.5% transfer amount with a minimum 10 MTRG or 20 MTR (depend on which token is being mapped). This fee is subject to change.</li>
+                <li>Please backup your wallet to keystore file and import it to an ETH wallet (such as Metamask) and make sure the imported ETH wallet address is the same as your Meter wallet address. eMTRG and eMTR will be mapped to the same address by the bridge.</li>
+                <li>Please allow 5 minutes for the fund to settle. If you do not see the tokens in 5 mins, please save your Meter network transaction hash and contact us in telegram or discord channels (edited)</li>
+              </ol>
             </v-flex>
           </v-layout>
         </v-card-title>
@@ -52,7 +53,13 @@
                   persistent-hint
                 ></v-select>
               </v-flex>
-              <v-text-field label="Toll fee" v-model="toll" disabled />
+              <v-flex xs12>
+                <v-text-field label="Toll fee" v-model="toll" disabled />
+              </v-flex>
+
+              <v-flex xs12 v-if="token.symbol=='MTRG'">
+                <v-text-field label="Available Capacity" v-model="mtrgAvailableCapacity" disabled />
+              </v-flex>
             </v-layout>
           </v-form>
         </v-card-text>
@@ -71,6 +78,8 @@ import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry } from "@meterio/devkit";
 import { Wallet } from "@meterio/flex-framework";
+import { BridgeAPI } from "../flex-driver/bridge-api";
+import { AppBridge } from "../flex-driver/app-bridge";
 const BRIDGE_EXCHANGE_ADDR = "0x5c5713656c6819ebe3921936fd28bed2a387cda5";
 
 @Component
@@ -92,6 +101,15 @@ export default class BridgeTransfer extends Vue {
     addr: string;
     walletName: string | null;
   }[] = [];
+  mtrgCapacity = "0";
+  mtrgUsed = "0";
+
+  get mtrgAvailableCapacity() {
+    return new BigNumber(this.mtrgCapacity)
+      .minus(this.mtrgUsed)
+      .dividedBy(1e18)
+      .toFixed();
+  }
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -110,6 +128,7 @@ export default class BridgeTransfer extends Vue {
   ];
 
   created() {
+    this.getCapacity();
     let fromAddr = this.$route.query["from"];
     console.log("FROM: ", fromAddr);
     if (fromAddr) {
@@ -150,20 +169,41 @@ export default class BridgeTransfer extends Vue {
         "balance: ",
         new BigNumber(acc.balance).dividedBy(1e18).toFixed()
       );
-      console.log("energy: ", new BigNumber(amount).toFixed());
       const res = new BigNumber(acc.balance)
         .dividedBy(1e18)
         .isGreaterThanOrEqualTo(new BigNumber(amount));
-      console.log("RESULT MTRG = ", res);
       return res;
     } else if (token === "MTR") {
       const res = new BigNumber(acc.energy)
         .dividedBy(1e18)
         .isGreaterThanOrEqualTo(new BigNumber(amount));
-      console.log("RESULT MTR = ", res);
       return res;
     }
     return false;
+  }
+
+  async reachedCapacity(amount: number, tokenSymbol: string) {
+    console.log(amount);
+    console.log(this.mtrgUsed);
+    console.log(this.mtrgCapacity);
+    if (tokenSymbol === "MTRG" && this.mtrgCapacity !== "0") {
+      return new BigNumber(amount)
+        .multipliedBy(1e18)
+        .plus(this.mtrgUsed)
+        .isGreaterThan(this.mtrgCapacity);
+    }
+    return false;
+  }
+
+  async getCapacity() {
+    try {
+      const c = await window.bridge.getCapacity();
+      console.log(c);
+      this.mtrgCapacity = c[0].capacity;
+      this.mtrgUsed = c[0].used;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async send() {
@@ -172,15 +212,22 @@ export default class BridgeTransfer extends Vue {
     if (!(this.$refs.form as any).validate()) {
       return;
     }
+    const capacityReached = await this.reachedCapacity(
+      this.amount!,
+      this.token.symbol
+    );
+    if (capacityReached) {
+      this.errMsg =
+        "MTRG capacity is reached, please make a transfer with smaller amount";
+      return;
+    }
     const b = await this.hasEnoughBalance(
       this.wallets[this.from],
       this.amount!,
       this.token.symbol
     );
-    console.log("b= ", b);
     if (!b) {
       this.errMsg = `Not enough balance for transfer amount`;
-      console.log("set err msg");
       return;
     }
 

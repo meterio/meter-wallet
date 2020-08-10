@@ -153,7 +153,7 @@ export class Driver extends DriverNoVendor {
                         const r = th.throttle(() => fn.apply(this, args))
                         if (th.concurrent >= th.softLimit && th.concurrent < th.hardLimit) {
                             wc.executeJavaScript(
-                                `console.warn('connex: request pending (concurrent soft limit ${th.softLimit})')`)
+                                `console.warn('flex: request pending (concurrent soft limit ${th.softLimit})')`)
                                 // tslint:disable-next-line: no-console
                                 .catch(err => console.warn('log to webview', err))
                         }
