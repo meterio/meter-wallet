@@ -11,7 +11,7 @@ import {Bridge} from "./flex-driver/bridge"
 // widgets names should be full caps.
 declare global {
   interface Window {
-    readonly NODE_CONFIG: NodeConfig
+    readonly NODE_CONFIG: NodeConfig;
     readonly ENV: typeof env;
     readonly GDB: GlobalDatabase;
     readonly BDB: BoundedDatabase;

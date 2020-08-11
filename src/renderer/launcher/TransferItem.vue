@@ -23,6 +23,11 @@
                     class="font-weight-light font-italic"
                   >{{ isIn ? 'Recieved from: ' : 'Transferred to: '}}</span>
                   {{ (isIn ? item.sender : item.recipient) | shortAddr}}
+                  <span
+                    v-if="!isIn"
+                  >
+                    <a @click="jumpToInsightTrade(item.meta.txID)" href="javascript:;">Trade Details</a>
+                  </span>
                 </span>
               </v-flex>
               <v-flex xs6 class="text-xs-right caption">
@@ -51,10 +56,23 @@ export default class TransferItem extends Vue {
   @Prop(Boolean)
   isIn!: boolean;
 
+  get isBridgeTrade() {
+    return (
+      this.item &&
+      this.item.recipient === "0x5c5713656c6819ebe3921936fd28bed2a387cda5"
+    );
+  }
+  jumpToInsightTrade(txID: string) {
+    BUS.$emit("open-tab", {
+      href: `https://insight.meter.io/#/trades/${txID}`,
+      mode: "append-active",
+    });
+  }
+
   jumpToInsight(txID: string) {
     BUS.$emit("open-tab", {
       href: `https://insight.meter.io/#/txs/${txID}`,
-      mode: "append-active"
+      mode: "append-active",
     });
   }
 }

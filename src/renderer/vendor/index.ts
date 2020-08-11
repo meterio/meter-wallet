@@ -1,11 +1,9 @@
 import Vendor from './Vendor.vue'
-import { BridgeAPI } from '../flex-driver/bridge-api'
 
 export default Vendor
 
 declare global {
     interface Window {
-        bridge: BridgeAPI,
         VENDOR: {
             signTx(
                 msg: Flex.Driver.SignTxArg,

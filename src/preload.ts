@@ -1,15 +1,7 @@
 import { remote, ipcRenderer } from 'electron'
 import {Framework } from "@meterio/flex-framework"
 import {AppDriver} from "@/renderer/flex-driver/app-driver"
-import {BridgeAPI}  from "@/renderer/flex-driver/bridge-api"
 import {AppBridge}  from "@/renderer/flex-driver/app-bridge"
-
-interface MyNamespacedWindow extends Window {
-    flex: Flex;
-    bridge: BridgeAPI;
-}
-
-declare var window: MyNamespacedWindow;
 
 // create connex on demand
 const getFlex = (() => {
@@ -23,7 +15,7 @@ const getFlex = (() => {
 })()
 
 const getBridge = (() => {
-    let bridge: BridgeAPI 
+    let bridge: Meter.BridgeAPI 
     return () => {
         if (!bridge) {
             bridge = new AppBridge()

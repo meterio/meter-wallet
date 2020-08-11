@@ -100,3 +100,15 @@ export function nameOfNetwork(genesisId: string) {
       return "unknown";
   }
 }
+
+export function bridgeBase(networkName:string){
+  switch (networkName){
+    case "testnet":
+      return "https://bridge-api.meter.io";
+    case "mainnet":
+      return "https://bridge-api.meter.io";
+      // return "http://bridge-api.meter.io:8080"
+    case "devnet":
+      return "http://bridge-api.meter.io";
+  }
+}

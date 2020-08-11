@@ -78,7 +78,6 @@ import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry } from "@meterio/devkit";
 import { Wallet } from "@meterio/flex-framework";
-import { BridgeAPI } from "../flex-driver/bridge-api";
 import { AppBridge } from "../flex-driver/app-bridge";
 const BRIDGE_EXCHANGE_ADDR = "0x5c5713656c6819ebe3921936fd28bed2a387cda5";
 
@@ -197,12 +196,12 @@ export default class BridgeTransfer extends Vue {
 
   async getCapacity() {
     try {
-      const c = await window.bridge.getCapacity();
-      console.log(c);
+      const c = await bridge.getCapacity();
       this.mtrgCapacity = c[0].capacity;
       this.mtrgUsed = c[0].used;
     } catch (e) {
-      console.log(e);
+      this.mtrgCapacity = "0";
+      this.mtrgUsed = "0";
     }
   }
 

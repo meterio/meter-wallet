@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["node", "@meterio/flex"],
+    "types": ["node", "@meterio/flex", "@meterio/bridge-interface"],
     "paths": {
       "@/*": ["src/*"]
     },

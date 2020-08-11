@@ -1,13 +1,9 @@
-import { DriverNoVendor } from '@meterio/flex-framework/dist/driver/driver-no-vendor'
 import { remote } from 'electron'
-import { ipcServe, ipcCall } from '../ipc'
-import { SimpleNet } from '@meterio/flex-framework/dist/driver/simple-net'
-import { blake2b256 } from '@meterio/devkit/dist/cry/blake2b'
-import { Throttle } from './throttle'
-import {BridgeAPI, Capacity, Trade} from "./bridge-api"
+import { ipcServe  } from '../ipc'
 import {Net} from "@meterio/flex-framework/dist/driver/interfaces"
+import {nameOfNetwork, bridgeBase} from "@/node-configs"
 
-export class Bridge implements  BridgeAPI{
+export class Bridge implements  Meter.BridgeAPI{
     constructor(
     private readonly net: Net,
     ) {
@@ -20,12 +16,26 @@ export class Bridge implements  BridgeAPI{
         });
       }
 
-    public getCapacity():Promise<Capacity[]>{
-        return this.httpGet("http://localhost:8080/capacity");
+    public getCapacity():Promise<Meter.Capacity[]>{
+        const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
+        const base = bridgeBase(networkName);
+
+        return this.httpGet(`${base}/gauges/capacity`);
     }
 
-    public getTrade(inboundTxHash:string):Promise<Trade>{
-        return this.httpGet(`http://localhost:8080/trade/${inboundTxHash}`)
+    public getTrade(inboundTxHash:string):Promise<Meter.Trade>{
+        const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
+        const base = bridgeBase(networkName);
+ 
+        return this.httpGet(`${base}/trade/${inboundTxHash}`)
+    }
+
+    public getTrades(inboundAddr:string):Promise<Meter.Trade[]>{
+        const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
+        const base = bridgeBase(networkName);
+ 
+        console.log("url = "+`${base}/trade/from/${inboundAddr}`)
+        return this.httpGet(`${base}/trade/from/${inboundAddr}`)
     }
 
     private serveForApp() {
@@ -38,6 +48,8 @@ export class Bridge implements  BridgeAPI{
                         return await this.getCapacity();
                     } else if (method === 'getTrade'){
                         return await this.getTrade(args[0])
+                    } else if (method === 'getTrades'){
+                        return await this.getTrades(args[0])
                     }
                 } 
                 throw { name: 'Error', message: 'not impl' }
