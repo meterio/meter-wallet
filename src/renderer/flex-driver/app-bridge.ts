@@ -9,6 +9,7 @@ export class AppBridge implements Meter.BridgeAPI {
     }
 
     public getCapacity(): Promise<Meter.Capacity[]>{
+        console.log("app-bridge getCapacity")
         return this.callToHost('getCapacity');
     }
 
@@ -21,12 +22,14 @@ export class AppBridge implements Meter.BridgeAPI {
     }
 
     private async callToHost(method: string, ...args: any[]) {
-        console.log("callToHost", method)
+        console.log("callToHost", method, args)
         try {
-            return await ipcCall({
+            const result  =await ipcCall({
                 webContentsId: wc.hostWebContents.id,
                 channel: 'bridge'
             }, method, args)
+            console.log('callToHost result:', result);
+            return result;
         } catch (err) {
             throw new BridgeError(err.message)
         }

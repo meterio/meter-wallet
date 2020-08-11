@@ -17,8 +17,10 @@ export class Bridge implements  Meter.BridgeAPI{
       }
 
     public getCapacity():Promise<Meter.Capacity[]>{
+        console.log('bridge getCapacity')
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
+        console.log('base: ', base)
 
         return this.httpGet(`${base}/gauges/capacity`);
     }
@@ -27,15 +29,15 @@ export class Bridge implements  Meter.BridgeAPI{
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
  
-        return this.httpGet(`${base}/trade/${inboundTxHash}`)
+        return this.httpGet(`${base}/trades/${inboundTxHash}`)
     }
 
     public getTrades(inboundAddr:string):Promise<Meter.Trade[]>{
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
  
-        console.log("url = "+`${base}/trade/from/${inboundAddr}`)
-        return this.httpGet(`${base}/trade/from/${inboundAddr}`)
+        console.log("url = "+`${base}/trades/from/${inboundAddr}`)
+        return this.httpGet(`${base}/trades/from/${inboundAddr}`)
     }
 
     private serveForApp() {
@@ -45,10 +47,13 @@ export class Bridge implements  Meter.BridgeAPI{
                 const fn = (this as any)[method]
                 if (fn instanceof Function) {
                     if (method === 'getCapacity') {
+                        console.log('calling getCapacity')
                         return await this.getCapacity();
                     } else if (method === 'getTrade'){
+                        console.log('calling get Trade', args[0])
                         return await this.getTrade(args[0])
                     } else if (method === 'getTrades'){
+                        console.log('calling getTrades')
                         return await this.getTrades(args[0])
                     }
                 } 
