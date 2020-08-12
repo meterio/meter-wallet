@@ -10,9 +10,13 @@
             <v-flex xs12>
               <h3>Bridge Exchange Rules</h3>
             </v-flex>
+            <Tip
+              class="ma-1"
+              type="error"
+            >Disclaimer: This bridge functionality is still under beta test. By clicking the “Send” button, you agree that you understand and accept all risks involved, including without limitation any loss of funds, errors or bugs in the relevant smart contract, calculation mistakes, delay of receiving funds etc</Tip>
+
             <v-flex xs-12 style="marginTop:20px;">
               <ol style="fontSize:90%">
-                <li>This bridge functionality is still under beta test. By clicking the “Send” button, you agree that you understand and accept all risks involved, including without limitation any loss of funds, errors or bugs in the relevant smart contract, calculation mistakes, delay of receiving funds etc.</li>
                 <li>To avoid abusing the bridge and cover the ETH gas cost. We currently charge a fee of 0.5% transfer amount with a minimum 10 MTRG or 20 MTR (depend on which token is being mapped). This fee is subject to change.</li>
                 <li>Please backup your wallet to keystore file and import it to an ETH wallet (such as Metamask) and make sure the imported ETH wallet address is the same as your Meter wallet address. eMTRG and eMTR will be mapped to the same address by the bridge.</li>
                 <li>Please allow 5 minutes for the fund to settle. If you do not see the tokens in 5 mins, please save your Meter network transaction hash and contact us in telegram or discord channels</li>

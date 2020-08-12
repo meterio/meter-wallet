@@ -24,7 +24,8 @@
                   >{{ isIn ? 'Recieved from: ' : 'Transferred to: '}}</span>
                   {{ (isIn ? item.sender : item.recipient) | shortAddr}}
                   <span
-                    v-if="!isIn"
+                    v-if="!isIn && isBridgeTrade"
+                    style="marginLeft:6px;"
                   >
                     <a @click="jumpToInsightTrade(item.meta.txID)" href="javascript:;">Trade Details</a>
                   </span>
