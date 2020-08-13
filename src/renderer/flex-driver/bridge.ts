@@ -16,27 +16,31 @@ export class Bridge implements  Meter.BridgeAPI{
         });
       }
 
-    public getCapacity():Promise<Meter.Capacity[]>{
-        console.log('bridge getCapacity')
+    public getPairs():Promise<Meter.Pair[]>{
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
-        console.log('base: ', base)
 
-        return this.httpGet(`${base}/gauges/capacity`);
+        return this.httpGet(`${base}/pairs`);
     }
 
-    public getTrade(inboundTxHash:string):Promise<Meter.Trade>{
+    public getCapacities():Promise<Meter.Capacity[]>{
+        const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
+        const base = bridgeBase(networkName);
+
+        return this.httpGet(`${base}/pairs/capacity`);
+    }
+
+    public getTradesByInboundHash(inboundTxHash:string):Promise<Meter.Trade>{
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
  
         return this.httpGet(`${base}/trades/${inboundTxHash}`)
     }
 
-    public getTrades(inboundAddr:string):Promise<Meter.Trade[]>{
+    public getTradesByInboundAddr(inboundAddr:string):Promise<Meter.Trade[]>{
         const networkName = nameOfNetwork(NODE_CONFIG.genesis.id)
         const base = bridgeBase(networkName);
  
-        console.log("url = "+`${base}/trades/from/${inboundAddr}`)
         return this.httpGet(`${base}/trades/from/${inboundAddr}`)
     }
 
@@ -46,15 +50,16 @@ export class Bridge implements  Meter.BridgeAPI{
                 const wc = remote.webContents.fromId(fromWebContentsId)
                 const fn = (this as any)[method]
                 if (fn instanceof Function) {
-                    if (method === 'getCapacity') {
-                        console.log('calling getCapacity')
-                        return await this.getCapacity();
-                    } else if (method === 'getTrade'){
+                    if (method === 'getCapacities') {
+                        return await this.getCapacities();
+                    } else if (method === 'getTradesByInboundHash'){
                         console.log('calling get Trade', args[0])
-                        return await this.getTrade(args[0])
-                    } else if (method === 'getTrades'){
+                        return await this.getTradesByInboundHash(args[0])
+                    } else if (method === 'getTradesByInboundAddr'){
                         console.log('calling getTrades')
-                        return await this.getTrades(args[0])
+                        return await this.getTradesByInboundAddr(args[0])
+                    } else if (method === 'getPairs'){
+                        return await this.getPairs();
                     }
                 } 
                 throw { name: 'Error', message: 'not impl' }

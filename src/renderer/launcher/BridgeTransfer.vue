@@ -9,6 +9,7 @@
           <v-layout row wrap>
             <v-flex xs12>
               <h3>Bridge Exchange Rules</h3>
+              <!-- <div v-if="lauched">{{countdown}} from launch</div> -->
             </v-flex>
             <Tip
               class="ma-1"
@@ -55,14 +56,15 @@
                   item-value="symbol"
                   return-object
                   persistent-hint
+                  v-on:change="getCapacity"
                 ></v-select>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="Toll fee" v-model="toll" disabled />
               </v-flex>
 
-              <v-flex xs12 v-if="token.symbol=='MTRG'">
-                <v-text-field label="Available Capacity" v-model="mtrgAvailableCapacity" disabled />
+              <v-flex xs12>
+                <v-text-field label="Available Capacity" v-model="availableCapacity" disabled />
               </v-flex>
             </v-layout>
           </v-form>
@@ -84,6 +86,8 @@ import { cry } from "@meterio/devkit";
 import { Wallet } from "@meterio/flex-framework";
 import { AppBridge } from "../flex-driver/app-bridge";
 const BRIDGE_EXCHANGE_ADDR = "0x5c5713656c6819ebe3921936fd28bed2a387cda5";
+const moment = require("moment");
+const LAUCH_TIME = 1597456800; // UTC timestamp
 
 @Component
 export default class BridgeTransfer extends Vue {
@@ -95,21 +99,33 @@ export default class BridgeTransfer extends Vue {
   errMsg = "";
   toll = 0;
   tokenItems = [
-    { symbol: "MTRG", fullname: "Meter Governance Token" },
+    // { symbol: "MTRG", fullname: "Meter Governance Token" },
     { symbol: "MTR", fullname: "Meter Token" },
   ];
-  token = { symbol: "MTRG", fullname: "Meter Governance Token" };
+  token = { symbol: "MTR", fullname: "Meter Token" };
   showHistory = false;
   history: {
     addr: string;
     walletName: string | null;
   }[] = [];
-  mtrgCapacity = "0";
-  mtrgUsed = "0";
+  capacity = "0";
+  used = "0";
 
-  get mtrgAvailableCapacity() {
-    return new BigNumber(this.mtrgCapacity)
-      .minus(this.mtrgUsed)
+  /*
+  get lauched() {
+    return moment.utc.unix() > LAUCH_TIME;
+  }
+
+  get countdown() {
+    const ms = moment.unix(LAUCH_TIME).diff(moment.unix(moment.utc().unix()));
+    const d = moment.duration(ms);
+    return "" + Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+  }
+  */
+
+  get availableCapacity() {
+    return new BigNumber(this.capacity)
+      .minus(this.used)
       .dividedBy(1e18)
       .toFixed();
   }
@@ -187,30 +203,31 @@ export default class BridgeTransfer extends Vue {
 
   async reachedCapacity(amount: number, tokenSymbol: string) {
     console.log(amount);
-    console.log(this.mtrgUsed);
-    console.log(this.mtrgCapacity);
-    if (tokenSymbol === "MTRG" && this.mtrgCapacity !== "0") {
-      return new BigNumber(amount)
-        .multipliedBy(1e18)
-        .plus(this.mtrgUsed)
-        .isGreaterThan(this.mtrgCapacity);
-    }
+    return new BigNumber(amount)
+      .multipliedBy(1e18)
+      .plus(this.used)
+      .isGreaterThan(this.capacity);
     return false;
   }
 
   async getCapacity() {
     try {
-      const c = await bridge.getCapacity();
-      this.mtrgCapacity = c[0].capacity;
-      this.mtrgUsed = c[0].used;
+      const capacities = await bridge.getCapacities();
+      console.log("capacities: ", capacities);
+      for (const c of capacities) {
+        if (c.inboundToken === this.token.symbol) {
+          console.log("found");
+          this.capacity = c.capacity;
+          this.used = c.used;
+        }
+      }
     } catch (e) {
-      this.mtrgCapacity = "0";
-      this.mtrgUsed = "0";
+      this.capacity = "0";
+      this.used = "0";
     }
   }
 
   async send() {
-    console.log("SENDING !!! ");
     this.errMsg = "";
     if (!(this.$refs.form as any).validate()) {
       return;
@@ -233,6 +250,10 @@ export default class BridgeTransfer extends Vue {
       this.errMsg = `Not enough balance for transfer amount`;
       return;
     }
+    if (new BigNumber(this.amount).isLessThan(this.toll)) {
+      this.errMsg = "Amount is less than toll fee";
+      return;
+    }
 
     try {
       const value =
@@ -242,7 +263,6 @@ export default class BridgeTransfer extends Vue {
           .integerValue()
           .toString(16);
       let tokenValue = this.token.symbol == "MTRG" ? 1 : 0;
-      console.log("TOKEN_VAL=", tokenValue);
 
       await flex.vendor
         .sign("tx")

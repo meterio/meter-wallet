@@ -8,17 +8,21 @@ export class AppBridge implements Meter.BridgeAPI {
     constructor() {
     }
 
-    public getCapacity(): Promise<Meter.Capacity[]>{
+    public getCapacities(): Promise<Meter.Capacity[]>{
         console.log("app-bridge getCapacity")
-        return this.callToHost('getCapacity');
+        return this.callToHost('getCapacities');
     }
 
-    public getTrade(inboundTxHash:string):Promise<Meter.Trade>{
-        return this.callToHost('getTrade', inboundTxHash)
+    public getPairs(): Promise<Meter.Pair[]>{
+        return this.callToHost('getPairs');
     }
 
-    public getTrades(inboundAddr:string): Promise<Meter.Trade[]>{
-        return this.callToHost('getTrades', inboundAddr)
+    public getTradesByInboundHash(inboundTxHash:string):Promise<Meter.Trade>{
+        return this.callToHost('getTradesByInboundHash', inboundTxHash)
+    }
+
+    public getTradesByInboundAddr(inboundAddr:string): Promise<Meter.Trade[]>{
+        return this.callToHost('getTradesByInboundAddr', inboundAddr)
     }
 
     private async callToHost(method: string, ...args: any[]) {
