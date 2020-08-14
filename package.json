@@ -25,6 +25,7 @@
   "build": {
     "productName": "meterWallet",
     "appId": "io.meter.wallet",
+    "artifactName": "${productName}-${version}.${ext}",
     "directories": {
       "output": "build"
     },
