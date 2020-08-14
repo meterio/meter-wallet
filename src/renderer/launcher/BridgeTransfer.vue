@@ -99,7 +99,7 @@ export default class BridgeTransfer extends Vue {
   errMsg = "";
   toll = 0;
   tokenItems = [
-    // { symbol: "MTRG", fullname: "Meter Governance Token" },
+    { symbol: "MTRG", fullname: "Meter Governance Token" },
     { symbol: "MTR", fullname: "Meter Token" },
   ];
   token = { symbol: "MTR", fullname: "Meter Token" };
@@ -124,10 +124,13 @@ export default class BridgeTransfer extends Vue {
   */
 
   get availableCapacity() {
-    return new BigNumber(this.capacity)
+    let available = new BigNumber(this.capacity)
       .minus(this.used)
-      .dividedBy(1e18)
-      .toFixed();
+      .dividedBy(1e18);
+    if (available.isLessThanOrEqualTo(new BigNumber(0))) {
+      available = new BigNumber(0);
+    }
+    return available.toFixed();
   }
 
   readonly addressRules = [
