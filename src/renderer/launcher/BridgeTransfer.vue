@@ -8,7 +8,7 @@
         <v-card-title class="subheading">
           <v-layout row wrap>
             <v-flex xs12>
-              <h3>Bridge Exchange Rules</h3>
+              <h3>Bridge Rules</h3>
               <!-- <div v-if="lauched">{{countdown}} from launch</div> -->
             </v-flex>
             <Tip
@@ -30,7 +30,7 @@
             <v-text-field
               validate-on-blur
               :rules="addressRules"
-              label="Bridge Exchange Address"
+              label="Bridge Address"
               v-model="to"
               disabled
             />
@@ -43,7 +43,6 @@
                   :rules="amountRules"
                   v-model="amount"
                   autofocus
-                  v-on:keyup="calcToll"
                 />
               </v-flex>
               <v-flex xs12 sm4>
@@ -59,12 +58,11 @@
                   v-on:change="getCapacity"
                 ></v-select>
               </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Toll fee" v-model="toll" disabled />
-              </v-flex>
-
-              <v-flex xs12>
+              <v-flex xs12 sm8>
                 <v-text-field label="Available Capacity" v-model="availableCapacity" disabled />
+              </v-flex>
+              <v-flex xs12 sm4>
+                <v-text-field label="Toll fee" v-model="toll" disabled />
               </v-flex>
             </v-layout>
           </v-form>
@@ -85,7 +83,7 @@ import BigNumber from "bignumber.js";
 import { cry } from "@meterio/devkit";
 import { Wallet } from "@meterio/flex-framework";
 import { AppBridge } from "../flex-driver/app-bridge";
-const BRIDGE_EXCHANGE_ADDR = "0x5c5713656c6819ebe3921936fd28bed2a387cda5";
+const BRIDGE_ADDR = "0x5c5713656c6819ebe3921936fd28bed2a387cda5";
 const moment = require("moment");
 const LAUCH_TIME = 1597456800; // UTC timestamp
 
@@ -94,10 +92,9 @@ export default class BridgeTransfer extends Vue {
   @State
   wallets!: entities.Wallet[];
   amount: number = NaN;
-  to = BRIDGE_EXCHANGE_ADDR;
+  to = BRIDGE_ADDR;
   from = 0;
   errMsg = "";
-  toll = 0;
   tokenItems = [
     { symbol: "MTRG", fullname: "Meter Governance Token" },
     { symbol: "MTR", fullname: "Meter Token" },
@@ -164,19 +161,19 @@ export default class BridgeTransfer extends Vue {
     }
   }
 
-  calcToll() {
+  get toll() {
     if (!new BigNumber(this.amount).isPositive()) {
-      this.toll = 0;
-      return;
+      return 0;
     }
-    this.toll = 0;
+    let toll = 0;
     const floatFee = new BigNumber(this.amount).multipliedBy(0.005);
     const flatFee = this.token.symbol === "MTRG" ? 10 : 20;
     if (floatFee.isGreaterThan(flatFee)) {
-      this.toll = floatFee.toNumber();
+      toll = floatFee.toNumber();
     } else {
-      this.toll = flatFee;
+      toll = flatFee;
     }
+    return toll;
   }
 
   async hasEnoughBalance(
@@ -217,11 +214,15 @@ export default class BridgeTransfer extends Vue {
     try {
       const capacities = await bridge.getCapacities();
       console.log("capacities: ", capacities);
+      this.capacity = "0";
+      this.used = "0";
+
       for (const c of capacities) {
         if (c.inboundToken === this.token.symbol) {
           console.log("found");
           this.capacity = c.capacity;
           this.used = c.used;
+          break;
         }
       }
     } catch (e) {
