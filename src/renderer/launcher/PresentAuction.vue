@@ -6,34 +6,46 @@
         <v-layout justify-space-between>
           <div>
             Auction amount:
-            <Amount sym="MTRG">{{presentAuction.releasedMTRG}}</Amount>
+            <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
           </div>
           <div>
             Received total bids:
-            <Amount sym="MTR">{{presentAuction.receivedMTR}}</Amount>
+            <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
           </div>
         </v-layout>
         <v-layout class="pt-2 pa-0" justify-space-between v-if="isPast">
-          <div>Start Height: {{presentAuction.startHeight}}</div>
-          <div>Closing Height: {{presentAuction.endHeight}}</div>
-          <div>Current Height: {{chainHead.number}}</div>
+          <div>Start Height: {{ presentAuction.startHeight }}</div>
+          <div>Closing Height: {{ presentAuction.endHeight }}</div>
+          <div>Current Height: {{ chainHead.number }}</div>
         </v-layout>
 
         <v-layout class="pt-2 pa-0" justify-space-between v-if="!isPast">
-          <div>Height Range: {{presentAuction.startHeight}} - {{presentAuction.endHeight}}</div>
-          <div>Current Height: {{chainHead.number}}</div>
+          <div>
+            Height Range: {{ presentAuction.startHeight }} -
+            {{ presentAuction.endHeight }}
+          </div>
+          <div>Current Height: {{ chainHead.number }}</div>
         </v-layout>
       </v-card-text>
 
       <v-card-title>
         <v-layout justify-space-between>
           <router-link :to="{ name: 'auction-bid' }" class="mt-3">
-            <v-btn depressed small color="primary" class="ml-0">Auction Bid</v-btn>
+            <v-btn depressed small color="primary" class="ml-0"
+              >Auction Bid</v-btn
+            >
           </router-link>
           <router-link :to="{ name: 'past-auctions' }" class="mt-3">
             <v-btn depressed small outline color="primary">Past Auctions</v-btn>
           </router-link>
-          <v-btn flat icon small color="green" class="mt-3" v-on:click.native="refresh">
+          <v-btn
+            flat
+            icon
+            small
+            color="green"
+            class="mt-3"
+            v-on:click.native="refresh"
+          >
             <v-icon>cached</v-icon>
           </v-btn>
 
@@ -55,12 +67,12 @@
         :rows-per-page-items="rowsPerPage"
       >
         <template slot="items" slot-scope="props">
-          <td>{{props.item.addr}}</td>
+          <td>{{ props.item.addr }}</td>
           <td>
             <Amount sym="MTR">{{ props.item.amount }}</Amount>
           </td>
           <td>{{ props.item.count }}</td>
-          <td>{{ props.item.createdAt}}</td>
+          <td>{{ props.item.createdAt }}</td>
         </template>
       </v-data-table>
     </v-card>
@@ -94,8 +106,8 @@ export default class PresentAuction extends Vue {
   }
 
   get auctionTxs() {
-    return this.presentAuction.auctionTxs.map(tx => {
-      tx.createdAt = moment.unix(tx.lastTime).format("MM/DD hh:mm");
+    return this.presentAuction.auctionTxs.map((tx) => {
+      tx.createdAt = moment.unix(tx.timestamp).format("MM/DD hh:mm");
       return tx;
     });
   }
@@ -108,7 +120,7 @@ export default class PresentAuction extends Vue {
     { text: "Address", value: "addr", sortable: true },
     { text: "Amount", value: "amount", sortable: true },
     { text: "Tx count", value: "count", sortable: true },
-    { text: "Created At", value: "createTime", sortable: true }
+    { text: "Created At", value: "createTime", sortable: true },
   ];
 
   async created() {
@@ -118,7 +130,7 @@ export default class PresentAuction extends Vue {
   jumpToInsight(addr: string) {
     BUS.$emit("open-tab", {
       href: `https://insight.meter.io/#/accounts/${addr}`,
-      mode: "append-active"
+      mode: "append-active",
     });
   }
 

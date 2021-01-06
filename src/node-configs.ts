@@ -25,14 +25,18 @@ export const presets: NodeConfig[] = [
       committee: [],
       qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
       nonce: 0,
+      isKBlock: true,
+      isTrunk: true,
+      epoch: 0,
+      kblockData:[],
     }
   },
   {
     name: "Warringstakes",
-    url: "https://warringstakes.meter.io:8667",
+    url: "https://warringstakes.meter.io",
     genesis: {
       number: 0,
-      id: "0x00000000ed77a5a4cc2cb585ed7fba4200b89751142cd6fe124aecc3d3350e58",
+      id: "0x000000003383aa3278b83f8c66d7ec335d5b1409fc832b8dd627c55dd8213665",
       size: 280,
       parentID:
         "0xffffffff00000000000000000000000000000000000000000000000000000000",
@@ -53,11 +57,15 @@ export const presets: NodeConfig[] = [
       committee: [],
       qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
       nonce: 0,
+      isKBlock: true,
+      isTrunk: true,
+      epoch: 0,
+      kblockData:[],
     }
   },
   {
-    name: "Tetra",
-    url: "http://tetra.meter.io:8669",
+    name: "Teeny",
+    url: "http://test01.meter.io:8669",
     genesis: {
       number: 0,
       id: "0x000000003383aa3278b83f8c66d7ec335d5b1409fc832b8dd627c55dd8213665",
@@ -81,6 +89,10 @@ export const presets: NodeConfig[] = [
       committee: [],
       qc: {qcHeight:0, qcRound:0, voterBitArrayStr:"", epochID:0},
       nonce: 0,
+      isKBlock: true,
+      isTrunk: true,
+      epoch: 0,
+      kblockData:[],
     }
   }
 ];
@@ -95,7 +107,8 @@ export function nameOfNetwork(genesisId: string) {
   
     case "0x000000003383aa3278b83f8c66d7ec335d5b1409fc832b8dd627c55dd8213665":
       return "devnet";
-
+    case "0x00000000dc655159094b6c6fa70e475d295fe78599da280ae55b7e54caef8306":
+      return "devnet";
     default:
       return "unknown";
   }
@@ -104,7 +117,7 @@ export function nameOfNetwork(genesisId: string) {
 export function bridgeBase(networkName:string){
   switch (networkName){
     case "testnet":
-      return "https://bridge-api.meter.io";
+      return "http://localhost:3000";
     case "mainnet":
       return "https://bridge-api.meter.io";
       // return "http://bridge-api.meter.io:8080"

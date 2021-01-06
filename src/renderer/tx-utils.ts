@@ -61,12 +61,14 @@ export async function estimateGas(
     }
     const bgp = await getBaseGasPrice()
     const lastOutput = outputs.slice().pop()
-    return {
+    const result = {
         gas: suggestedGas,
         reverted: lastOutput ? lastOutput.reverted : false,
         vmError: lastOutput ? lastOutput.vmError : '',
         baseGasPrice: bgp,
     }
+    console.log("")
+    return result;
 }
 
 export function buildTx(

@@ -92,6 +92,7 @@ declare namespace entities {
 
   type Candidate = {
     name: string;
+    description: string;
     ipAddr: string;
     address: string;
     totalVotes: number;
@@ -112,6 +113,7 @@ declare namespace entities {
     unbounded: boolean;
     option: string;
     nonce: number;
+    autobid: number;
 
     owned: boolean;
     candidateName: string;
@@ -119,28 +121,38 @@ declare namespace entities {
     state: string;
   };
 
+  type DistMTRG = {
+    addr:string;
+    amount: string;
+  }
+
   type AuctionSummary = {
     auctionID: string;
     startHeight: number;
+    startEpoch: number;
     endHeight: number;
+    endEpoch: number;
     releasedMTRG: string;
+    reservedMTRG: string;
     reservedPrice: string;
     createTime: number;
     receivedMTR: string;
     actualPrice: string;
-    leftoverMTRG:  string;
+    auctionTxs: AuctionTx[];
+    distMTRG: DistMTRG[];
 
-    createdAt: string;
+    createdAt?: string;
   }
 
   type AuctionTx = {
-    addr: string;
-    amount: string;
-    count: number;
+    txid: string; 
+    address: string; 
+    amount: string; 
+    type: string; 
+    timestamp: number; 
     nonce: number;
-    lastTime: number;
 
-    createdAt: string;
+    createdAt?: string;
   };
 
   type AuctionCB = {

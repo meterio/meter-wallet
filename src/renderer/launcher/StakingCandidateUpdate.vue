@@ -1,10 +1,17 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">Update staking candidate information</v-card-title>
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="subheading"
+          >Update staking candidate information</v-card-title
+        >
         <v-card-text>
           <v-form ref="form">
             <v-text-field
@@ -15,7 +22,21 @@
               v-model="name"
             ></v-text-field>
 
-            <v-text-field ref="ip" label="IP" :rules="ipRules" validate-on-blur v-model="ip"></v-text-field>
+            <v-text-field
+              ref="description"
+              label="Description"
+              :rules="descRules"
+              validate-on-blur
+              v-model="description"
+            ></v-text-field>
+
+            <v-text-field
+              ref="ip"
+              label="IP"
+              :rules="ipRules"
+              validate-on-blur
+              v-model="ip"
+            ></v-text-field>
             <v-text-field
               ref="port"
               type="number"
@@ -34,6 +55,7 @@
               v-model="commission"
               suffix="%"
             ></v-text-field>
+            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
 
             <v-textarea
               ref="pubkey"
@@ -45,7 +67,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -65,6 +87,7 @@ export default class StakingCandidateUpdate extends Vue {
   @State
   wallets!: entities.Wallet[];
   name = "";
+  description = "";
   pubkey = "";
   ip = "";
   port = "8670";
@@ -72,6 +95,7 @@ export default class StakingCandidateUpdate extends Vue {
   errMsg = "";
   token = "MTRG";
   commission = 10.0;
+  autobid = false;
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -83,7 +107,7 @@ export default class StakingCandidateUpdate extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
 
   readonly nameRules = [(v: string) => !!v || "Input name here"];
@@ -101,22 +125,22 @@ export default class StakingCandidateUpdate extends Vue {
       if (formattedEcdsaPK != ecdsaPK.trim())
         return "Invalid public key, unncessary suffix characters";
       return ecdsaPKHex.length == 130 || "Invalid public key";
-    }
+    },
   ];
   readonly ipRules = [
     (v: string) => !!v || "Input ip here",
-    (v: string) => !!v.match(/\d+[.]\d+[.]\d+[.]\d+/) || "Invalid IPv4 Address"
+    (v: string) => !!v.match(/\d+[.]\d+[.]\d+[.]\d+/) || "Invalid IPv4 Address",
   ];
   readonly portRules = [
     (v: string) =>
       (0 < parseInt(v) && parseInt(v) <= 65535) ||
-      "Invalid port number (1-65535)"
+      "Invalid port number (1-65535)",
   ];
 
   readonly commissionRules = [
     (v: number) =>
       (100 <= v * 100 && v * 100 <= 10000) ||
-      "Invalid commission rate, must be in range [1,100] %"
+      "Invalid commission rate, must be in range [1,100] %",
   ];
 
   created() {
@@ -124,7 +148,7 @@ export default class StakingCandidateUpdate extends Vue {
     if (fromAddr) {
       fromAddr = fromAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === fromAddr
+        (wallet) => wallet.address === fromAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -142,10 +166,12 @@ export default class StakingCandidateUpdate extends Vue {
       let dataBuffer = ScriptEngine.getCandidateUpdateData(
         fromAddr,
         this.name,
+        this.description,
         this.pubkey,
         this.ip,
         parseInt(this.port),
-        Math.floor(this.commission * 100)
+        Math.floor(this.commission * 100),
+        this.autobid ? 100 : 0
       );
       await flex.vendor
         .sign("tx")
@@ -155,8 +181,8 @@ export default class StakingCandidateUpdate extends Vue {
             to: fromAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

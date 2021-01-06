@@ -10,21 +10,21 @@
     height="490px"
   >
     <v-card class="bg">
-      <v-layout column style="height:495px;">
+      <v-layout column style="height: 495px">
         <v-layout
           column
           justify-start
           class="pb-3"
           style="
-                        overflow: auto;
-                        background-color:rgba(0,0,0,0.1);
-                        position: absolute;
-                        height: 315px;
-                        width: 100%;
-                        top: 180px
-                    "
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.1);
+            position: absolute;
+            height: 315px;
+            width: 100%;
+            top: 180px;
+          "
         >
-          <v-layout column style="flex:0 1 auto" class="py-1">
+          <v-layout column style="flex: 0 1 auto" class="py-1">
             <Tip v-if="estimation.error" class="ma-1" type="error">
               <v-layout>
                 Error got while estimating fee
@@ -33,7 +33,7 @@
                   <v-icon small>refresh</v-icon>
                 </v-btn>
               </v-layout>
-              <i>{{estimation.error}}</i>
+              <i>{{ estimation.error }}</i>
             </Tip>
             <Tip v-if="insufficientMTR" class="ma-1" type="warning">
               <strong>Insufficient MTR balance</strong>
@@ -41,35 +41,47 @@
             <Tip v-if="estimation.reverted" class="ma-1" type="warning">
               <strong>Transaction may fail/revert</strong>
               <br />
-              <i>VM error: {{estimation.vmError}}</i>
+              <i>VM error: {{ estimation.vmError }}</i>
               <br />
-              <i v-if="estimation.revertReason">"{{estimation.revertReason}}"</i>
+              <i v-if="estimation.revertReason"
+                >"{{ estimation.revertReason }}"</i
+              >
             </Tip>
             <Tip
               class="ma-1"
               v-if="!isLocal && connected && !delegation.calling"
               type="info"
-            >Please double check the transaction and confirm on your device</Tip>
-            <TxListForDialog v-show="step === 1" :clauses="clauses" :txComment="txComment" />
+              >Please double check the transaction and confirm on your
+              device</Tip
+            >
+            <TxListForDialog
+              v-show="step === 1"
+              :clauses="clauses"
+              :txComment="txComment"
+            />
             <template v-if="step === 2">
               <v-card-text
                 v-show="!!arg.delegationHandler && !ledgerError"
                 style="text-align: center"
               >
-                <div style="min-width:50%">
+                <div style="min-width: 50%">
                   <div v-show="delegation.calling">
-                    <v-progress-circular indeterminate color="green" size="20" />
+                    <v-progress-circular
+                      indeterminate
+                      color="green"
+                      size="20"
+                    />
                     <span>Contacting fee delegator ...</span>
                   </div>
                 </div>
-                <b
-                  v-show="!!delegation.error"
-                  class="error--text"
-                >Failed to connect delegator, tx fee will be paid by you.</b>
+                <b v-show="!!delegation.error" class="error--text"
+                  >Failed to connect delegator, tx fee will be paid by you.</b
+                >
                 <b
                   v-show="!!delegation.signature && (isLocal || connected)"
                   class="green--text"
-                >Tx fee will be paid by app!!!</b>
+                  >Tx fee will be paid by app!!!</b
+                >
               </v-card-text>
               <template v-if="!isLocal && !delegation.calling">
                 <div
@@ -97,17 +109,32 @@
                   style="width: 500px; margin: auto"
                   v-if="!!ledgerError"
                 >
-                  <v-icon color="error" class="display-3">mdi-alert-circle-outline</v-icon>
-                  <p class="error--text">{{ledgerError.message}}</p>
+                  <v-icon color="error" class="display-3"
+                    >mdi-alert-circle-outline</v-icon
+                  >
+                  <p class="error--text">{{ ledgerError.message }}</p>
                 </div>
               </template>
               <template
-                v-if="isLocal || (isLocal && !!arg.delegationHandler && !delegation.calling)"
+                v-if="
+                  isLocal ||
+                  (isLocal && !!arg.delegationHandler && !delegation.calling)
+                "
               >
-                <v-card-text style="width: 500px; margin: auto" class="pt-4" v-show="!privateKey">
+                <v-card-text
+                  style="width: 500px; margin: auto"
+                  class="pt-4"
+                  v-show="!privateKey"
+                >
                   <p
-                    style="text-align: center; font-size: 16px;margin-bottom: 50px"
-                  >Please input your wallet's password to sign the transaction</p>
+                    style="
+                      text-align: center;
+                      font-size: 16px;
+                      margin-bottom: 50px;
+                    "
+                  >
+                    Please input your wallet's password to sign the transaction
+                  </p>
                   <div style="width: 350px; margin: auto">
                     <v-text-field
                       v-focus
@@ -129,16 +156,21 @@
                     />
                   </div>
                 </v-card-text>
-                <v-card-text v-show="!!privateKey" class="text-xs-center mt-4 subheading">
+                <v-card-text
+                  v-show="!!privateKey"
+                  class="text-xs-center mt-4 subheading"
+                >
                   <p class="title">Please sign the transaction</p>
                   <v-icon class="mr-2 display-2">mdi-lock-open</v-icon>
-                  <p class="grey--text text--darken-1">The wallet is unlocked</p>
+                  <p class="grey--text text--darken-1">
+                    The wallet is unlocked
+                  </p>
                 </v-card-text>
               </template>
             </template>
           </v-layout>
         </v-layout>
-        <div style="position:absolute;left:0;bottom: 44px; width: 100%">
+        <div style="position: absolute; left: 0; bottom: 44px; width: 100%">
           <v-progress-linear
             v-show="signing"
             class="ma-0"
@@ -156,14 +188,16 @@
                 :flat="!(step === 2 || groups.length === 1)"
                 slot="activator"
               >
-                {{currentGroup.name}}
+                {{ currentGroup.name }}
                 <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-tile v-for="(item, index) in groups" :key="index">
                 <v-list-tile-content>
-                  <v-btn small flat @click="onGroupSelect(item)">{{ item.name }}</v-btn>
+                  <v-btn small flat @click="onGroupSelect(item)">{{
+                    item.name
+                  }}</v-btn>
                 </v-list-tile-content>
               </v-list-tile>
             </v-list>
@@ -175,13 +209,13 @@
                   full-size
                   :wallets="wallets"
                   v-model="seekIndex"
-                  :noseek="(step === 2) || !!arg.selectedWallet"
+                  :noseek="step === 2 || !!arg.selectedWallet"
                 />
               </v-card-text>
             </v-layout>
             <v-layout align-content-center column>
               <v-divider
-                style="margin: 20px auto; max-height: calc(100% - 40px);"
+                style="margin: 20px auto; max-height: calc(100% - 40px)"
                 inset
                 :vertical="true"
               ></v-divider>
@@ -191,21 +225,30 @@
                 <v-layout>
                   <span class="caption grey--text">Total value</span>
                   <v-spacer />
-                  <Amount v-if="token=='1'" prepend="-" sym=" MTRG ">{{value.toString(10)}}</Amount>
-                  <Amount v-if="token=='0'" prepend="-" sym=" MTR ">{{value.toString(10)}}</Amount>
+                  <Amount v-if="token == '1'" prepend="-" sym=" MTRG ">{{
+                    value.toString(10)
+                  }}</Amount>
+                  <Amount v-if="token == '0'" prepend="-" sym=" MTR ">{{
+                    value.toString(10)
+                  }}</Amount>
                 </v-layout>
                 <v-layout>
                   <span class="caption grey--text">Estimated fee</span>
                   <v-spacer />
-                  <Tooltip bottom :disabled="!(estimation.gas>0)">
-                    <Amount prepend="-" sym=" MTR " slot="activator">{{fee.toString(10)}}</Amount>
-                    <span>Estimated gas {{estimation.gas}}</span>
+                  <Tooltip bottom :disabled="!(estimation.gas > 0)">
+                    <Amount prepend="-" sym=" MTR " slot="activator">{{
+                      fee.toString(10)
+                    }}</Amount>
+                    <span>Estimated gas {{ estimation.gas }}</span>
                   </Tooltip>
                 </v-layout>
                 <v-layout>
                   <span class="caption grey--text">Priority</span>
                   <v-spacer />
-                  <Priority v-model="gasPriceCoef" :readonly="signing || step === 2" />
+                  <Priority
+                    v-model="gasPriceCoef"
+                    :readonly="signing || step === 2"
+                  />
                 </v-layout>
               </v-card-text>
             </v-layout>
@@ -213,8 +256,14 @@
         </div>
         <div class="signing-content-bottom"></div>
       </v-layout>
-      <v-card-actions style="flex: 0 0 auto;">
-        <v-btn :disabled="signing && (isLocal || connected)" small flat @click="decline">Decline</v-btn>
+      <v-card-actions style="flex: 0 0 auto">
+        <v-btn
+          :disabled="signing && (isLocal || connected)"
+          small
+          flat
+          @click="decline"
+          >Decline</v-btn
+        >
         <v-spacer />
         <v-btn
           dark
@@ -224,7 +273,8 @@
           v-show="step === 1"
           @click="goNext"
           :disabled="delegation.calling"
-        >Next</v-btn>
+          >Next</v-btn
+        >
         <v-btn
           v-show="step === 2"
           small
@@ -233,7 +283,8 @@
           :disabled="(signing || delegation.calling) && (isLocal || connected)"
           class="secondary"
           @click="back"
-        >Back</v-btn>
+          >Back</v-btn
+        >
         <v-btn
           v-show="step === 2 && isLocal"
           dark
@@ -242,7 +293,8 @@
           :disabled="!readyToSign || delegation.calling"
           class="green"
           @click="sign"
-        >Sign</v-btn>
+          >Sign</v-btn
+        >
       </v-card-actions>
     </v-card>
   </DialogEx>
@@ -295,7 +347,7 @@ export default class TxSigningDialog extends Mixins(
     revertReason: "",
     vmError: "",
     baseGasPrice: new BigNumber(0),
-    error: ""
+    error: "",
   };
   ledgerError: any = null;
   password = "";
@@ -309,7 +361,7 @@ export default class TxSigningDialog extends Mixins(
   delegation = {
     calling: false,
     signature: "",
-    error: null as Error | null
+    error: null as Error | null,
   };
   connected = false;
   builtTx = null as ReturnType<typeof buildTx> | null;
@@ -319,7 +371,7 @@ export default class TxSigningDialog extends Mixins(
     key: string;
   } = {
     name: "",
-    key: ""
+    key: "",
   };
   get suggestedGas() {
     return this.arg.suggestedGas;
@@ -328,7 +380,7 @@ export default class TxSigningDialog extends Mixins(
     return this.arg.txComment || describeClauses(this.arg.message);
   }
   get wallets(): entities.Wallet[] | { name: string; address: string }[] {
-    const wallets = this.arg.wallets.find(item => {
+    const wallets = this.arg.wallets.find((item) => {
       return item.key === this.currentGroup!.key;
     });
     if (wallets) {
@@ -341,10 +393,10 @@ export default class TxSigningDialog extends Mixins(
     return this.currentGroup.key === "local";
   }
   get groups() {
-    return this.arg.wallets.map(item => {
+    return this.arg.wallets.map((item) => {
       return {
         name: item.sectionName,
-        key: item.key
+        key: item.key,
       };
     });
   }
@@ -367,12 +419,10 @@ export default class TxSigningDialog extends Mixins(
     return this.arg.message;
   }
   get fee() {
+    console.log("Estimation: ", this.estimation);
     if (this.estimation.gas > 0) {
       const bgp = this.estimation.baseGasPrice;
-      const gp = bgp
-        .times(this.gasPriceCoef)
-        .idiv(255)
-        .plus(bgp);
+      const gp = bgp.times(this.gasPriceCoef).idiv(255).plus(bgp);
       return gp.times(this.estimation.gas);
     }
     return new BigNumber(NaN);
@@ -425,7 +475,7 @@ export default class TxSigningDialog extends Mixins(
 
   @Watch("currentGroup")
   setWalletThings() {
-    const i = this.wallets.findIndex(w => {
+    const i = this.wallets.findIndex((w) => {
       return w.address === (this.arg.selectedWallet || this.lastSigner);
     });
     this.reestimateGas();
@@ -445,6 +495,7 @@ export default class TxSigningDialog extends Mixins(
     } else {
       this.debouncedEstimateGas();
     }
+    console.log("REEST: ", this.estimation);
   }
 
   onGroupSelect(item: { name: string; key: string }) {
@@ -463,6 +514,7 @@ export default class TxSigningDialog extends Mixins(
         this.estimateGasCache.set(addr, result);
       }
 
+console.log("EST: ", result);
       if (seq === this.estimateGasSeq) {
         this.estimation.gas = result.gas;
         this.estimation.baseGasPrice = result.baseGasPrice;
@@ -484,8 +536,8 @@ export default class TxSigningDialog extends Mixins(
 
   getDefaultGroup() {
     if (this.arg.wallets.length > 1) {
-      const group = this.arg.wallets.find(item => {
-        const temp = item.list.find(wallet => {
+      const group = this.arg.wallets.find((item) => {
+        const temp = item.list.find((wallet) => {
           return wallet.address === this.lastSigner;
         });
         return !!temp;
@@ -493,13 +545,13 @@ export default class TxSigningDialog extends Mixins(
       if (group) {
         return {
           key: group.key!,
-          name: group.sectionName
+          name: group.sectionName,
         };
       }
     }
     return {
       key: this.arg.wallets[0].key!,
-      name: this.arg.wallets[0].sectionName
+      name: this.arg.wallets[0].sectionName,
     };
   }
 
@@ -553,17 +605,12 @@ export default class TxSigningDialog extends Mixins(
         this.delegation.calling = true;
         const r = await Promise.race([
           this.arg.delegationHandler({
-            raw:
-              "0x" +
-              builtTx
-                .unsignedTx(true)
-                .encode()
-                .toString("hex"),
-            origin: this.wallet!.address
+            raw: "0x" + builtTx.unsignedTx(true).encode().toString("hex"),
+            origin: this.wallet!.address,
           }),
           new Promise<{ signature: string }>((_, reject) => {
             setTimeout(() => reject(new Error("timeout")), 10000);
-          })
+          }),
         ]);
         this.delegation.signature = r.signature;
       } catch (err) {
@@ -614,7 +661,7 @@ export default class TxSigningDialog extends Mixins(
       );
       const result = {
         txid: signedTx.id!,
-        rawTx: "0x" + signedTx.encode().toString("hex")
+        rawTx: "0x" + signedTx.encode().toString("hex"),
       };
 
       this.opened = false;
@@ -622,7 +669,7 @@ export default class TxSigningDialog extends Mixins(
         ...result,
         signer: this.address!,
         estimatedFee: this.fee.toString(10),
-        timestamp
+        timestamp,
       });
     } catch (err) {
       if (err.message === "message authentication code mismatch") {

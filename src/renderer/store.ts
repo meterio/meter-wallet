@@ -63,8 +63,9 @@ class Store extends Vuex.Store<Store.Model> {
           // console.log('update candidate in store');
           state.candidates = payload.map(function(c: Flex.Meter.Candidate) {
             let t: entities.Candidate = {
-              address: c.addr,
+              address: c.address,
               name: c.name,
+              description: c.description,
               ipAddr: c.ipAddr,
               buckets: c.buckets,
               totalVotes: parseInt(c.totalVotes.toString()),
@@ -90,6 +91,7 @@ class Store extends Vuex.Store<Store.Model> {
               option: b.option,
               bonus: 0,
               nonce: b.nonce,
+              autobid: b.autobid,
 
               owned: false,
               candidateName: "",

@@ -1,10 +1,17 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">Delegate locked bucket to candidate</v-card-title>
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="subheading"
+          >Delegate locked bucket to candidate</v-card-title
+        >
         <v-card-text>
           <v-form ref="form">
             <v-text-field
@@ -39,11 +46,12 @@
               item-value="value"
               :autofocus="true"
             ></v-select>
+            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
             <!-- <v-select :items="items" label="Token" v-model="token"></v-select> -->
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -66,7 +74,7 @@ export default class StakingDelegate extends Vue {
   candidates!: entities.Candidate[];
 
   get candidatesList() {
-    return this.candidates.map(c => {
+    return this.candidates.map((c) => {
       return {
         text:
           c.name +
@@ -75,7 +83,7 @@ export default class StakingDelegate extends Vue {
           "..." +
           c.address.substr(c.address.length - 6) +
           ")",
-        value: c.address
+        value: c.address,
       };
     });
   }
@@ -84,6 +92,7 @@ export default class StakingDelegate extends Vue {
   from = 0;
   errMsg = "";
   token = "MTRG";
+  autobid = false;
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
@@ -95,7 +104,7 @@ export default class StakingDelegate extends Vue {
     { text: "Lock for one week", value: 1 },
     { text: "Lock for two weeks", value: 2 },
     { text: "Lock for three weekds", value: 3 },
-    { text: "Lock for four weeks", value: 4 }
+    { text: "Lock for four weeks", value: 4 },
   ];
   candAddr = "";
 
@@ -109,11 +118,11 @@ export default class StakingDelegate extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
   readonly stakingIDRules = [(v: string) => !!v || "Input staking ID here"];
   readonly amountRules = [
-    (v: number) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: number) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
   created() {
@@ -125,7 +134,7 @@ export default class StakingDelegate extends Vue {
     if (holderAddr) {
       holderAddr = holderAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === holderAddr
+        (wallet) => wallet.address === holderAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -149,7 +158,8 @@ export default class StakingDelegate extends Vue {
         holderAddr,
         this.candAddr,
         this.stakingID,
-        value
+        value,
+        this.autobid ? 100 : 0
       );
 
       await flex.vendor
@@ -160,8 +170,8 @@ export default class StakingDelegate extends Vue {
             to: holderAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {
