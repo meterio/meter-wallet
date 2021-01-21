@@ -159,6 +159,8 @@ export default class StakingDelegate extends Vue {
         this.candAddr,
         this.stakingID,
         value,
+        undefined,
+        undefined,
         this.autobid ? 100 : 0
       );
 

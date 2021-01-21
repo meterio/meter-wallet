@@ -228,6 +228,8 @@ export default class StakingCandidate extends Vue {
         parseInt(this.port),
         value,
         Math.floor(this.commission * 100),
+        undefined,
+        undefined,
         this.autobid ? 100 : 0
       );
       await flex.vendor

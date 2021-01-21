@@ -121,6 +121,8 @@ export default class StakingBound extends Vue {
         holderAddr,
         this.candAddr,
         value,
+        undefined,
+        undefined,
         this.autobid ? 100 : 0
       );
       await flex.vendor
