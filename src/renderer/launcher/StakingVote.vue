@@ -1,10 +1,17 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">Bound locked bucket to candidate</v-card-title>
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="subheading"
+          >Bound locked bucket to candidate</v-card-title
+        >
         <v-card-text>
           <v-form ref="form">
             <!--<v-text-field
@@ -14,7 +21,12 @@
               v-model="candAddr"
             />-->
 
-            <v-select :items="options" label="Option" v-model="optionVal"></v-select>
+            <v-select
+              :items="options"
+              label="Option"
+              v-model="optionVal"
+              disabled
+            ></v-select>
             <v-select :items="items" label="Source" v-model="source"></v-select>
             <v-select
               :items="candidatesList"
@@ -25,7 +37,7 @@
               item-value="value"
               :autofocus="true"
             ></v-select>
-            <div v-if="source=='bound'">
+            <div v-if="source == 'bound'">
               <v-text-field
                 validate-on-blur
                 type="number"
@@ -35,13 +47,17 @@
                 v-model="amount"
               />
             </div>
-            <div v-if="source=='delegate'">
-              <v-select :items="myBuckets" label="Bucket" v-model="bucketID"></v-select>
+            <div v-if="source == 'delegate'">
+              <v-select
+                :items="myBuckets"
+                label="Bucket"
+                v-model="bucketID"
+              ></v-select>
             </div>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -67,7 +83,7 @@ export default class StakingBound extends Vue {
   candidates!: entities.Candidate[];
 
   get candidatesList() {
-    return this.candidates.map(c => {
+    return this.candidates.map((c) => {
       return {
         text:
           c.name +
@@ -76,7 +92,7 @@ export default class StakingBound extends Vue {
           "..." +
           c.address.substr(c.address.length - 6) +
           ")",
-        value: c.address
+        value: c.address,
       };
     });
   }
@@ -88,24 +104,24 @@ export default class StakingBound extends Vue {
   source = "bound";
   items = [
     { text: "My balance", value: "bound" },
-    { text: "Existing bucket", value: "delegate" }
+    { text: "Existing bucket", value: "delegate" },
   ];
   optionVal = 1;
   options = [
     { text: "Lock for one week", value: 1 },
     { text: "Lock for two weeks", value: 2 },
     { text: "Lock for three weekds", value: 3 },
-    { text: "Lock for four weeks", value: 4 }
+    { text: "Lock for four weeks", value: 4 },
   ];
   candAddr = "";
   bucketID = "";
 
   get myBuckets() {
     return this.buckets
-      .filter(b => {
+      .filter((b) => {
         return b.owner == this.wallets[this.from].address;
       })
-      .map(b => {
+      .map((b) => {
         return {
           text:
             b.id.substr(0, 8) +
@@ -114,7 +130,7 @@ export default class StakingBound extends Vue {
             " (" +
             b.votes / 1e18 +
             " MTRG)",
-          value: b.id
+          value: b.id,
         };
       });
   }
@@ -129,10 +145,10 @@ export default class StakingBound extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
   created() {
@@ -142,7 +158,7 @@ export default class StakingBound extends Vue {
     if (holderAddr) {
       holderAddr = holderAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === holderAddr
+        (wallet) => wallet.address === holderAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -199,8 +215,8 @@ export default class StakingBound extends Vue {
             to: holderAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

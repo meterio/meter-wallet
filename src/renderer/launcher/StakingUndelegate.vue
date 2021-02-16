@@ -1,9 +1,14 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading">Undelegate buckets</v-card-title>
         <v-card-text>
           <v-form ref="form">
@@ -26,7 +31,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -59,12 +64,6 @@ export default class StakingUndelegate extends Vue {
   ];
   */
   optionVal = 1;
-  options = [
-    { text: "Lock for one week", value: 1 },
-    { text: "Lock for two weeks", value: 2 },
-    { text: "Lock for three weekds", value: 3 },
-    { text: "Lock for four weeks", value: 4 }
-  ];
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -76,23 +75,27 @@ export default class StakingUndelegate extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
   readonly stakingIDRules = [(v: string) => !!v || "Input staking ID here"];
   readonly amountRules = [
-    (v: number) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: number) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
   readonly nameRules = [(v: string) => !!v || "Input name here"];
   readonly ipRules = [(v: string) => !!v || "Input ip here"];
   readonly portRules = [
     (v: string) =>
-      parseInt(v) > 0 || parseInt(v) <= 65535 || "Invalid port number (1-65535)"
+      parseInt(v) > 0 ||
+      parseInt(v) <= 65535 ||
+      "Invalid port number (1-65535)",
   ];
 
   created() {
     const id = this.$route.params.id;
-    const amount = parseInt(this.$route.params.amount) / 1e18;
+    const amount = parseInt(
+      new BigNumber(this.$route.params.amount).dividedBy(1e18).toFixed()
+    );
     this.stakingID = id;
     this.amount = amount;
 
@@ -100,7 +103,7 @@ export default class StakingUndelegate extends Vue {
     if (holderAddr) {
       holderAddr = holderAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === holderAddr
+        (wallet) => wallet.address === holderAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -132,8 +135,8 @@ export default class StakingUndelegate extends Vue {
             to: holderAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

@@ -25,6 +25,7 @@
               :items="options"
               label="Option"
               v-model="optionVal"
+              disabled
             ></v-select>
             <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
             <v-select :items="items" label="Token" v-model="token"></v-select>

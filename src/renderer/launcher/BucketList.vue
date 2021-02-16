@@ -1,6 +1,6 @@
 <template>
   <v-layout column align-center>
-    <v-layout column style="max-width:1000px;width:100%">
+    <v-layout column style="max-width: 1000px; width: 100%">
       <div class="pa-3"></div>
     </v-layout>
     <h3 class="pa-3">Staking Buckets</h3>
@@ -15,14 +15,19 @@
           item-value="text"
         ></v-select>
 
-        <router-link :to="{name:'create-vote'}">
+        <router-link :to="{ name: 'create-vote' }">
           <v-btn depressed small color="primary">Create vote</v-btn>
         </router-link>
         <v-btn flat icon small color="green" v-on:click.native="refresh">
           <v-icon>cached</v-icon>
         </v-btn>
 
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line></v-text-field>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+        ></v-text-field>
       </v-card-title>
       <div v-if="filteredBuckets.length > 0">
         <v-data-table
@@ -34,29 +39,41 @@
           <template slot="items" slot-scope="props">
             <td>
               <router-link
-                :to="{name:'bucket', params:{id:props.item.id}}"
-              >{{props.item.id|shortID}}</router-link>
+                :to="{ name: 'bucket', params: { id: props.item.id } }"
+                >{{ props.item.id | shortID }}</router-link
+              >
             </td>
             <td>{{ props.item.owner | shortAddr }}</td>
             <td>{{ props.item.candidate | shortAddr }}</td>
-            <td>{{ props.item.candidateName}}</td>
+            <td>{{ props.item.candidateName }}</td>
             <td>
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
-            <td>{{ props.item.state}}</td>
-            <td>{{ props.item.matureFromNow}}</td>
+            <td>{{ props.item.state }}</td>
+            <td>{{ props.item.matureFromNow }}</td>
             <td>
-              <div v-if="props.item.candidate=='0x0000000000000000000000000000000000000000'">
+              <div
+                v-if="
+                  props.item.candidate ==
+                  '0x0000000000000000000000000000000000000000'
+                "
+              >
                 <router-link
                   tag="span"
-                  :to="{name:'delegate', params:{id: props.item.id, amount: props.item.votes}}"
+                  :to="{
+                    name: 'delegate',
+                    params: { id: props.item.id, amount: props.item.votes },
+                  }"
                 >
                   <v-btn flat small outline color="teal">delegate</v-btn>
                 </router-link>
                 <router-link
                   v-if="!props.item.unbounded"
                   tag="span"
-                  :to="{name:'unbound', params:{id: props.item.id, amount: props.item.votes}}"
+                  :to="{
+                    name: 'unbound',
+                    params: { id: props.item.id, amount: props.item.votes },
+                  }"
                 >
                   <v-btn flat small outline color="grey">unbound</v-btn>
                 </router-link>
@@ -64,7 +81,10 @@
               <div v-else>
                 <router-link
                   tag="span"
-                  :to="{name:'undelegate', params:{id: props.item.id, amount: props.item.votes}}"
+                  :to="{
+                    name: 'undelegate',
+                    params: { id: props.item.id, amount: props.item.votes },
+                  }"
                 >
                   <v-btn flat small outline color="indigo">undelegate</v-btn>
                 </router-link>
@@ -83,6 +103,7 @@ import { State } from "vuex-class";
 import { mapMutations } from "vuex";
 
 import env from "@/env";
+import BigNumber from "bignumber.js";
 const moment = require("moment");
 
 @Component
@@ -100,8 +121,8 @@ export default class BucketList extends Vue {
 
   get ownedBuckets() {
     return this.buckets
-      .filter(b => b.owner in this.walletMap)
-      .map(b => {
+      .filter((b) => b.owner in this.walletMap)
+      .map((b) => {
         b.owned = true;
         b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
         b.matureFromNow = b.unbounded ? moment.utc(b.matureTime).fromNow() : "";
@@ -111,8 +132,8 @@ export default class BucketList extends Vue {
   }
   get votedBuckets() {
     return this.buckets
-      .filter(b => b.candidate in this.walletMap)
-      .map(b => {
+      .filter((b) => b.candidate in this.walletMap)
+      .map((b) => {
         b.owned = false;
         b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
         b.matureFromNow = b.unbounded ? moment.utc(b.matureTime).fromNow() : "";
@@ -151,8 +172,8 @@ export default class BucketList extends Vue {
       filterSelection: "buckets owned by me",
       bucketFilters: [
         { text: "buckets owned by me" },
-        { text: "buckets voted to me" }
-      ]
+        { text: "buckets voted to me" },
+      ],
     };
   }
 
@@ -167,7 +188,7 @@ export default class BucketList extends Vue {
     { text: "Total Votes", value: "totalVotes", sortable: true },
     { text: "State", value: "state", sortable: true },
     { text: "Mature", value: "matureFromNow", sortable: true },
-    { text: "Action", value: "action", sortable: true }
+    { text: "Action", value: "action", sortable: true },
   ];
 
   async refresh() {

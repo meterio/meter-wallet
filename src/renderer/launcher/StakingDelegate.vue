@@ -100,12 +100,6 @@ export default class StakingDelegate extends Vue {
   ];
   */
   optionVal = 1;
-  options = [
-    { text: "Lock for one week", value: 1 },
-    { text: "Lock for two weeks", value: 2 },
-    { text: "Lock for three weekds", value: 3 },
-    { text: "Lock for four weeks", value: 4 },
-  ];
   candAddr = "";
 
   readonly addressRules = [
@@ -127,7 +121,9 @@ export default class StakingDelegate extends Vue {
 
   created() {
     const id = this.$route.params.id;
-    const amount = parseInt(this.$route.params.amount) / 1e18;
+    const amount = parseInt(
+      new BigNumber(this.$route.params.amount).dividedBy(1e18).toFixed()
+    );
     this.stakingID = id;
     this.amount = amount;
     let holderAddr = this.$route.query["from"];
