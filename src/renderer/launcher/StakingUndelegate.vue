@@ -51,18 +51,11 @@ export default class StakingUndelegate extends Vue {
   wallets!: entities.Wallet[];
   amount = 0;
   stakingID = "";
-  name = "";
   ip = "";
-  port = 8669;
   from = 0;
   errMsg = "";
   token = "MTRG";
-  /*
-  items = [
-    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" }
-  ];
-  */
+
   optionVal = 1;
 
   readonly addressRules = [
@@ -80,15 +73,6 @@ export default class StakingUndelegate extends Vue {
   readonly stakingIDRules = [(v: string) => !!v || "Input staking ID here"];
   readonly amountRules = [
     (v: number) => new BigNumber(0).lte(v) || "Invalid amount",
-  ];
-
-  readonly nameRules = [(v: string) => !!v || "Input name here"];
-  readonly ipRules = [(v: string) => !!v || "Input ip here"];
-  readonly portRules = [
-    (v: string) =>
-      parseInt(v) > 0 ||
-      parseInt(v) <= 65535 ||
-      "Invalid port number (1-65535)",
   ];
 
   created() {
