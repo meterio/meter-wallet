@@ -105,7 +105,7 @@ export default class StakingCandidate extends Vue {
   errMsg = "";
   token = "MTRG";
   commission = 10.0;
-  autobid = false;
+  autobid = true;
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },

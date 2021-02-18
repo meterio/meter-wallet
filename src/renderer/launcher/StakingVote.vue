@@ -27,6 +27,7 @@
               v-model="optionVal"
               disabled
             ></v-select>
+            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
             <v-select :items="items" label="Source" v-model="source"></v-select>
             <v-select
               :items="candidatesList"
@@ -107,6 +108,7 @@ export default class StakingBound extends Vue {
     { text: "Existing bucket", value: "delegate" },
   ];
   optionVal = 1;
+  autobid = true;
   options = [
     { text: "Lock for one week", value: 1 },
     { text: "Lock for two weeks", value: 2 },
@@ -184,7 +186,10 @@ export default class StakingBound extends Vue {
           this.optionVal,
           holderAddr,
           this.candAddr,
-          value
+          value,
+          undefined,
+          undefined,
+          this.autobid ? 100 : 0
         );
       } else if (this.source === "delegate") {
         let bucket;
@@ -204,7 +209,10 @@ export default class StakingBound extends Vue {
           holderAddr,
           this.candAddr,
           this.bucketID,
-          bucket.votes
+          bucket.votes,
+          undefined,
+          undefined,
+          this.autobid ? 100 : 0
         );
       }
       await flex.vendor

@@ -13,13 +13,8 @@
             <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
           </div>
         </v-layout>
-        <v-layout class="pt-2 pa-0" justify-space-between v-if="isPast">
-          <div>Start Height: {{ presentAuction.startHeight }}</div>
-          <div>Closing Height: {{ presentAuction.endHeight }}</div>
-          <div>Current Height: {{ chainHead.number }}</div>
-        </v-layout>
 
-        <v-layout class="pt-2 pa-0" justify-space-between v-if="!isPast">
+        <v-layout class="pt-2 pa-0" justify-space-between>
           <div>
             Height Range: {{ presentAuction.startHeight }} -
             {{ presentAuction.endHeight }}
@@ -67,11 +62,11 @@
         :rows-per-page-items="rowsPerPage"
       >
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.addr }}</td>
+          <td>{{ props.item.address }}</td>
           <td>
             <Amount sym="MTR">{{ props.item.amount }}</Amount>
           </td>
-          <td>{{ props.item.count }}</td>
+          <td>{{ props.item.type }}</td>
           <td>{{ props.item.createdAt }}</td>
         </template>
       </v-data-table>
@@ -81,8 +76,6 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
-import Amount from "@/src/renderer/components/Amount.vue";
-import env from "@/env";
 
 const moment = require("moment");
 
@@ -108,19 +101,17 @@ export default class PresentAuction extends Vue {
   get auctionTxs() {
     return this.presentAuction.auctionTxs.map((tx) => {
       tx.createdAt = moment.unix(tx.timestamp).format("MM/DD hh:mm");
+      console.log(tx);
+
       return tx;
     });
   }
 
-  get isPast() {
-    return this.chainHead.number > this.presentAuction.endHeight;
-  }
-
   headers = [
-    { text: "Address", value: "addr", sortable: true },
+    { text: "Address", value: "address", sortable: true },
     { text: "Amount", value: "amount", sortable: true },
-    { text: "Tx count", value: "count", sortable: true },
-    { text: "Created At", value: "createTime", sortable: true },
+    { text: "Type", value: "type", sortable: true },
+    { text: "Created At", value: "createdAt", sortable: true },
   ];
 
   async created() {

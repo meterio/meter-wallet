@@ -10,9 +10,8 @@
         :rows-per-page-items="rowsPerPage"
       >
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.startHeight }}</td>
-          <td>{{ props.item.endHeight }}</td>
           <td>{{ props.item.auctionID | shortID }}</td>
+          <td>{{ props.item.startHeight }} - {{ props.item.endHeight }}</td>
           <td>
             <Amount sym="MTR">{{ props.item.receivedMTR }}</Amount>
           </td>
@@ -48,9 +47,8 @@ export default class PastAuctions extends Vue {
   rowsPerPage = [10, 20, { text: "All", value: -1 }];
 
   headers = [
-    { text: "Start", value: "startHeight", sortable: true },
-    { text: "End", value: "endHeight", sortable: true },
     { text: "ID", value: "auctionID", sortable: true },
+    { text: "Height Range", value: "heightRange", sortable: true },
     { text: "Received", value: "receivedMTR", sortable: true },
     { text: "Settlement Price", value: "actualPrice", sortable: true },
     { text: "Sold", value: "releasedMTRG", sortable: true },
