@@ -7,11 +7,15 @@
         :headers="headers"
         :items="auctions"
         :search="search"
+        :sort-by="['endHeight']"
+        :sort-desc="[true]"
+        multi-sort
         :rows-per-page-items="rowsPerPage"
       >
         <template slot="items" slot-scope="props">
           <td>{{ props.item.auctionID | shortID }}</td>
-          <td>{{ props.item.startHeight }} - {{ props.item.endHeight }}</td>
+          <td>{{ props.item.startHeight }}</td>
+          <td>{{ props.item.endHeight }}</td>
           <td>
             <Amount sym="MTR">{{ props.item.receivedMTR }}</Amount>
           </td>
@@ -34,9 +38,6 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { State } from "vuex-class";
-import Amount from "@/src/renderer/components/Amount.vue";
-import env from "@/env";
 const moment = require("moment");
 
 @Component
@@ -47,8 +48,9 @@ export default class PastAuctions extends Vue {
   rowsPerPage = [10, 20, { text: "All", value: -1 }];
 
   headers = [
-    { text: "ID", value: "auctionID", sortable: true },
-    { text: "Height Range", value: "heightRange", sortable: true },
+    { text: "ID", value: "auctionID", sortable: false },
+    { text: "Start Height", value: "startHeight", sortable: true },
+    { text: "End Height", value: "endHeight", sortable: true },
     { text: "Received", value: "receivedMTR", sortable: true },
     { text: "Settlement Price", value: "actualPrice", sortable: true },
     { text: "Sold", value: "releasedMTRG", sortable: true },
