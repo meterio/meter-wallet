@@ -95,7 +95,7 @@ export default class StakingCandidateUpdate extends Vue {
   errMsg = "";
   token = "MTRG";
   commission = 10.0;
-  autobid = false;
+  autobid = true;
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",

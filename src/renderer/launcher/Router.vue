@@ -1,51 +1,64 @@
 <template>
-  <div style="position:relative;width:100%;height:100%;">
+  <div style="position: relative; width: 100%; height: 100%">
     <transition
       :enter-active-class="`animated faster ${enterClass}`"
       :leave-active-class="`animated faster ${leaveClass}`"
     >
-      <router-view style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:auto" />
+      <router-view
+        style="
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          overflow: auto;
+        "
+      />
     </transition>
-    <v-layout style="position:absolute;left:0;top:0">
+    <v-layout style="position: absolute; left: 0; top: 0">
       <router-link tag="span" to="/bridge/transfer">
         <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right:3px">mdi-bridge</v-icon>Bridge
+          <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
         </v-btn>
       </router-link>
 
       <router-link v-if="!isMainnet" tag="span" to="/candidates">
         <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right:3px">mdi-account-multiple</v-icon>Candidates
+          <v-icon small mr-5 style="margin-right: 3px"
+            >mdi-account-multiple</v-icon
+          >Candidates
         </v-btn>
       </router-link>
       <router-link v-if="!isMainnet" tag="span" to="/buckets">
         <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right:3px">mdi-lock-outline</v-icon>Buckets
+          <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
+          >Staking
         </v-btn>
       </router-link>
       <router-link v-if="!isMainnet" tag="span" to="/auction/present">
         <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right:3px">mdi-timelapse</v-icon>Auction
+          <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
+          >Auction
         </v-btn>
       </router-link>
     </v-layout>
 
-    <v-layout style="position:absolute;right:0;top:0;">
+    <v-layout style="position: absolute; right: 0; top: 0">
       <router-link tag="span" to="/wallets">
         <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right:3px">mdi-cards</v-icon>Wallets
+          <v-icon small mr-5 style="margin-right: 3px">mdi-cards</v-icon>Wallets
         </v-btn>
       </router-link>
 
       <router-link tag="span" to="/settings">
         <v-btn flat class="ml-0">
-          <v-icon small style="margin-right:3px">mdi-settings</v-icon>Settings
+          <v-icon small style="margin-right: 3px">mdi-settings</v-icon>Settings
         </v-btn>
       </router-link>
 
       <router-link tag="span" v-on:click.native="doSomethingCool" to>
         <v-btn flat class="ml-0">
-          <v-icon small style="margin-right:3px">mdi-apps</v-icon>Explorer
+          <v-icon small style="margin-right: 3px">mdi-apps</v-icon>Explorer
         </v-btn>
       </router-link>
     </v-layout>

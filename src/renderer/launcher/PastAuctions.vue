@@ -7,9 +7,7 @@
         :headers="headers"
         :items="auctions"
         :search="search"
-        :sort-by="['endHeight']"
-        :sort-desc="[true]"
-        multi-sort
+        :disable-initial-sort="true"
         :rows-per-page-items="rowsPerPage"
       >
         <template slot="items" slot-scope="props">

@@ -17,7 +17,7 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "pack:preload": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.preload.config.js",
-    "upload": "aws s3 cp ./build/  s3://wallet-release/download/ --acl public-read --recursive --exclude '*' --include \"*$npm_package_version*\" --include \"latest*\" ",
+    "upload": "aws s3 cp ./build/  s3://m-wallet/download/ --acl public-read --recursive --exclude '*' --include \"*$npm_package_version*\" --include \"latest*\" ",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
     "postinstall": "electron-rebuild"
@@ -31,7 +31,7 @@
     },
     "publish": {
       "provider": "s3",
-      "bucket": "wallet-release",
+      "bucket": "m-wallet",
       "path": "/download",
       "region": "ap-southeast-1"
     },
