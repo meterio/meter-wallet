@@ -34,7 +34,7 @@
             <v-btn depressed small outline color="primary">Past Auctions</v-btn>
           </router-link>
           <v-btn
-            flat
+            text
             icon
             small
             color="green"

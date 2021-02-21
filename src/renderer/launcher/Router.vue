@@ -16,51 +16,37 @@
       />
     </transition>
     <v-layout style="position: absolute; left: 0; top: 0">
-      <router-link tag="span" to="/bridge/transfer">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
-        </v-btn>
-      </router-link>
+      <v-btn text class="ml-0" to="/bridge/transfer">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
+      </v-btn>
 
-      <router-link v-if="!isMainnet" tag="span" to="/candidates">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px"
-            >mdi-account-multiple</v-icon
-          >Candidates
-        </v-btn>
-      </router-link>
-      <router-link v-if="!isMainnet" tag="span" to="/buckets">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
-          >Staking
-        </v-btn>
-      </router-link>
-      <router-link v-if="!isMainnet" tag="span" to="/auction/present">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
-          >Auction
-        </v-btn>
-      </router-link>
+      <v-btn text class="ml-0" v-if="!isMainnet" to="/candidates">
+        <v-icon small mr-5 style="margin-right: 3px"
+          >mdi-account-multiple</v-icon
+        >Candidates
+      </v-btn>
+      <v-btn text class="ml-0" v-if="!isMainnet" to="/buckets">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
+        >Staking
+      </v-btn>
+      <v-btn text class="ml-0" v-if="!isMainnet" to="/auction/present">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
+        >Auction
+      </v-btn>
     </v-layout>
 
     <v-layout style="position: absolute; right: 0; top: 0">
-      <router-link tag="span" to="/wallets">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-cards</v-icon>Wallets
-        </v-btn>
-      </router-link>
+      <v-btn text class="ml-0" to="/wallets">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-cards</v-icon>Wallets
+      </v-btn>
 
-      <router-link tag="span" to="/settings">
-        <v-btn flat class="ml-0">
-          <v-icon small style="margin-right: 3px">mdi-settings</v-icon>Settings
-        </v-btn>
-      </router-link>
+      <v-btn text class="ml-0" to="/settings">
+        <v-icon small style="margin-right: 3px">mdi-settings</v-icon>Settings
+      </v-btn>
 
-      <router-link tag="span" v-on:click.native="doSomethingCool" to>
-        <v-btn flat class="ml-0">
-          <v-icon small style="margin-right: 3px">mdi-apps</v-icon>Explorer
-        </v-btn>
-      </router-link>
+      <v-btn text class="ml-0" v-on:click.native="doSomethingCool" to>
+        <v-icon small style="margin-right: 3px">mdi-apps</v-icon>Explorer
+      </v-btn>
     </v-layout>
   </div>
 </template>
@@ -91,6 +77,7 @@ import PastAuctions from "./PastAuctions.vue";
 import PresentAuction from "./PresentAuction.vue";
 import LockedTransfer from "./LockedTransfer.vue";
 import { nameOfNetwork } from "../../node-configs";
+import vuetify from "../../plugins/vuetify";
 
 @Component
 export default class Router extends Vue {
@@ -101,6 +88,7 @@ export default class Router extends Vue {
         mode: "abstract",
         routes: routes,
       }),
+      vuetify,
     });
   }
   items = ["1", "2", "3"];

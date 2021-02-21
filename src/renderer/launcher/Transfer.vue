@@ -1,45 +1,60 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4">Transfer from</div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading">To</v-card-title>
         <v-card-text>
           <v-form ref="form">
             <v-select :items="items" label="Token" v-model="token"></v-select>
             <v-menu
               v-model="showHistory"
-              style="width:100%;"
+              style="width: 100%"
               class="unset-cursor"
               :open-on-click="false"
               offset-y
               :nudge-top="18"
             >
-              <v-text-field
-                ref="address"
-                slot="activator"
-                :rules="addressRules"
-                validate-on-blur
-                label="Recipient Address"
-                v-model="to"
-                append-icon="mdi-history"
-                @click:append="onClickHistoryIcon"
-              />
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  ref="address"
+                  v-on="on"
+                  :rules="addressRules"
+                  validate-on-blur
+                  label="Recipient Address"
+                  v-model="to"
+                  append-icon="mdi-history"
+                  @click:append="onClickHistoryIcon"
+                />
+              </template>
               <v-list two-line>
-                <template v-for="(item,i) in history">
-                  <v-divider v-if="i>0" :key="item.addr + '-divider'" />
-                  <v-list-tile :key="item.addr" @click="selectAddress(item.addr)">
+                <template v-for="(item, i) in history">
+                  <v-divider v-if="i > 0" :key="item.addr + '-divider'" />
+                  <v-list-tile
+                    :key="item.addr"
+                    @click="selectAddress(item.addr)"
+                  >
                     <v-list-tile-content>
-                      <v-list-tile-title>{{item.addr}}</v-list-tile-title>
+                      <v-list-tile-title>{{ item.addr }}</v-list-tile-title>
                       <v-list-tile-sub-title v-show="!!item.walletName">
                         <v-layout align-center>
                           <AddressLabel
                             icon
                             class="mr-2"
-                            style="width:30px;height:20px;border-radius:3px;"
-                          >{{item.addr}}</AddressLabel>
-                          {{item.walletName}}
+                            style="
+                              width: 30px;
+                              height: 20px;
+                              border-radius: 3px;
+                            "
+                            >{{ item.addr }}</AddressLabel
+                          >
+                          {{ item.walletName }}
                         </v-layout>
                       </v-list-tile-sub-title>
                     </v-list-tile-content>
@@ -59,9 +74,9 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
+          <v-btn class="primary" @click="send">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-layout>
@@ -84,7 +99,7 @@ export default class Transfer extends Vue {
   token = "MTRG";
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" }
+    { text: "Meter Token", value: "MTR" },
   ];
   showHistory = false;
   history: {
@@ -102,10 +117,10 @@ export default class Transfer extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
   created() {
@@ -114,7 +129,7 @@ export default class Transfer extends Vue {
     if (fromAddr) {
       fromAddr = fromAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === fromAddr
+        (wallet) => wallet.address === fromAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -145,8 +160,8 @@ export default class Transfer extends Vue {
             to: this.to,
             value,
             token: tokenValue,
-            data: "0x"
-          }
+            data: "0x",
+          },
         ]);
       this.$router.back();
     } catch (err) {
@@ -167,10 +182,10 @@ export default class Transfer extends Vue {
 
     const addrs: string[] = [];
     txs
-      .map(tx => (tx.data.receipt ? tx.data.receipt.outputs : []))
-      .forEach(outputs => {
-        outputs.forEach(output => {
-          output.transfers.forEach(tr => {
+      .map((tx) => (tx.data.receipt ? tx.data.receipt.outputs : []))
+      .forEach((outputs) => {
+        outputs.forEach((output) => {
+          output.transfers.forEach((tr) => {
             if (addrs.indexOf(tr.recipient) < 0) {
               addrs.push(tr.recipient);
             }
@@ -178,20 +193,22 @@ export default class Transfer extends Vue {
         });
       });
 
-    this.history = addrs.slice(0, 10).map<Transfer["history"][number]>(addr => {
-      const wallet = this.wallets.find(wallet => addr === wallet.address);
-      if (wallet) {
-        return {
-          addr: cry.toChecksumAddress(addr),
-          walletName: wallet.name!
-        };
-      } else {
-        return {
-          addr: cry.toChecksumAddress(addr),
-          walletName: null
-        };
-      }
-    });
+    this.history = addrs
+      .slice(0, 10)
+      .map<Transfer["history"][number]>((addr) => {
+        const wallet = this.wallets.find((wallet) => addr === wallet.address);
+        if (wallet) {
+          return {
+            addr: cry.toChecksumAddress(addr),
+            walletName: wallet.name!,
+          };
+        } else {
+          return {
+            addr: cry.toChecksumAddress(addr),
+            walletName: null,
+          };
+        }
+      });
     (this.$refs.address as Vue).$el.querySelector("input")!.focus();
     this.showHistory = true;
   }

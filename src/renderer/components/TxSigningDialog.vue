@@ -181,12 +181,12 @@
         </div>
         <div class="signing-content-top">
           <v-menu :disabled="step === 2 || groups.length === 1" offset-y>
-            <template>
+            <template v-slot:activator="{ on }">
               <v-btn
                 small
                 :disabled="step === 2 || groups.length === 1"
-                :flat="!(step === 2 || groups.length === 1)"
-                slot="activator"
+                :text="!(step === 2 || groups.length === 1)"
+                v-on="on"
               >
                 {{ currentGroup.name }}
                 <v-icon right>mdi-menu-down</v-icon>
@@ -195,7 +195,7 @@
             <v-list>
               <v-list-tile v-for="(item, index) in groups" :key="index">
                 <v-list-tile-content>
-                  <v-btn small flat @click="onGroupSelect(item)">{{
+                  <v-btn small text @click="onGroupSelect(item)">{{
                     item.name
                   }}</v-btn>
                 </v-list-tile-content>
@@ -236,9 +236,11 @@
                   <span class="caption grey--text">Estimated fee</span>
                   <v-spacer />
                   <Tooltip bottom :disabled="!(estimation.gas > 0)">
-                    <Amount prepend="-" sym=" MTR " slot="activator">{{
-                      fee.toString(10)
-                    }}</Amount>
+                    <template v-slot:activator="{ on }">
+                      <Amount prepend="-" sym=" MTR " v-on="on">{{
+                        fee.toString(10)
+                      }}</Amount>
+                    </template>
                     <span>Estimated gas {{ estimation.gas }}</span>
                   </Tooltip>
                 </v-layout>
@@ -260,7 +262,7 @@
         <v-btn
           :disabled="signing && (isLocal || connected)"
           small
-          flat
+          text
           @click="decline"
           >Decline</v-btn
         >
@@ -268,7 +270,7 @@
         <v-btn
           dark
           small
-          flat
+          text
           class="green"
           v-show="step === 1"
           @click="goNext"
@@ -278,7 +280,7 @@
         <v-btn
           v-show="step === 2"
           small
-          flat
+          text
           dark
           :disabled="(signing || delegation.calling) && (isLocal || connected)"
           class="secondary"
@@ -289,7 +291,7 @@
           v-show="step === 2 && isLocal"
           dark
           small
-          flat
+          text
           :disabled="!readyToSign || delegation.calling"
           class="green"
           @click="sign"
@@ -514,7 +516,7 @@ export default class TxSigningDialog extends Mixins(
         this.estimateGasCache.set(addr, result);
       }
 
-console.log("EST: ", result);
+      console.log("EST: ", result);
       if (seq === this.estimateGasSeq) {
         this.estimation.gas = result.gas;
         this.estimation.baseGasPrice = result.baseGasPrice;

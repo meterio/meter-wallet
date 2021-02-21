@@ -1,22 +1,30 @@
 <template>
   <OverlayedMenu left offset-y v-model="opened" :close-on-content-click="false">
-    <slot slot="activator" name="activator" />
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator"
+    /></template>
     <v-card width="280">
       <v-list dense>
-        <template v-for="(item,i) in items">
-          <v-divider v-show="!item.invisible" v-if="item.divider" :key="i+'_d'" />
+        <template v-for="(item, i) in items">
+          <v-divider
+            v-show="!item.invisible"
+            v-if="item.divider"
+            :key="i + '_d'"
+          />
           <v-list-tile
             v-show="!item.invisible"
             :key="i"
-            @click="opened=false;item.action()"
+            @click="
+              opened = false;
+              item.action();
+            "
             :disabled="!!item.disabled"
           >
-            {{item.label}}
+            {{ item.label }}
             <v-spacer />
-            <span
-              class="text-capitalize"
-              style="font-family: 'Roboto Mono'"
-            >{{prettyKeys(item.keys)}}</span>
+            <span class="text-capitalize" style="font-family: 'Roboto Mono'">{{
+              prettyKeys(item.keys)
+            }}</span>
           </v-list-tile>
         </template>
       </v-list>
@@ -46,7 +54,7 @@ export default class ExperimentalMenu extends Vue {
     }
 
     const keys: string[] = [];
-    this.items.forEach(i => {
+    this.items.forEach((i) => {
       if (i.disabled) {
         return;
       }

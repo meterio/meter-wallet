@@ -18,7 +18,7 @@
         <router-link :to="{ name: 'create-vote' }">
           <v-btn depressed small color="primary">Create vote</v-btn>
         </router-link>
-        <v-btn flat icon small color="green" v-on:click.native="refresh">
+        <v-btn icon small color="green" v-on:click.native="refresh">
           <v-icon>cached</v-icon>
         </v-btn>
 
@@ -65,7 +65,7 @@
                     params: { id: props.item.id, amount: props.item.votes },
                   }"
                 >
-                  <v-btn flat small outline color="teal">delegate</v-btn>
+                  <v-btn small outline color="teal">delegate</v-btn>
                 </router-link>
                 <router-link
                   v-if="!props.item.unbounded"
@@ -75,7 +75,7 @@
                     params: { id: props.item.id, amount: props.item.votes },
                   }"
                 >
-                  <v-btn flat small outline color="grey">unbound</v-btn>
+                  <v-btn small outline color="grey">unbound</v-btn>
                 </router-link>
               </div>
               <div v-else>
@@ -86,7 +86,7 @@
                     params: { id: props.item.id, amount: props.item.votes },
                   }"
                 >
-                  <v-btn flat small outline color="indigo">undelegate</v-btn>
+                  <v-btn small outline color="indigo">undelegate</v-btn>
                 </router-link>
               </div>
             </td>

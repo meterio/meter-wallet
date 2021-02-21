@@ -6,7 +6,9 @@
     transition="fade-transition"
     open-delay="600"
   >
-    <slot slot="activator" name="activator" />
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator"
+    /></template>
     <slot />
   </v-tooltip>
 </template>

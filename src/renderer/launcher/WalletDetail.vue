@@ -1,13 +1,22 @@
 <template>
   <div class="pa-3">
-    <div style="max-width: 1000px; width: 100%; margin: 20px auto;">
+    <div style="max-width: 1000px; width: 100%; margin: 20px auto">
       <div v-if="wallet">
         <v-layout justify-center>
-          <v-btn right color="primary" @click="showReset" flat small>Reset Password</v-btn>
-          <v-btn right color="error" flat @click="showDelete" small>Delete</v-btn>
-          <v-btn flat small right class="caption" color="primary" @click="showExport">Backup</v-btn>
-          <router-link tag="span" :to="{name: 'transfer', query: {from: wallet.address}}">
-            <v-btn flat small class="caption" color="primary">transfer</v-btn>
+          <v-btn right color="primary" @click="showReset" text small
+            >Reset Password</v-btn
+          >
+          <v-btn right color="error" text @click="showDelete" small
+            >Delete</v-btn
+          >
+          <v-btn small right class="caption" color="primary" @click="showExport"
+            >Backup</v-btn
+          >
+          <router-link
+            tag="span"
+            :to="{ name: 'transfer', query: { from: wallet.address } }"
+          >
+            <v-btn small class="caption" color="primary">transfer</v-btn>
           </router-link>
         </v-layout>
       </div>
@@ -18,9 +27,10 @@
               <v-list-tile avatar>
                 <v-list-tile-avatar :size="90">
                   <AddressLabel
-                    style="width:70px;height:50px;border-radius:5px"
+                    style="width: 70px; height: 50px; border-radius: 5px"
                     icon
-                  >{{wallet.address}}</AddressLabel>
+                    >{{ wallet.address }}</AddressLabel
+                  >
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-card class="elevation-0">
@@ -40,43 +50,57 @@
                         style="max-width: 300px"
                         class="d-block text-truncate"
                         v-if="!isEdit"
-                      >{{wallet.name}}</span>
+                        >{{ wallet.name }}</span
+                      >
                       <v-icon
                         class="ml-1"
                         @click="isEdit = true"
                         v-if="!isEdit"
                         small
-                      >mdi-square-edit-outline</v-icon>
+                        >mdi-square-edit-outline</v-icon
+                      >
                     </v-card-title>
                     <v-card-text class="caption pa-0">
                       <v-layout row align-content-center>
                         <v-flex align-self-center>
-                          <AddressLabel class="grey--text text--darken-1">{{wallet.address}}</AddressLabel>
+                          <AddressLabel class="grey--text text--darken-1">{{
+                            wallet.address
+                          }}</AddressLabel>
                         </v-flex>
                         <v-flex>
                           <v-tooltip top>
-                            <v-btn
-                              class="ma-0 ml-3"
-                              v-clipboard="wallet.address"
-                              @click="textTip = 'Copied'"
-                              @mouseover="textTip = 'Copy'"
-                              slot="activator"
-                              small
-                              icon
-                            >
-                              <v-icon small>mdi-content-copy</v-icon>
-                            </v-btn>
-                            <span>{{textTip}}</span>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                class="ma-0 ml-3"
+                                v-clipboard="wallet.address"
+                                @click="textTip = 'Copied'"
+                                @mouseover="textTip = 'Copy'"
+                                v-on="on"
+                                small
+                                icon
+                              >
+                                <v-icon small>mdi-content-copy</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>{{ textTip }}</span>
                           </v-tooltip>
-                          <QRCodeDialog width="300" :size="270" :content="wallet.address">
-                            <div slot="activator">
-                              <v-tooltip top>
-                                <v-btn class="ma-0" slot="activator" small icon>
-                                  <v-icon small>mdi-qrcode</v-icon>
-                                </v-btn>
-                                <span>Show QR code</span>
-                              </v-tooltip>
-                            </div>
+                          <QRCodeDialog
+                            width="300"
+                            :size="270"
+                            :content="wallet.address"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <div v-on="on">
+                                <v-tooltip top>
+                                  <template v-slot:activator="{ on }">
+                                    <v-btn class="ma-0" v-on="on" small icon>
+                                      <v-icon small>mdi-qrcode</v-icon>
+                                    </v-btn>
+                                  </template>
+                                  <span>Show QR code</span>
+                                </v-tooltip>
+                              </div>
+                            </template>
                           </QRCodeDialog>
                         </v-flex>
                       </v-layout>
@@ -91,12 +115,12 @@
               <v-list-tile>
                 <v-divider inset vertical></v-divider>
                 <v-list-tile-content>
-                  <v-layout column style="width: 100%;">
+                  <v-layout column style="width: 100%">
                     <v-flex class="text-xs-right">
-                      <Amount sym=" MTRG ">{{mtrgBalance}}</Amount>
+                      <Amount sym=" MTRG ">{{ mtrgBalance }}</Amount>
                     </v-flex>
                     <v-flex class="text-xs-right">
-                      <Amount sym=" MTR">{{mtrBalance}}</Amount>
+                      <Amount sym=" MTR">{{ mtrBalance }}</Amount>
                     </v-flex>
                   </v-layout>
                 </v-list-tile-content>
@@ -107,7 +131,9 @@
       </v-card>
       <v-layout justify-space-around>
         <v-flex xs9 sm10 class="mt-1">
-          <h3 flat v-if="list.length" class="pl-0 pt-4 title d-inline-block">Recent Transfer</h3>
+          <h3 flat v-if="list.length" class="pl-0 pt-4 title d-inline-block">
+            Recent Transfer
+          </h3>
           <v-progress-circular
             class="ml-3"
             size="22"
@@ -116,10 +142,15 @@
             indeterminate
             color="primary"
           ></v-progress-circular>
-          <v-progress-linear v-if="isloading && !list.length" :indeterminate="true"></v-progress-linear>
+          <v-progress-linear
+            v-if="isloading && !list.length"
+            :indeterminate="true"
+          ></v-progress-linear>
           <div v-if="!list.length" class="text-xs-center">
             <div style="margin-top: 130px">
-              <v-icon style="font-size: 80px" color="grey lighten-2" medium left>search</v-icon>
+              <v-icon style="font-size: 80px" color="grey lighten-2" medium left
+                >search</v-icon
+              >
               <br />
               <span>No logs display at this time!</span>
             </div>
@@ -129,25 +160,31 @@
               :disabled="isloading"
               color="primary"
               @click="onLoadClick"
-            >Load</v-btn>
+              >Load</v-btn
+            >
           </div>
           <div style="background: #fff">
-            <template v-for="(item, i) in list ">
+            <template v-for="(item, i) in list">
               <TransferItem
                 style="border-radios"
                 :isIn="item.sender !== address"
                 :item="item"
                 :key="i"
               />
-              <v-divider timeout="3000" v-if="i !== (list.length - 1)" :key="`${i}-divider`" inset></v-divider>
+              <v-divider
+                timeout="3000"
+                v-if="i !== list.length - 1"
+                :key="`${i}-divider`"
+                inset
+              ></v-divider>
             </template>
           </div>
         </v-flex>
       </v-layout>
     </div>
     <v-snackbar v-model="snackbar" color="error" top>
-      {{errorMessage}}
-      <v-btn flat dark @click="snackbar = false">close</v-btn>
+      {{ errorMessage }}
+      <v-btn dark @click="snackbar = false">close</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -167,8 +204,8 @@ import { Stats } from "fs";
 
 @Component({
   components: {
-    TransferItem
-  }
+    TransferItem,
+  },
 })
 export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
   walletName?: string;
@@ -216,7 +253,7 @@ export default class WalletDetail extends Mixins(TransferMixin, AccountLoader) {
   }
 
   get wallet() {
-    return this.wallets.find(item => {
+    return this.wallets.find((item) => {
       return item.address === this.$route.params.address;
     });
   }

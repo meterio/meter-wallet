@@ -1,6 +1,8 @@
 <template>
   <DialogEx persistent v-model="show" max-width="500px">
-    <slot slot="activator" name="activator" />
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator"
+    /></template>
     <v-card>
       <v-card-text>
         <div class="subheading font-weight-light">Import Wallet</div>
@@ -10,7 +12,9 @@
             <v-divider />
             <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
           </v-stepper-header>
-          <div class="title font-weight-light pl-4">{{['Import', 'Set Password'][step-1]}}</div>
+          <div class="title font-weight-light pl-4">
+            {{ ["Import", "Set Password"][step - 1] }}
+          </div>
           <v-stepper-items>
             <v-stepper-content step="1">
               <ContentForm v-if="show" ref="pk" v-model="content"></ContentForm>
@@ -28,14 +32,15 @@
         </v-stepper>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="preMove" flat>{{ BackBtnStatus.text }}</v-btn>
+        <v-btn @click="preMove" text>{{ BackBtnStatus.text }}</v-btn>
         <v-spacer />
         <v-btn
           @click="nextMove"
           :disabled="preBtnStatus.disable"
-          flat
+          text
           color="primary"
-        >{{ preBtnStatus.text }}</v-btn>
+          >{{ preBtnStatus.text }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </DialogEx>
@@ -50,8 +55,8 @@ import DialogHelper from "@/renderer/mixins/dialog-helper";
 @Component({
   components: {
     ContentForm,
-    NameAndPass
-  }
+    NameAndPass,
+  },
 })
 export default class ImportWalletDialog extends Mixins(
   class extends DialogHelper<any, void> {}
@@ -66,12 +71,12 @@ export default class ImportWalletDialog extends Mixins(
     type: 0,
     pwd: "",
     content: "",
-    valid: false
+    valid: false,
   };
 
   get BackBtnStatus() {
     return {
-      text: this.step === 1 ? "Abort" : "Back"
+      text: this.step === 1 ? "Abort" : "Back",
     };
   }
   @Watch("show")
@@ -96,7 +101,7 @@ export default class ImportWalletDialog extends Mixins(
     }
     return {
       text: this.step === 1 ? "Next" : "import",
-      disable: disable
+      disable: disable,
     };
   }
   reset() {
@@ -145,16 +150,13 @@ export default class ImportWalletDialog extends Mixins(
           name: this.nameAndPass.name,
           address: "0x" + ks.address,
           keystore: ks,
-          createdTime: Date.now()
+          createdTime: Date.now(),
         };
         if (this.addressExist) {
-          await BDB.wallets
-            .where("address")
-            .equals(entity.address)
-            .modify({
-              keystore: entity.keystore,
-              name: entity.name
-            });
+          await BDB.wallets.where("address").equals(entity.address).modify({
+            keystore: entity.keystore,
+            name: entity.name,
+          });
         } else {
           await BDB.wallets.add(entity);
         }

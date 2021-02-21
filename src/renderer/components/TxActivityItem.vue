@@ -4,44 +4,50 @@
       <v-layout column>
         <v-layout row align-center>
           <b class="label primary mr-2">TX</b>
-          <div class="text-truncate">{{comment}}</div>
+          <div class="text-truncate">{{ comment }}</div>
           <b v-show="reverted" class="label warning">Reverted</b>
           <v-spacer />
-          <span class="caption grey--text">{{time}}</span>
+          <span class="caption grey--text">{{ time }}</span>
         </v-layout>
       </v-layout>
 
       <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          icon
-          small
-          flat
-          @click.stop="resend"
-          class="my-0"
-          style="margin-right:-8px;"
-          :style="{'pointer-events': canResend? '':'none'}"
-        >
-          <v-icon small :color="iconColor">{{icon}}</v-icon>
-        </v-btn>
-        <span>{{statusTip}}</span>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            icon
+            small
+            text
+            @click.stop="resend"
+            class="my-0"
+            style="margin-right: -8px"
+            :style="{ 'pointer-events': canResend ? '' : 'none' }"
+          >
+            <v-icon small :color="iconColor">{{ icon }}</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ statusTip }}</span>
       </v-tooltip>
     </v-layout>
     <v-card class="text-truncate">
       <v-card-text class="pt-1">
         <v-layout align-center mb-2>
-          <AddressLabel icon style="width:27px;height:18px;border-radius:3px">{{signer}}</AddressLabel>
-          <span class="px-2 subheading">{{walletName}}</span>
+          <AddressLabel
+            icon
+            style="width: 27px; height: 18px; border-radius: 3px"
+            >{{ signer }}</AddressLabel
+          >
+          <span class="px-2 subheading">{{ walletName }}</span>
         </v-layout>
         <v-layout>
           <span class="caption grey--text">Amount</span>
           <v-spacer />
-          <Amount sym=" MTRG " prepend="-">{{amount}}</Amount>
+          <Amount sym=" MTRG " prepend="-">{{ amount }}</Amount>
         </v-layout>
         <v-layout>
-          <span class="caption grey--text">{{fee ? 'Fee':'Est. fee'}}</span>
+          <span class="caption grey--text">{{ fee ? "Fee" : "Est. fee" }}</span>
           <v-spacer />
-          <Amount sym=" MTR" prepend="-">{{fee || estimatedFee}}</Amount>
+          <Amount sym=" MTR" prepend="-">{{ fee || estimatedFee }}</Amount>
         </v-layout>
 
         <v-layout>
@@ -51,28 +57,36 @@
         </v-layout>
         <div>
           <a class="caption" @click="insight">
-            <v-icon style="font-size:110%;color:currentColor">search</v-icon>
-            {{txid | shortTxId}}
+            <v-icon style="font-size: 110%; color: currentColor">search</v-icon>
+            {{ txid | shortTxId }}
           </a>
           <v-tooltip bottom>
-            <v-btn
-              flat
-              small
-              icon
-              slot="activator"
-              class="ma-0 ml-3"
-              v-clipboard="txid"
-              @click="textTip = 'Copied'"
-              @mouseover="textTip = 'Copy Tx Id'"
-            >
-              <v-icon small style="font-size:12px">mdi-content-copy</v-icon>
-            </v-btn>
-            <span>{{textTip}}</span>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                small
+                icon
+                v-on="on"
+                class="ma-0 ml-3"
+                v-clipboard="txid"
+                @click="textTip = 'Copied'"
+                @mouseover="textTip = 'Copy Tx Id'"
+              >
+                <v-icon small style="font-size: 12px">mdi-content-copy</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ textTip }}</span>
           </v-tooltip>
         </div>
-        <div v-show="!!errorMessage" class="error--text" style="font-size:12px;">
-          <v-icon style="font-size:12px;color:currentColor">mdi-alert</v-icon>
-          {{errorMessage}}
+        <div
+          v-show="!!errorMessage"
+          class="error--text"
+          style="font-size: 12px"
+        >
+          <v-icon style="font-size: 12px; color: currentColor"
+            >mdi-alert</v-icon
+          >
+          {{ errorMessage }}
         </div>
 
         <!--
@@ -147,7 +161,7 @@ export default class TxActivityItem extends Vue {
   }
   get walletName() {
     const wallets = this.$store.state.wallets as entities.Wallet[];
-    const wallet = wallets.find(w => w.address === this.signer);
+    const wallet = wallets.find((w) => w.address === this.signer);
     return wallet ? wallet.name : "Unknown";
   }
 
@@ -235,7 +249,7 @@ export default class TxActivityItem extends Vue {
     );
     this.$store.commit("updateTxResendTime", {
       id: this.item.data.id,
-      value: Date.now() / 1000
+      value: Date.now() / 1000,
     });
   }
 

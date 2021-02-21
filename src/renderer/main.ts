@@ -10,6 +10,7 @@ import VueRouter from "vue-router";
 import Nova from "./Nova.vue";
 import Store from "./store";
 import DialogHelper from "./mixins/dialog-helper";
+import vuetify from "../plugins/vuetify"
 
 Vue.use(Vuetify, {
   iconfont: "mdi" // 'md' || 'mdi' || 'fa' || 'fa4'
@@ -29,7 +30,7 @@ for (const key in components) {
 }
 
 // the portal root
-new Nova({ store: new Store() }).$mount("#nova");
+new Nova({ store: new Store(), vuetify }).$mount("#nova");
 
 if (isFirstTimeRun) {
   GDB.on(

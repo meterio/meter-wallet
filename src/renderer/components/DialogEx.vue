@@ -1,35 +1,42 @@
 <template>
-    <v-dialog v-bind="$attrs" v-on="$listeners" :value="value" @input="$emit('input', $event)">
-        <div v-nofocusout @keypress.enter="onEnter" @keydown.esc="onEsc">
-            <slot/>
-        </div>
-        <slot slot="activator" name="activator"/>
-    </v-dialog>
+  <v-dialog
+    v-bind="$attrs"
+    v-on="$listeners"
+    :value="value"
+    @input="$emit('input', $event)"
+  >
+    <div v-nofocusout @keypress.enter="onEnter" @keydown.esc="onEsc">
+      <slot />
+    </div>
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator" />
+    </template>
+  </v-dialog>
 </template>
 <script lang="ts">
-import { Vue, Component, Emit, Prop } from 'vue-property-decorator'
+import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 
 @Component
 export default class DialogEx extends Vue {
-    @Prop(Boolean) value !: boolean
+  @Prop(Boolean) value!: boolean;
 
-    @Emit('action:ok')
-    emitOK() { }
-    @Emit('action:cancel')
-    emitCancel() { }
+  @Emit("action:ok")
+  emitOK() {}
+  @Emit("action:cancel")
+  emitCancel() {}
 
-    onEnter(ev: KeyboardEvent) {
-        if (ev.target && (ev.target as any).type === 'button') {
-            return
-        }
-        this.emitOK()
+  onEnter(ev: KeyboardEvent) {
+    if (ev.target && (ev.target as any).type === "button") {
+      return;
     }
+    this.emitOK();
+  }
 
-    onEsc(ev: KeyboardEvent) {
-        if ((ev as any).isComposing) {
-            return
-        }
-        this.emitCancel()
+  onEsc(ev: KeyboardEvent) {
+    if ((ev as any).isComposing) {
+      return;
     }
+    this.emitCancel();
+  }
 }
 </script>

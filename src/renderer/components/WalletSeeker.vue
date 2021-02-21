@@ -1,14 +1,14 @@
 <template>
   <v-window :value="value" @input="$emit('input', $event)">
-    <v-window-item v-for="(wallet,i) in wallets" :key="i">
+    <v-window-item v-for="(wallet, i) in wallets" :key="i">
       <v-layout row align-center justify-center>
         <WalletCard
           flat
           :compact="!fullSize"
           class="outline"
           :wallet="wallet"
-          style="border-radius:9px;"
-          :style="{width: fullSize? '200px': '170px'}"
+          style="border-radius: 9px"
+          :style="{ width: fullSize ? '200px' : '170px' }"
         />
       </v-layout>
     </v-window-item>
@@ -16,14 +16,14 @@
       v-show="wallets.length > 1"
       row
       align-center
-      style="position:absolute;left:0;top:0;width:100%;height:100%"
+      style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"
     >
       <v-btn
         :ripple="false"
         icon
-        flat
+        text
         @click.stop="$emit('input', value - 1)"
-        :disabled="disabled || value<1"
+        :disabled="disabled || value < 1"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -31,9 +31,9 @@
       <v-btn
         :ripple="false"
         icon
-        flat
+        text
         @click.stop="$emit('input', value + 1)"
-        :disabled="disabled || value>=wallets.length-1"
+        :disabled="disabled || value >= wallets.length - 1"
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
@@ -47,7 +47,7 @@ import {
   Prop,
   Model,
   Emit,
-  Watch
+  Watch,
 } from "vue-property-decorator";
 
 @Component

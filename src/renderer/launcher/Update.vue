@@ -7,19 +7,25 @@
           <v-list-tile-content>
             <v-list-tile-title class="grey--text text--darken-3">
               Version
-              <span class="grey--text ml-2 v-list__tile__sub-title">{{autoUpdateStatusText}}</span>
+              <span class="grey--text ml-2 v-list__tile__sub-title">{{
+                autoUpdateStatusText
+              }}</span>
             </v-list-tile-title>
-            <v-list-tile-sub-title>Wallet {{walletVersion}} / Flex {{flexVersion}}</v-list-tile-sub-title>
+            <v-list-tile-sub-title
+              >Wallet {{ walletVersion }} / Flex
+              {{ flexVersion }}</v-list-tile-sub-title
+            >
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn
-              style="text-transform:none"
-              flat
+              style="text-transform: none"
+              text
               small
               color="primary"
               :disabled="!autoUpdateAction"
               @click="autoUpdateAction"
-            >{{autoUpdateActionName}}</v-btn>
+              >{{ autoUpdateActionName }}</v-btn
+            >
           </v-list-tile-action>
         </v-list-tile>
       </v-list>
@@ -40,7 +46,7 @@ export default class AutoUpdate extends Vue {
     status: updateChecker.status,
     newVersion: updateChecker.newVersion,
     error: updateChecker.error,
-    progress: updateChecker.downloadProgress
+    progress: updateChecker.downloadProgress,
   };
 
   get walletVersion() {
@@ -84,7 +90,7 @@ export default class AutoUpdate extends Vue {
             status: updateChecker.status,
             newVersion: updateChecker.newVersion,
             error: updateChecker.error,
-            progress: updateChecker.downloadProgress
+            progress: updateChecker.downloadProgress,
           };
         };
       case "checking":
@@ -103,7 +109,7 @@ export default class AutoUpdate extends Vue {
         status: updateChecker.status,
         newVersion: updateChecker.newVersion,
         error: updateChecker.error,
-        progress: updateChecker.downloadProgress
+        progress: updateChecker.downloadProgress,
       };
     }, 2000);
   }

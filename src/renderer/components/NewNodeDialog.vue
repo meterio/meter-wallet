@@ -1,10 +1,12 @@
 <template>
-  <DialogEx v-model="show" @action:cancel="show=false" max-width="500px">
-    <slot slot="activator" name="activator" />
+  <DialogEx v-model="show" @action:cancel="show = false" max-width="500px">
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator"
+    /></template>
     <v-card>
       <v-form @submit.prevent="save" ref="form" v-model="valid">
         <v-card-text>
-          <div class="headline">{{isEditing ? 'Edit Node' : 'New Node'}}</div>
+          <div class="headline">{{ isEditing ? "Edit Node" : "New Node" }}</div>
           <v-layout>
             <v-flex>
               <v-text-field
@@ -26,10 +28,23 @@
           </v-layout>
         </v-card-text>
         <v-card-actions>
-          <v-btn flat v-if="isEditing" @click.native="onDelete" color="error darken-1">Delete</v-btn>
+          <v-btn
+            v-if="isEditing"
+            @click.native="onDelete"
+            color="error darken-1"
+            >Delete</v-btn
+          >
           <v-spacer></v-spacer>
-          <v-btn color="primary darken-1" flat @click.native="clear">Cancel</v-btn>
-          <v-btn :disabled="checking" type="submit" color="primary darken-1" flat>Save</v-btn>
+          <v-btn color="primary darken-1" text @click.native="clear"
+            >Cancel</v-btn
+          >
+          <v-btn
+            :disabled="checking"
+            type="submit"
+            color="primary darken-1"
+            text
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-form>
     </v-card>
@@ -43,7 +58,7 @@ import {
   Watch,
   Prop,
   Emit,
-  Mixins
+  Mixins,
 } from "vue-property-decorator";
 import { dialog, remote } from "electron";
 import { resolve } from "path";
@@ -58,7 +73,7 @@ export default class NewNodeDialog extends Mixins(
   show = false;
   error = {
     isError: false,
-    message: ""
+    message: "",
   };
   checkingReject?: () => void;
   checking = false;
@@ -69,12 +84,12 @@ export default class NewNodeDialog extends Mixins(
   valid = true;
   form = {
     name: "",
-    rpcUrl: ""
+    rpcUrl: "",
   };
 
   rules = {
     name: [(v: string) => !!v || "Name is required"],
-    rpcUrl: [(v: string) => !!v || "URL is required"]
+    rpcUrl: [(v: string) => !!v || "URL is required"],
   };
 
   // @Watch('value')
@@ -125,7 +140,7 @@ export default class NewNodeDialog extends Mixins(
     form.reset();
     this.error = {
       isError: false,
-      message: ""
+      message: "",
     };
     if (this.checkingReject) {
       this.checkingReject();
@@ -151,7 +166,7 @@ export default class NewNodeDialog extends Mixins(
       result.name = this.form.name;
       result.url = this.form.rpcUrl;
       // result.value.genesis = genesis
-      GDB.nodes.update(this.arg!.id as any, { ...result }).then(updated => {
+      GDB.nodes.update(this.arg!.id as any, { ...result }).then((updated) => {
         if (updated) {
           this.isEditing = false;
           this.clear();
@@ -177,7 +192,7 @@ export default class NewNodeDialog extends Mixins(
         .add({
           name: this.form.name,
           url: this.form.rpcUrl,
-          genesis: genesis
+          genesis: genesis,
         })
         .then(() => {
           this.clear();

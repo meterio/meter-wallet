@@ -8,26 +8,28 @@
     max-height="500px"
     v-model="opened"
   >
-    <slot slot="activator" name="activator" />
-    <v-card flat width="250">
+    <template v-slot:activator="{ on }">
+      <slot v-on="on" name="activator"
+    /></template>
+    <v-card width="250">
       <v-card-text>
         <v-layout row align-center>
-          <div class="text-truncate subheading">{{config.name}}</div>
+          <div class="text-truncate subheading">{{ config.name }}</div>
           <v-spacer />
           <v-btn icon small class="ma-0" @click="onSettings">
             <v-icon small>mdi-settings</v-icon>
           </v-btn>
         </v-layout>
-        <div class="caption text-truncate grey--text">{{config.url}}</div>
+        <div class="caption text-truncate grey--text">{{ config.url }}</div>
       </v-card-text>
       <v-card-text class="pt-0">
         <v-layout align-center>
           <v-icon small class="mr-2">mdi-cube</v-icon>
-          {{headNumberText}}
+          {{ headNumberText }}
         </v-layout>
         <v-layout align-center>
           <v-icon small class="mr-2">mdi-swap-vertical-bold</v-icon>
-          {{progressText}}
+          {{ progressText }}
         </v-layout>
       </v-card-text>
       <v-list two-line dense>
@@ -37,9 +39,11 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <NetworkName :genesis="config.genesis.id" />
-                {{config.name}}
+                {{ config.name }}
               </v-list-tile-title>
-              <v-list-tile-sub-title class="caption">{{config.url}}</v-list-tile-sub-title>
+              <v-list-tile-sub-title class="caption">{{
+                config.url
+              }}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -69,7 +73,8 @@ export default class NodeStatusPanel extends Vue {
 
   get otherConfigs() {
     return this.configs.filter(
-      c => c.url !== this.config.url || c.genesis.id !== this.config.genesis.id
+      (c) =>
+        c.url !== this.config.url || c.genesis.id !== this.config.genesis.id
     );
   }
 
@@ -96,7 +101,7 @@ export default class NodeStatusPanel extends Vue {
   activateOrOpenWindow(config: NodeConfig) {
     this.opened = false;
     const wins = remote.BrowserWindow.getAllWindows();
-    const found = wins.find(w => {
+    const found = wins.find((w) => {
       try {
         const c = w.webContents.getWebPreferences().nodeConfig!;
         return c.url === config.url && c.genesis.id === config.genesis.id;

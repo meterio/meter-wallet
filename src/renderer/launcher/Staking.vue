@@ -1,12 +1,12 @@
 <template>
   <v-layout column align-center>
-    <v-layout column style="max-width:1000px;width:100%">
+    <v-layout column style="max-width: 1000px; width: 100%">
       <div class="pa-3">
         <v-layout justify-center>
-          <img :src="logoUrl" style="height:12rem;margin:3rem 0 2rem 0;" />
+          <img :src="logoUrl" style="height: 12rem; margin: 3rem 0 2rem 0" />
         </v-layout>
         <v-layout justify-center>
-          <!-- <v-btn flat small class="caption" color="primary" @click="onCreate">New</v-btn> -->
+          <!-- <v-btn small class="caption" color="primary" @click="onCreate">New</v-btn> -->
         </v-layout>
       </div>
       <div>
@@ -48,10 +48,10 @@ export default class Staking extends Vue {
   created() {
     flex.meter
       .candidates()
-      .then(res => {
+      .then((res) => {
         this.$store.state.candidateList = res;
       })
-      .catch(err => {});
+      .catch((err) => {});
   }
 }
 </script>

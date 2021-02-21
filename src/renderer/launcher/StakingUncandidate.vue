@@ -1,17 +1,22 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading">uncandidate this account</v-card-title>
         <v-card-text>
           <v-form ref="form"></v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
+          <v-btn class="primary" @click="send">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-layout>
@@ -46,7 +51,7 @@ export default class StakingUncandidate extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
 
   created() {
@@ -54,7 +59,7 @@ export default class StakingUncandidate extends Vue {
     if (fromAddr) {
       fromAddr = fromAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === fromAddr
+        (wallet) => wallet.address === fromAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -79,8 +84,8 @@ export default class StakingUncandidate extends Vue {
             to: fromAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

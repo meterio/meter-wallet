@@ -1,10 +1,10 @@
 <template>
-  <DialogEx v-model="show" @action:cancel="show=false" max-width="500px">
-    <v-card ref="card" flat>
+  <DialogEx v-model="show" @action:cancel="show = false" max-width="500px">
+    <v-card ref="card">
       <v-card-text class="pb-0 pr-0">
         <div class="subheading font-weight-light">Verify Password</div>
         <form @submit.prevent="onNext">
-          <v-card flat>
+          <v-card>
             <v-card-text class="pr-3">
               <div class="pr-3">
                 <v-text-field
@@ -16,14 +16,19 @@
                   v-model="password"
                   :loading="checking"
                 >
-                  <v-progress-linear v-if="checking" slot="progress" indeterminate height="2"></v-progress-linear>
+                  <v-progress-linear
+                    v-if="checking"
+                    slot="progress"
+                    indeterminate
+                    height="2"
+                  ></v-progress-linear>
                 </v-text-field>
               </div>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat @click.stop="close">Cancel</v-btn>
-              <v-btn flat type="submit" color="error">Delete</v-btn>
+              <v-btn @click.stop="close">Cancel</v-btn>
+              <v-btn type="submit" color="error">Delete</v-btn>
             </v-card-actions>
           </v-card>
         </form>
@@ -50,7 +55,7 @@ export default class DeleteWalletDialog extends Mixins(
     messages: string[];
   } = {
     isError: false,
-    messages: []
+    messages: [],
   };
 
   mounted() {

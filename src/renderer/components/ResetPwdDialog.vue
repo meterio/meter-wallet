@@ -1,5 +1,5 @@
 <template>
-  <DialogEx v-model="show" @action:cancel="show=false" max-width="500px">
+  <DialogEx v-model="show" @action:cancel="show = false" max-width="500px">
     <v-card ref="card">
       <v-card-text class="pb-0 pr-0">
         <div class="subheading font-weight-light">Reset Password</div>
@@ -9,9 +9,9 @@
             <v-divider></v-divider>
             <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
           </v-stepper-header>
-          <div
-            class="title font-weight-light pl-4"
-          >{{['Verify Password', 'Reset Password'][step-1]}}</div>
+          <div class="title font-weight-light pl-4">
+            {{ ["Verify Password", "Reset Password"][step - 1] }}
+          </div>
           <v-stepper-items>
             <v-stepper-content class="pr-0 pb-0 pl-0" step="1">
               <v-form @submit.prevent="onNext">
@@ -27,14 +27,19 @@
                         v-model="password"
                         :loading="checking"
                       >
-                        <v-progress-linear v-if="checking" slot="progress" indeterminate height="2"></v-progress-linear>
+                        <v-progress-linear
+                          v-if="checking"
+                          slot="progress"
+                          indeterminate
+                          height="2"
+                        ></v-progress-linear>
                       </v-text-field>
                     </div>
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn flat @click="close">Cancel</v-btn>
-                    <v-btn flat type="submit" color="primary">Next</v-btn>
+                    <v-btn @click="close">Cancel</v-btn>
+                    <v-btn type="submit" color="primary">Next</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-form>
@@ -62,8 +67,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn flat @click="close">Cancel</v-btn>
-                    <v-btn flat type="submit" color="primary">Save</v-btn>
+                    <v-btn @click="close">Cancel</v-btn>
+                    <v-btn type="submit" color="primary">Save</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-form>
@@ -97,7 +102,7 @@ export default class ResetPwdDialog extends Mixins(
     messages: string[];
   } = {
     isError: false,
-    messages: []
+    messages: [],
   };
 
   @Watch("show")
@@ -148,10 +153,7 @@ export default class ResetPwdDialog extends Mixins(
     }
     if (this.privateKey && this.arg.id) {
       const ks = await cry.Keystore.encrypt(this.privateKey, this.newPassword);
-      BDB.wallets
-        .where("id")
-        .equals(this.arg.id)
-        .modify({ keystore: ks });
+      BDB.wallets.where("id").equals(this.arg.id).modify({ keystore: ks });
 
       this.close();
     }

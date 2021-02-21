@@ -8,7 +8,7 @@
         :wallets="wallets"
         v-model="from"
       />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
+      <v-card tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading"
           >Bound locked bucket to candidate</v-card-title
         >
@@ -42,7 +42,7 @@
         <v-card-actions>
           <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
+          <v-btn class="primary" @click="send">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-layout>

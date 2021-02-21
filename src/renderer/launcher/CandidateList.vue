@@ -1,6 +1,6 @@
 <template>
   <v-layout column align-center>
-    <v-layout column style="max-width:1000px;width:100%">
+    <v-layout column style="max-width: 1000px; width: 100%">
       <div class="pa-3"></div>
     </v-layout>
     <h3 class="pa-3">Staking Candidates</h3>
@@ -9,11 +9,16 @@
         <router-link :to="{ name: 'candidate' }">
           <v-btn depressed small color="primary">List me as candidate</v-btn>
         </router-link>
-        <v-btn flat icon small color="green" v-on:click.native="refresh">
+        <v-btn icon small color="green" v-on:click.native="refresh">
           <v-icon>cached</v-icon>
         </v-btn>
         <v-spacer></v-spacer>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line></v-text-field>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+        ></v-text-field>
       </v-card-title>
       <div v-if="candidates.length > 0">
         <v-data-table
@@ -32,28 +37,33 @@
             </td>
             <td>
               <div v-for="id in props.item.buckets" :key="id">
-                <router-link :to="{name:'bucket', params:{id:id}}">{{id|shortID}}</router-link>
+                <router-link :to="{ name: 'bucket', params: { id: id } }">{{
+                  id | shortID
+                }}</router-link>
               </div>
             </td>
             <td>
               <router-link
                 tag="span"
-                :to="{name:'vote',params:{candidateAddress: props.item.address}}"
+                :to="{
+                  name: 'vote',
+                  params: { candidateAddress: props.item.address },
+                }"
               >
-                <v-btn flat small outline color="teal">Vote</v-btn>
+                <v-btn small outline color="teal">Vote</v-btn>
                 <router-link
                   v-if="props.item.owned"
                   tag="span"
-                  :to="{name:'uncandidate', params:{}}"
+                  :to="{ name: 'uncandidate', params: {} }"
                 >
-                  <v-btn flat small outline color="grey">Uncandidate</v-btn>
+                  <v-btn small outline color="grey">Uncandidate</v-btn>
                 </router-link>
                 <router-link
                   v-if="props.item.owned"
                   tag="span"
-                  :to="{name:'update-candidate', params:{}}"
+                  :to="{ name: 'update-candidate', params: {} }"
                 >
-                  <v-btn flat small outline color="blue">Update</v-btn>
+                  <v-btn small outline color="blue">Update</v-btn>
                 </router-link>
               </router-link>
             </td>
@@ -79,7 +89,7 @@ export default class CandidateList extends Vue {
   wallets!: entities.Wallet[];
 
   get candidateList() {
-    return this.candidates.map(c => {
+    return this.candidates.map((c) => {
       if (c.address in this.walletMap) {
         c.owned = true;
       }
@@ -108,7 +118,7 @@ export default class CandidateList extends Vue {
     { text: "Commission", value: "commission" },
     { text: "Total Votes", value: "totalVotes" },
     { text: "Buckets", value: "buckets" },
-    { text: "Action", value: "action" }
+    { text: "Action", value: "action" },
   ];
 
   async refresh() {

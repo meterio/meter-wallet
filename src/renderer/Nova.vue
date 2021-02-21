@@ -29,35 +29,39 @@
           <!-- here use @mouseup instead of @click, 
           since the area of window title is not responsive on osx-->
           <TabButton
-            v-for="(page,i) in pages"
+            v-for="(page, i) in pages"
             class="tab-button no-drag"
-            :key="'tab'+page.id"
+            :key="'tab' + page.id"
             :title="page.title"
-            :favicon="page.isBuiltin? '': page.favicon"
-            :placeholder="page.isBuiltin? page.favicon : ''"
-            :active="i===activePageIndex"
+            :favicon="page.isBuiltin ? '' : page.favicon"
+            :placeholder="page.isBuiltin ? page.favicon : ''"
+            :active="i === activePageIndex"
             @close="closeTab(i)"
             @mouseup.native="activePageIndex = i"
             @dblclick.native.stop
-            @mousedown="i=== activePageIndex && $event.preventDefault()"
+            @mousedown="i === activePageIndex && $event.preventDefault()"
           />
           <v-btn
             class="no-drag ma-1 pa-0 ml-2"
-            flat
+            text
             small
             key="the-new-tab-button"
             :ripple="false"
             @click="openTab('')"
             @dblclick.native.stop
-            style="width:auto;height:auto;min-width:auto;"
+            style="width: auto; height: auto; min-width: auto"
           >
-            <v-icon style="font-size:150%">add</v-icon>
+            <v-icon style="font-size: 150%">add</v-icon>
           </v-btn>
         </transition-group>
-        <WindowControls v-if="!isDarwin" class="no-drag" style="flex:0 0 auto;" />
+        <WindowControls
+          v-if="!isDarwin"
+          class="no-drag"
+          style="flex: 0 0 auto"
+        />
       </v-layout>
-      <div class="nav-bar">
-        <v-layout row align-center px-1>
+      <div class="nav-bar mt-3">
+        <v-layout row align-center px-6>
           <v-btn
             class="my-1"
             small
@@ -66,7 +70,7 @@
             :ripple="false"
             @click="activePage.goBack()"
           >
-            <v-icon style="font-size:150%">arrow_back</v-icon>
+            <v-icon style="font-size: 150%">arrow_back</v-icon>
           </v-btn>
           <v-btn
             class="my-1"
@@ -76,7 +80,7 @@
             :ripple="false"
             @click="activePage.goForward()"
           >
-            <v-icon style="font-size:150%">arrow_forward</v-icon>
+            <v-icon style="font-size: 150%">arrow_forward</v-icon>
           </v-btn>
           <v-btn
             class="my-1"
@@ -86,30 +90,45 @@
             :disabled="activePage.isBuiltin"
             @click="activePage.reloadOrStop($event.shiftKey)"
           >
-            <v-icon style="font-size:150%">{{activePage.loading ? 'close': 'refresh'}}</v-icon>
+            <v-icon style="font-size: 150%">{{
+              activePage.loading ? "close" : "refresh"
+            }}</v-icon>
           </v-btn>
-          <div ref="navBox" class="mx-2 nav-box" :class="{'nav-box-focused': urlBoxFocused}">
-            <v-layout align-center style="position:relative;" fill-height>
+          <div
+            ref="navBox"
+            class="mx-2 nav-box"
+            :class="{ 'nav-box-focused': urlBoxFocused }"
+          >
+            <v-layout align-center style="position: relative" fill-height>
               <NodeStatusPanel :nudge-top="2">
-                <v-btn
-                  :ripple="false"
-                  flat
-                  slot="activator"
-                  class="ma-0 px-1"
-                  style="min-width:auto;"
-                >
-                  <NodeStatus />
-                </v-btn>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    :ripple="false"
+                    text
+                    v-on="on"
+                    class="ma-0 px-1"
+                    style="min-width: auto"
+                  >
+                    <NodeStatus />
+                  </v-btn>
+                </template>
               </NodeStatusPanel>
-              <v-layout ref="urlBoxWithIcon" class="url-box-with-icon" fill-height align-center>
+              <v-layout
+                ref="urlBoxWithIcon"
+                class="url-box-with-icon"
+                fill-height
+                align-center
+              >
                 <CertIndicator
                   v-if="!!activePage.cert && !activePage.userInput"
                   class="mx-2"
                   :cert="activePage.cert"
                 />
-                <v-icon v-else style="font-size:95%" class="mx-2">mdi-earth</v-icon>
+                <v-icon v-else style="font-size: 95%" class="mx-2"
+                  >mdi-earth</v-icon
+                >
                 <AccessHistoryPanel
-                  style="flex:1 1 auto;height:100%;transition: all 0s;"
+                  style="flex: 1 1 auto; height: 100%; transition: all 0s"
                   v-model="showAccessHistory"
                   absolute
                   :close-on-click="false"
@@ -118,111 +137,130 @@
                   :position-y="accessHistoryPosition.y"
                   :width="accessHistoryPosition.width"
                   :keyword="keyword"
-                  @update:selection="activePage.userInput=$event.href"
+                  @update:selection="activePage.userInput = $event.href"
                   @select="onAccessHistorySelected"
                 >
-                  <UrlBox
-                    @click.stop
-                    slot="activator"
-                    v-model="activePage.userInput"
-                    :href="activePage.href"
-                    @update:href="navigateTo"
-                    class="url-box"
-                    placeholder="Enter URL | app | block | tx | account to go"
-                    @focus="urlBoxFocused=true"
-                    @blur="onUrlBoxBlur"
-                    @input="onUrlBoxInput"
-                  />
+                  <template v-slot:activator="{ on }">
+                    <UrlBox
+                      @click.stop
+                      v-on="on"
+                      v-model="activePage.userInput"
+                      :href="activePage.href"
+                      @update:href="navigateTo"
+                      class="url-box"
+                      placeholder="Enter URL | app | block | tx | account to go"
+                      @focus="urlBoxFocused = true"
+                      @blur="onUrlBoxBlur"
+                      @input="onUrlBoxInput"
+                    />
+                  </template>
                 </AccessHistoryPanel>
               </v-layout>
               <ExpansionBtn
                 v-show="showAddShortcutBtn"
                 small
-                flat
-                style="min-width:auto;text-transform:none"
+                text
+                style="min-width: auto; text-transform: none"
                 :ripple="false"
                 class="ma-0 caption"
                 @action="addOrRemoveShortcut"
               >
-                <v-icon
-                  style="font-size:150%"
-                >{{shortcutAdded ? 'mdi-bookmark-plus' : 'mdi-bookmark-plus-outline'}}</v-icon>
-                <template slot="expansion">{{shortcutAdded?'Remove shortcut': 'Add shortcut'}}</template>
+                <v-icon style="font-size: 150%">{{
+                  shortcutAdded
+                    ? "mdi-bookmark-plus"
+                    : "mdi-bookmark-plus-outline"
+                }}</v-icon>
+                <template slot="expansion">{{
+                  shortcutAdded ? "Remove shortcut" : "Add shortcut"
+                }}</template>
               </ExpansionBtn>
               <v-progress-linear
-                v-for="(page,i) in pages"
-                :key="'progress'+page.id"
-                v-show="i===activePageIndex"
+                v-for="(page, i) in pages"
+                :key="'progress' + page.id"
+                v-show="i === activePageIndex"
                 background-color="rgba(0,0,0,0)"
                 :active="!page.isBuiltin && page.loading"
                 :value="page.progress"
                 class="ma-0"
                 height="2px"
-                style="position:absolute;left:0;right:0;bottom:0;"
+                style="position: absolute; left: 0; right: 0; bottom: 0"
               />
             </v-layout>
           </div>
           <ActivitiesPanel>
-            <v-btn class="my-1" icon small slot="activator" :ripple="false" title="activities">
-              <ActivitiesStatus />
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                class="my-1"
+                icon
+                small
+                v-on="on"
+                :ripple="false"
+                title="activities"
+              >
+                <ActivitiesStatus />
+              </v-btn>
+            </template>
           </ActivitiesPanel>
 
           <WindowMenu :items="menuItems">
-            <v-btn class="my-1" icon small slot="activator" :ripple="false">
-              <v-icon style="font-size:150%" title="menu">menu</v-icon>
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn class="my-1" icon small v-on="on" :ripple="false">
+                <v-icon style="font-size: 150%" title="menu">menu</v-icon>
+              </v-btn>
+            </template>
           </WindowMenu>
 
           <ExperimentalMenu :items="experimentalItems">
-            <v-btn class="my-1" icon small slot="activator" :ripple="false">
-              <v-icon
-                class="mdi mdi-layers-outline"
-                style="font-size:150%"
-                title="experimental features"
-              />
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn class="my-1" icon small v-on="on" :ripple="false">
+                <v-icon
+                  class="mdi mdi-layers-outline"
+                  style="font-size: 150%"
+                  title="experimental features"
+                />
+              </v-btn>
+            </template>
           </ExperimentalMenu>
         </v-layout>
         <div class="sharp-line" />
       </div>
     </div>
-    <v-content>
+    <v-main>
       <Vendor />
       <UpdateChecker />
       <Swiper
         ref="swiper"
-        style="width:100%;height:100%;"
+        style="width: 100%; height: 100%"
         :canSwipeRight="activePage.canGoBack"
         :canSwipeLeft="activePage.canGoForward"
         @swipe="onSwipe"
       >
-        <template v-for="(page,i) in pages">
+        <template v-for="(page, i) in pages">
           <Launcher
             v-if="page.isBuiltin"
-            v-show="i===activePageIndex"
-            :key="'launcher'+page.id"
+            v-show="i === activePageIndex"
+            :key="'launcher' + page.id"
             :href.sync="page.href"
             :nav="page.nav"
             @update:status="page.updateStatus($event)"
-            style="position:absolute;left:0;top:0;right:0;bottom:0;"
-            @update:href="page.userInput=''"
+            style="position: absolute; left: 0; top: 0; right: 0; bottom: 0"
+            @update:href="page.userInput = ''"
           />
           <WebView
             v-else
-            :visible="i===activePageIndex"
-            :key="'webview'+page.id"
-            style="position:absolute;left:0;top:0;right:0;bottom:0;"
+            :visible="i === activePageIndex"
+            :key="'webview' + page.id"
+            style="position: absolute; left: 0; top: 0; right: 0; bottom: 0"
             :href.sync="page.href"
             :nav="page.nav"
             :zoomfactor.sync="page.zoomFactor"
             @update:status="page.updateStatus($event)"
-            @update:href="page.userInput=''"
+            @update:href="page.userInput = ''"
             @update:wheel="onWebviewWheel"
           />
         </template>
       </Swiper>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 <script lang="ts">
@@ -249,7 +287,7 @@ class Page {
     progress: 0,
     canGoBack: false,
     canGoForward: false,
-    cert: null
+    cert: null,
   };
 
   readonly nav: WebView.Nav = {
@@ -258,7 +296,7 @@ class Page {
     reload: 0,
     reloadIgnoringCache: 0,
     stop: 0,
-    reGo: 0
+    reGo: 0,
   };
 
   constructor(href: string) {
@@ -361,8 +399,8 @@ type OpenTab = {
 @Component({
   components: {
     Vendor,
-    Launcher
-  }
+    Launcher,
+  },
 })
 export default class Nova extends Vue {
   pages: Page[] = [];
@@ -390,8 +428,9 @@ export default class Nova extends Vue {
 
   get shortcutAdded() {
     return (
-      (this.shortcuts || []).findIndex(s => s.href === this.activePage.href) >=
-      0
+      (this.shortcuts || []).findIndex(
+        (s) => s.href === this.activePage.href
+      ) >= 0
     );
   }
 
@@ -491,7 +530,7 @@ export default class Nova extends Vue {
       case "Minimize":
         payload = {
           windowId: win.id,
-          action: "minimize"
+          action: "minimize",
         };
         break;
       case "None":
@@ -500,12 +539,12 @@ export default class Nova extends Vue {
         if (win.isMaximized()) {
           payload = {
             windowId: win.id,
-            action: "unmaximize"
+            action: "unmaximize",
           };
         } else {
           payload = {
             windowId: win.id,
-            action: "maximize"
+            action: "maximize",
           };
         }
     }
@@ -564,13 +603,13 @@ export default class Nova extends Vue {
     if (this.shortcutAdded) {
       GDB.shortcuts.bulkDelete(
         this.shortcuts
-          .filter(s => s.href === this.activePage.href)
-          .map(s => s.id!)
+          .filter((s) => s.href === this.activePage.href)
+          .map((s) => s.id!)
       );
     } else {
       GDB.shortcuts.add({
         title: this.activePage.title,
-        href: this.activePage.href
+        href: this.activePage.href,
       });
     }
   }
@@ -584,12 +623,12 @@ export default class Nova extends Vue {
       {
         label: "New Tab",
         keys: isDarwin ? ["command+t"] : ["ctrl+t"],
-        action: () => this.openTab("")
+        action: () => this.openTab(""),
       },
       {
         label: "Close Tab",
         keys: isDarwin ? ["command+w"] : ["ctrl+w"],
-        action: () => this.closeTab(this.activePageIndex)
+        action: () => this.closeTab(this.activePageIndex),
       },
       {
         label: "Reload",
@@ -597,7 +636,7 @@ export default class Nova extends Vue {
         disabled: this.activePage.isBuiltin,
         action: () => {
           this.activePage.reload();
-        }
+        },
       },
       {
         label: "Force Reload",
@@ -606,7 +645,7 @@ export default class Nova extends Vue {
         invisible: true,
         action: () => {
           this.activePage.forceReload();
-        }
+        },
       },
       {
         label: "Go Back",
@@ -614,7 +653,7 @@ export default class Nova extends Vue {
         disabled: !this.activePage.canGoBack,
         action: () => {
           this.activePage.goBack();
-        }
+        },
       },
       {
         label: "Go Forward",
@@ -622,7 +661,7 @@ export default class Nova extends Vue {
         disabled: !this.activePage.canGoForward,
         action: () => {
           this.activePage.goForward();
-        }
+        },
       },
       {
         label: "Zoom In",
@@ -631,7 +670,7 @@ export default class Nova extends Vue {
         action: () => {
           this.activePage.zoomIn();
         },
-        divider: true
+        divider: true,
       },
       {
         label: "Zoom Out",
@@ -639,7 +678,7 @@ export default class Nova extends Vue {
         disabled: this.activePage.isBuiltin,
         action: () => {
           this.activePage.zoomOut();
-        }
+        },
       },
       {
         label: "Reset Zoom",
@@ -647,7 +686,7 @@ export default class Nova extends Vue {
         disabled: this.activePage.isBuiltin,
         action: () => {
           this.activePage.zoomFactor = 1;
-        }
+        },
       },
       {
         label: "Wallets",
@@ -655,14 +694,14 @@ export default class Nova extends Vue {
         action: () => {
           this.openTab("sync://wallets", "inplace-builtin");
         },
-        divider: true
+        divider: true,
       },
       {
         label: "Settings",
         keys: isDarwin ? ["command+,"] : [],
         action: () => {
           this.openTab("sync://settings", "inplace-builtin");
-        }
+        },
       },
       {
         label: "Toggle Developer Tools",
@@ -670,15 +709,15 @@ export default class Nova extends Vue {
         action: () => {
           remote.getCurrentWebContents().toggleDevTools();
         },
-        divider: true
+        divider: true,
       },
       {
         label: "About",
         keys: [],
         action: () => {
           remote.app.EXTENSION.showAbout();
-        }
-      }
+        },
+      },
     ];
   }
 
@@ -691,15 +730,15 @@ export default class Nova extends Vue {
         action: () => {
           this.openTab("sync://slashing/bailout", "inplace-builtin");
         },
-        divider: true
+        divider: true,
       },
       {
         label: "Locked Transfer",
         keys: [],
         action: () => {
           this.openTab("sync://locked/transfer", "inplace-builtin");
-        }
-      }
+        },
+      },
     ];
   }
 }
@@ -816,6 +855,7 @@ html {
 
 .nav-bar {
   box-shadow: 0px 2px 3px 1px rgba(0, 0, 0, 0.15);
+  height: 50px;
 }
 .theme--light .nav-bar {
   background-color: #ffffff;
@@ -861,6 +901,7 @@ html {
   color: rgba(0, 0, 0, 0.6);
 }
 .sharp-line {
+  margin-top: 10px;
   height: 1px;
   background-image: linear-gradient(
     to top,
