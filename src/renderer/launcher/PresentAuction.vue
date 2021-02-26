@@ -1,46 +1,41 @@
 <template>
-  <v-layout column align-center justify-center>
+  <v-layout column pa-5>
     <h3 class="pa-3">Present Auction</h3>
     <v-card>
-      <v-card-text class="pr-3 pl-3 pt-4 pb-0">
+      <v-card-text>
         <v-layout justify-space-between>
           <div>
-            Auction amount:
-            <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
+            <div class="my-2">
+              Auction amount:
+              <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
+            </div>
+            <div class="my-2">
+              Received total bids:
+              <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
+            </div>
           </div>
-          <div>
-            Received total bids:
-            <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
-          </div>
-        </v-layout>
 
-        <v-layout class="pt-2 pa-0" justify-space-between>
           <div>
-            Height Range: {{ presentAuction.startHeight }} -
-            {{ presentAuction.endHeight }}
+            <div class="my-2">
+              Height Range: {{ presentAuction.startHeight }} -
+              {{ presentAuction.endHeight }}
+            </div>
+            <div class="my-2">Current Height: {{ chainHead.number }}</div>
           </div>
-          <div>Current Height: {{ chainHead.number }}</div>
         </v-layout>
       </v-card-text>
 
       <v-card-title>
         <v-layout justify-space-between>
-          <router-link :to="{ name: 'auction-bid' }" class="mt-3">
+          <router-link :to="{ name: 'auction-bid' }">
             <v-btn depressed small color="primary" class="ml-0"
               >Auction Bid</v-btn
             >
           </router-link>
-          <router-link :to="{ name: 'past-auctions' }" class="mt-3">
+          <router-link :to="{ name: 'past-auctions' }">
             <v-btn depressed small outline color="primary">Past Auctions</v-btn>
           </router-link>
-          <v-btn
-            flat
-            icon
-            small
-            color="green"
-            class="mt-3"
-            v-on:click.native="refresh"
-          >
+          <v-btn flat icon small color="green" v-on:click.native="refresh">
             <v-icon>cached</v-icon>
           </v-btn>
 
@@ -88,7 +83,7 @@ export default class PresentAuction extends Vue {
   chainHead!: Flex.Meter.Status["head"];
 
   search = "";
-  rowsPerPage = [50, 100, 200, { text: "All", value: -1 }];
+  rowsPerPage = [20, 50, { text: "All", value: -1 }];
 
   get progress() {
     const start = this.presentAuction.startHeight;
@@ -131,3 +126,10 @@ export default class PresentAuction extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.v-input.v-text-field {
+  padding-top: 0;
+  margin-top: 0;
+}
+</style>

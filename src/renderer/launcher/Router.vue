@@ -15,48 +15,43 @@
         "
       />
     </transition>
-    <v-layout style="position: absolute; left: 0; top: 0">
-      <router-link tag="span" to="/bridge/transfer">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
-        </v-btn>
-      </router-link>
+    <v-layout style="position: absolute; left: 0; top: 0; background: #fafafa">
+      <v-btn flat class="ml-0" to="/bridge/transfer">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
+      </v-btn>
 
-      <router-link v-if="!isMainnet" tag="span" to="/candidates">
-        <v-btn flat class="ml-0">
+      <div v-if="!isMainnet">
+        <v-btn flat class="ml-0" to="/candidates">
           <v-icon small mr-5 style="margin-right: 3px"
             >mdi-account-multiple</v-icon
           >Candidates
         </v-btn>
-      </router-link>
-      <router-link v-if="!isMainnet" tag="span" to="/buckets">
-        <v-btn flat class="ml-0">
+        <v-btn flat class="ml-0" to="/buckets">
           <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
           >Staking
         </v-btn>
-      </router-link>
-      <router-link v-if="!isMainnet" tag="span" to="/auction/present">
-        <v-btn flat class="ml-0">
+        <v-btn
+          flat
+          class="ml-0"
+          to="/auction/present"
+          :input-value="$route.path.startsWith('/auction')"
+        >
           <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
           >Auction
         </v-btn>
-      </router-link>
+      </div>
     </v-layout>
 
-    <v-layout style="position: absolute; right: 0; top: 0">
-      <router-link tag="span" to="/wallets">
-        <v-btn flat class="ml-0">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-cards</v-icon>Wallets
-        </v-btn>
-      </router-link>
+    <v-layout style="position: absolute; right: 0; top: 0; background: #fafafa">
+      <v-btn flat class="ml-0" to="/wallets">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-cards</v-icon>Wallets
+      </v-btn>
 
-      <router-link tag="span" to="/settings">
-        <v-btn flat class="ml-0">
-          <v-icon small style="margin-right: 3px">mdi-settings</v-icon>Settings
-        </v-btn>
-      </router-link>
+      <v-btn flat class="ml-0" to="/settings">
+        <v-icon small style="margin-right: 3px">mdi-settings</v-icon>Settings
+      </v-btn>
 
-      <router-link tag="span" v-on:click.native="doSomethingCool" to>
+      <router-link tag="span" v-on:click.native="openExplorer" to>
         <v-btn flat class="ml-0">
           <v-icon small style="margin-right: 3px">mdi-apps</v-icon>Explorer
         </v-btn>
@@ -107,12 +102,13 @@ export default class Router extends Vue {
   historyIndex = 0;
   enterClass = "";
   leaveClass = "";
+  auctionActive = false;
 
   get isMainnet() {
     return nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet";
   }
 
-  doSomethingCool() {
+  openExplorer() {
     BUS.$emit("open-tab", {
       href: "https://insight.meter.io",
       mode: "inplace",
@@ -132,6 +128,12 @@ export default class Router extends Vue {
       this.leaveClass = "slide-out";
     }
     this.historyIndex = newIndex;
+    console.log(this.$route.path);
+    if (this.$route.path.startsWith("/auction")) {
+      this.auctionActive = true;
+    } else {
+      this.auctionActive = false;
+    }
   }
   on() {
     console.log("on !");

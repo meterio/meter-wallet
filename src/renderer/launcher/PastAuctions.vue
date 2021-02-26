@@ -1,5 +1,5 @@
 <template>
-  <v-layout column align-center justify-center>
+  <v-layout column pa-5 >
     <h3 class="pa-3">Past Auctions</h3>
     <v-card>
       <v-card-title></v-card-title>

@@ -1,8 +1,5 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column style="max-width: 1000px; width: 100%">
-      <div class="pa-3"></div>
-    </v-layout>
+  <v-layout column pa-5>
     <h3 class="pa-3">Staking Buckets</h3>
     <v-card>
       <v-card-title>
