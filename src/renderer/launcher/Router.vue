@@ -75,6 +75,7 @@ import StakingUnbound from "./StakingUnbound.vue";
 import StakingDelegate from "./StakingDelegate.vue";
 import StakingUndelegate from "./StakingUndelegate.vue";
 import StakingCandidateUpdate from "./StakingCandidateUpdate.vue";
+import StakingBucketUpdate from "./StakingBucketUpdate.vue";
 import SlashingBailOut from "./SlashingBailOut.vue";
 import CandidateList from "./CandidateList.vue";
 import BucketList from "./BucketList.vue";
@@ -313,6 +314,15 @@ const routes: RouteConfig[] = [
       title: "Edit Candidate",
     },
   },
+  {
+    path: "/staking/bucket/:addr/:bucketid/:amount/update",
+    name: "update-bucket",
+    component: StakingBucketUpdate,
+    meta: {
+      title: "Edit Bucket",
+    },
+  },
+
   {
     path: "/slashing/bailout",
     name: "bailout-without-addr",

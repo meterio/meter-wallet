@@ -1,6 +1,7 @@
 import { Vue } from "vue-property-decorator";
 import { Address, Num, Bucket } from "@/common/formatter";
 import { cry } from "@meterio/devkit";
+import moment from 'moment'
 
 function isRegExpArray(v: any): v is RegExpMatchArray {
   return v !== null && v instanceof Array;
@@ -48,6 +49,10 @@ Vue.filter("dateTime", (val: number) => {
   const date = new Date(val * 10e2);
   return date.toLocaleString();
 });
+
+Vue.filter("fromNow", (val:string)=>{
+  return moment.utc(1000 * Number(val)).fromNow()
+})
 
 Vue.filter("checksum", (val: string) => {
   try {

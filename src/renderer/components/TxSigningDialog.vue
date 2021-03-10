@@ -142,7 +142,7 @@
                       v-model="password"
                       label="Password"
                       type="password"
-                      maxlength="20"
+                      maxlength="256"
                       :error-messages="passwordError"
                       ref="passwordElem"
                       @focus="onPasswordFocused"
@@ -514,7 +514,7 @@ export default class TxSigningDialog extends Mixins(
         this.estimateGasCache.set(addr, result);
       }
 
-console.log("EST: ", result);
+      console.log("EST: ", result);
       if (seq === this.estimateGasSeq) {
         this.estimation.gas = result.gas;
         this.estimation.baseGasPrice = result.baseGasPrice;

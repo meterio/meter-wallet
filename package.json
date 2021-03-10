@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@meterio/bridge-interface": "0.0.3",
-    "@meterio/devkit": "^1.4.0",
+    "@meterio/devkit": "^1.4.4",
     "@meterio/flex": "^0.5.6",
     "@meterio/flex-framework": "^0.5.6",
     "axios": "^0.19.2",

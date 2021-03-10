@@ -85,6 +85,19 @@
                 >
                   <v-btn flat small outline color="indigo">undelegate</v-btn>
                 </router-link>
+                <router-link
+                  tag="span"
+                  :to="{
+                    name: 'update-bucket',
+                    params: {
+                      bucketid: props.item.id,
+                      addr: props.item.candidateAddress,
+                      amount: props.item.votes,
+                    },
+                  }"
+                >
+                  <v-btn flat small outline color="indigo">add more</v-btn>
+                </router-link>
               </div>
             </td>
           </template>
@@ -122,7 +135,9 @@ export default class BucketList extends Vue {
       .map((b) => {
         b.owned = true;
         b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
-        b.matureFromNow = b.unbounded ? moment.utc(b.matureTime).fromNow() : "";
+        b.matureFromNow = b.unbounded
+          ? moment.utc(1000 * Number(b.matureTime)).fromNow()
+          : "";
         b.state = b.unbounded ? "unbounded" : "created";
         return b;
       });
@@ -133,7 +148,9 @@ export default class BucketList extends Vue {
       .map((b) => {
         b.owned = false;
         b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
-        b.matureFromNow = b.unbounded ? moment.utc(b.matureTime).fromNow() : "";
+        b.matureFromNow = b.unbounded
+          ? moment.utc(1000 * Number(b.matureTime)).fromNow()
+          : "";
         b.state = b.unbounded ? "unbounded" : "created";
         return b;
       });

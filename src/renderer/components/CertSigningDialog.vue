@@ -10,28 +10,30 @@
     transition="sign-dialog-transition"
   >
     <v-card class="bg">
-      <v-layout column style="height:495px;">
+      <v-layout column style="height: 495px">
         <v-layout
           column
           justify-center
-          style="overflow: auto;
-                        background-color:rgba(0,0,0,0.1);
-                        position: absolute;
-                        height: 315px;
-                        width: 100%;
-                        top: 180px"
+          style="
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.1);
+            position: absolute;
+            height: 315px;
+            width: 100%;
+            top: 180px;
+          "
         >
-          <Tip
-            class="ma-1"
-            v-if="!isLocal && connected"
-            type="info"
-          >Please double check the transaction and confirm on your device</Tip>
-          <template v-if="step ===1">
+          <Tip class="ma-1" v-if="!isLocal && connected" type="info"
+            >Please double check the transaction and confirm on your device</Tip
+          >
+          <template v-if="step === 1">
             <div>
               <v-layout column>
-                <v-layout class="py-2 px-3" align-center style="flex:0 0 auto;">
+                <v-layout class="py-2 px-3" align-center style="flex: 0 0 auto">
                   <div class="subheading text-truncate mr-3">Certificate</div>
-                  <b class="label primary text-uppercase">{{arg.message.purpose}}</b>
+                  <b class="label primary text-uppercase">{{
+                    arg.message.purpose
+                  }}</b>
                 </v-layout>
               </v-layout>
             </div>
@@ -46,10 +48,20 @@
           </template>
           <template v-else-if="step === 2">
             <template v-if="isLocal">
-              <v-card-text style="width: 500px; margin: auto" class="mt-4" v-show="!privateKey">
+              <v-card-text
+                style="width: 500px; margin: auto"
+                class="mt-4"
+                v-show="!privateKey"
+              >
                 <p
-                  style="text-align: center; font-size: 16px;margin-bottom: 50px"
-                >Please input your wallet's password to sign the certificate</p>
+                  style="
+                    text-align: center;
+                    font-size: 16px;
+                    margin-bottom: 50px;
+                  "
+                >
+                  Please input your wallet's password to sign the certificate
+                </p>
                 <div style="width: 350px; margin: auto">
                   <v-text-field
                     v-focus
@@ -57,7 +69,7 @@
                     v-model="password"
                     label="Password"
                     type="password"
-                    maxlength="20"
+                    maxlength="256"
                     :error-messages="passwordError"
                     ref="passwordElem"
                     @focus="onPasswordFocused"
@@ -71,12 +83,15 @@
                   />
                 </div>
               </v-card-text>
-              <v-card-text v-show="!!privateKey" class="text-xs-center mt-4 subheading">
+              <v-card-text
+                v-show="!!privateKey"
+                class="text-xs-center mt-4 subheading"
+              >
                 <p class="title">Please sign the certificate</p>
                 <v-icon class="mr-2 display-2">mdi-lock-open</v-icon>
                 <p class="grey--text text--darken-1">The wallet is unlocked</p>
               </v-card-text>
-              <div style="position:absolute;left:0;bottom:0; width: 100%">
+              <div style="position: absolute; left: 0; bottom: 0; width: 100%">
                 <v-progress-linear
                   v-show="signing"
                   class="ma-0"
@@ -88,7 +103,7 @@
             </template>
             <template v-else>
               <div
-                v-show="!connected  && !ledgerError"
+                v-show="!connected && !ledgerError"
                 style="width: 500px; margin: auto"
                 class="text-md-center pt-1"
               >
@@ -111,20 +126,25 @@
                   <span
                     style="font-family: 'Roboto Mono', monospace"
                     class="display-2 d-inline-block px-2 mx-2"
-                    :class="{'elevation-1': i!== 4}"
+                    :class="{ 'elevation-1': i !== 4 }"
                     v-for="(e, i) in unsignedHexStr"
                     :key="i"
-                  >{{e}}</span>
+                    >{{ e }}</span
+                  >
                 </p>
-                <span class="grey--text text--darken-2">Waiting for the confirmation...</span>
+                <span class="grey--text text--darken-2"
+                  >Waiting for the confirmation...</span
+                >
               </div>
               <div
                 class="text-md-center pt-1"
                 style="width: 500px; margin: auto"
                 v-if="!!ledgerError"
               >
-                <v-icon color="error" class="display-3">mdi-alert-circle-outline</v-icon>
-                <p class="error--text">{{ledgerError.message}}</p>
+                <v-icon color="error" class="display-3"
+                  >mdi-alert-circle-outline</v-icon
+                >
+                <p class="error--text">{{ ledgerError.message }}</p>
               </div>
             </template>
           </template>
@@ -138,14 +158,16 @@
                 small
                 slot="activator"
               >
-                {{currentGroup.name}}
+                {{ currentGroup.name }}
                 <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-tile v-for="(item, index) in groups" :key="index">
                 <v-list-tile-content>
-                  <v-btn small flat @click="onGroupSelect(item)">{{ item.name }}</v-btn>
+                  <v-btn small flat @click="onGroupSelect(item)">{{
+                    item.name
+                  }}</v-btn>
                 </v-list-tile-content>
               </v-list-tile>
             </v-list>
@@ -157,22 +179,24 @@
                   full-size
                   :wallets="wallets"
                   v-model="seekIndex"
-                  :noseek="step===2 || !!arg.selectedWallet"
+                  :noseek="step === 2 || !!arg.selectedWallet"
                 />
               </v-card-text>
             </v-layout>
             <v-layout align-content-center column>
               <v-divider
-                style="margin: 20px auto; max-height: calc(100% - 40px);"
+                style="margin: 20px auto; max-height: calc(100% - 40px)"
                 inset
                 :vertical="true"
               ></v-divider>
             </v-layout>
             <v-layout column>
               <v-card-text style="width: 280px">
-                <div
-                  class="lighten-5"
-                >Your signature is being requested. Please review the content before you signed. Always make sure you trust the sites you interact with.</div>
+                <div class="lighten-5">
+                  Your signature is being requested. Please review the content
+                  before you signed. Always make sure you trust the sites you
+                  interact with.
+                </div>
               </v-card-text>
             </v-layout>
           </v-layout>
@@ -180,7 +204,7 @@
         <div class="signing-content-bottom"></div>
       </v-layout>
 
-      <v-card-actions class="signing-footer" style="flex: 0 0 auto;">
+      <v-card-actions class="signing-footer" style="flex: 0 0 auto">
         <v-btn :disabled="signing" small flat @click="decline">Decline</v-btn>
         <v-spacer />
         <v-btn
@@ -191,7 +215,8 @@
           :disabled="signing"
           class="secondary"
           @click="back"
-        >Back</v-btn>
+          >Back</v-btn
+        >
         <v-btn
           v-if="isLocal"
           v-show="step === 2"
@@ -201,7 +226,8 @@
           :disabled="signing"
           class="green darken-1"
           @click="sign"
-        >Sign</v-btn>
+          >Sign</v-btn
+        >
         <v-btn
           v-show="step === 1"
           small
@@ -210,7 +236,8 @@
           :disabled="signing"
           class="green darken-1"
           @click="goNext"
-        >Next</v-btn>
+          >Next</v-btn
+        >
       </v-card-actions>
     </v-card>
   </DialogEx>
@@ -252,7 +279,7 @@ export default class CertSigningDialog extends Mixins(
     key: string;
   } = {
     name: "",
-    key: ""
+    key: "",
   };
 
   keepUnlocked = false;
@@ -261,10 +288,10 @@ export default class CertSigningDialog extends Mixins(
     return getUnlocked(_wallet.id! || -1);
   }
   get groups() {
-    return this.arg.wallets.map(item => {
+    return this.arg.wallets.map((item) => {
       return {
         name: item.sectionName,
-        key: item.key
+        key: item.key,
       };
     });
   }
@@ -275,7 +302,7 @@ export default class CertSigningDialog extends Mixins(
     return this.currentGroup.key === "local";
   }
   get wallets(): entities.Wallet[] | { name: string; address: string }[] {
-    const wallets = this.arg.wallets.find(item => {
+    const wallets = this.arg.wallets.find((item) => {
       return item.key === this.currentGroup!.key;
     });
     if (wallets) {
@@ -304,8 +331,8 @@ export default class CertSigningDialog extends Mixins(
 
   getDefaultGroup() {
     if (this.arg.wallets.length > 1) {
-      const group = this.arg.wallets.find(item => {
-        const temp = item.list.find(wallet => {
+      const group = this.arg.wallets.find((item) => {
+        const temp = item.list.find((wallet) => {
           return wallet.address === this.lastSigner;
         });
         return !!temp;
@@ -313,13 +340,13 @@ export default class CertSigningDialog extends Mixins(
       if (group) {
         return {
           key: group.key!,
-          name: group.sectionName
+          name: group.sectionName,
         };
       }
     }
     return {
       key: this.arg.wallets[0].key!,
-      name: this.arg.wallets[0].sectionName
+      name: this.arg.wallets[0].sectionName,
     };
   }
 
@@ -332,7 +359,7 @@ export default class CertSigningDialog extends Mixins(
   }
   @Watch("currentGroup")
   setWalletThings() {
-    const i = this.wallets.findIndex(w => {
+    const i = this.wallets.findIndex((w) => {
       return w.address === (this.arg.selectedWallet || this.lastSigner);
     });
     this.seekIndex = i < 0 ? 0 : i;
@@ -379,7 +406,7 @@ export default class CertSigningDialog extends Mixins(
       const annex = {
         domain: this.arg.domain,
         timestamp: flex.meter.status.head.timestamp,
-        signer: wallet!.address!
+        signer: wallet!.address!,
       };
 
       let privateKey;
@@ -395,7 +422,7 @@ export default class CertSigningDialog extends Mixins(
 
       const unsigned = Certificate.encode({
         ...this.arg.message,
-        ...annex
+        ...annex,
       });
 
       const signature =
@@ -407,7 +434,7 @@ export default class CertSigningDialog extends Mixins(
       this.opened = false;
       this.$resolve({
         annex,
-        signature
+        signature,
       });
     } catch (err) {
       if (err.message === "message authentication code mismatch") {
