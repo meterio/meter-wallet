@@ -20,26 +20,26 @@
         <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
       </v-btn>
 
-      <div v-if="!isMainnet">
-        <v-btn flat class="ml-0" to="/candidates">
-          <v-icon small mr-5 style="margin-right: 3px"
-            >mdi-account-multiple</v-icon
-          >Candidates
-        </v-btn>
-        <v-btn flat class="ml-0" to="/buckets">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
-          >Staking
-        </v-btn>
-        <v-btn
-          flat
-          class="ml-0"
-          to="/auction/present"
-          :input-value="$route.path.startsWith('/auction')"
-        >
-          <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
-          >Auction
-        </v-btn>
-      </div>
+      <v-btn flat class="ml-0" to="/candidates">
+        <v-icon small mr-5 style="margin-right: 3px"
+          >mdi-account-multiple</v-icon
+        >Candidates
+      </v-btn>
+
+      <v-btn flat class="ml-0" to="/buckets">
+        <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
+        >Staking
+      </v-btn>
+
+      <v-btn
+        flat
+        class="ml-0"
+        to="/auction/present"
+        :input-value="$route.path.startsWith('/auction')"
+      >
+        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
+        >Auction
+      </v-btn>
     </v-layout>
 
     <v-layout style="position: absolute; right: 0; top: 0; background: #fafafa">
