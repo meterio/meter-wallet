@@ -119,6 +119,7 @@ declare namespace entities {
     candidateName: string;
     matureFromNow: string;
     state: string;
+    type?: string;
   };
 
   type DistMTRG = {

@@ -48,6 +48,7 @@
             </td>
             <td>{{ props.item.state }}</td>
             <td>{{ props.item.matureFromNow }}</td>
+            <td>{{ props.item.type }}</td>
             <td>
               <div
                 v-if="
@@ -139,6 +140,7 @@ export default class BucketList extends Vue {
           ? moment.utc(1000 * Number(b.matureTime)).fromNow()
           : "";
         b.state = b.unbounded ? "unbounded" : "created";
+        b.type = b.autobid >= 100 ? "autobid" : "userbid";
         return b;
       });
   }
@@ -152,6 +154,7 @@ export default class BucketList extends Vue {
           ? moment.utc(1000 * Number(b.matureTime)).fromNow()
           : "";
         b.state = b.unbounded ? "unbounded" : "created";
+        b.type = b.autobid >= 100 ? "autobid" : "userbid";
         return b;
       });
   }
@@ -202,6 +205,7 @@ export default class BucketList extends Vue {
     { text: "Total Votes", value: "totalVotes", sortable: true },
     { text: "State", value: "state", sortable: true },
     { text: "Mature", value: "matureFromNow", sortable: true },
+    { text: "Type", value: "type", sortable: false },
     { text: "Action", value: "action", sortable: true },
   ];
 
