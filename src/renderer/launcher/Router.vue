@@ -20,26 +20,28 @@
         <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
       </v-btn>
 
-      <v-btn flat class="ml-0" to="/candidates">
-        <v-icon small mr-5 style="margin-right: 3px"
-          >mdi-account-multiple</v-icon
-        >Candidates
-      </v-btn>
+      <div v-if="isTesla">
+        <v-btn flat class="ml-0" to="/candidates">
+          <v-icon small mr-5 style="margin-right: 3px"
+            >mdi-account-multiple</v-icon
+          >Candidates
+        </v-btn>
 
-      <v-btn flat class="ml-0" to="/buckets">
-        <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
-        >Staking
-      </v-btn>
+        <v-btn flat class="ml-0" to="/buckets">
+          <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
+          >Staking
+        </v-btn>
 
-      <v-btn
-        flat
-        class="ml-0"
-        to="/auction/present"
-        :input-value="$route.path.startsWith('/auction')"
-      >
-        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
-        >Auction
-      </v-btn>
+        <v-btn
+          flat
+          class="ml-0"
+          to="/auction/present"
+          :input-value="$route.path.startsWith('/auction')"
+        >
+          <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
+          >Auction
+        </v-btn>
+      </div>
     </v-layout>
 
     <v-layout style="position: absolute; right: 0; top: 0; background: #fafafa">
@@ -107,6 +109,13 @@ export default class Router extends Vue {
 
   get isMainnet() {
     return nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet";
+  }
+
+  get isTesla() {
+    return (
+      nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet" &&
+      this.$store.state.chainHead.number > 9470000
+    );
   }
 
   openExplorer() {
