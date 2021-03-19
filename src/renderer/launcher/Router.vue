@@ -20,7 +20,7 @@
         <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
       </v-btn>
 
-      <div v-if="isTesla">
+      <div v-if="enableScriptEngine">
         <v-btn flat class="ml-0" to="/candidates">
           <v-icon small mr-5 style="margin-right: 3px"
             >mdi-account-multiple</v-icon
@@ -111,10 +111,11 @@ export default class Router extends Vue {
     return nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet";
   }
 
-  get isTesla() {
+  get enableScriptEngine() {
     return (
-      nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet" &&
-      this.$store.state.chainHead.number > 9470000
+      (nameOfNetwork(NODE_CONFIG.genesis.id) == "mainnet" &&
+        this.$store.state.chainHead.number > 9470000) ||
+      nameOfNetwork(NODE_CONFIG.genesis.id) != "mainnet"
     );
   }
 
