@@ -1,12 +1,25 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
+  <v-layout v-if="bucketNotFound" column align-center>
+    Bucket with id {{ stakingID }} is not found
+  </v-layout>
+  <v-layout v-else column align-center>
+    <v-layout v-if="addressNotFound" column align-center>
+      Bucket owner address {{ holderAddr }} is not found
+    </v-layout>
+    <v-layout
+      v-else
+      column
+      align-center
+      style="max-width: 1000px; width: 100%"
+      pa-3
+    >
       <div class="subheading py-4"></div>
       <WalletSeeker
         style="width: 270px"
         full-size
         :wallets="wallets"
         v-model="from"
+        disabled
       />
       <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading"
@@ -21,14 +34,15 @@
               validate-on-blur
               label="Staking ID"
               v-model="stakingID"
+              disabled
             />
             <v-text-field
               validate-on-blur
-              type="number"
               label="Amount"
               v-bind:suffix="token"
               :rules="amountRules"
               v-model="amount"
+              disabled
             />
           </v-form>
         </v-card-text>
@@ -51,11 +65,18 @@ import { cry, ScriptEngine } from "@meterio/devkit";
 export default class StakingBound extends Vue {
   @State
   wallets!: entities.Wallet[];
-  amount = 0;
+
+  @State
+  buckets!: entities.Bucket[];
+
+  amount = "0";
   stakingID = "";
   from = 0;
   errMsg = "";
   token = "MTRG";
+  bucketNotFound = false;
+  addressNotFound = false;
+  holderAddr = "";
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
@@ -80,22 +101,37 @@ export default class StakingBound extends Vue {
     (v: number) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
-  created() {
-    const id = this.$route.params.id;
-    const amount = parseInt(
-      new BigNumber(this.$route.params.amount).dividedBy(1e18).toFixed()
-    );
-    this.stakingID = id;
-    this.amount = amount;
+  async created() {
+    const buckets = await flex.meter.buckets();
+    this.$store.commit("updateBuckets", buckets);
 
-    let holderAddr = this.$route.query["from"];
-    if (holderAddr) {
-      holderAddr = holderAddr.toLowerCase();
-      const index = this.wallets.findIndex(
-        (wallet) => wallet.address === holderAddr
-      );
-      if (index >= 0) {
-        this.from = index;
+    const id = this.$route.params.id;
+    let bucket = undefined;
+    for (const b of buckets) {
+      if (b.id.toLowerCase() == id) {
+        bucket = b;
+        break;
+      }
+    }
+
+    if (!bucket) {
+      this.bucketNotFound = true;
+    } else {
+      const amount = new BigNumber(bucket.value).dividedBy(1e18).toFixed();
+      this.stakingID = id;
+      this.amount = amount;
+
+      let holderAddr = bucket.owner.toLowerCase();
+      if (holderAddr) {
+        const index = this.wallets.findIndex(
+          (wallet) => wallet.address === holderAddr
+        );
+        this.holderAddr = holderAddr;
+        if (index >= 0) {
+          this.from = index;
+        } else {
+          this.addressNotFound = true;
+        }
       }
     }
   }

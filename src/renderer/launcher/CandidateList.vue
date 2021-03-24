@@ -85,6 +85,8 @@ export default class CandidateList extends Vue {
   @State
   wallets!: entities.Wallet[];
 
+  timer: NodeJS.Timeout = {} as any;
+
   get candidateList() {
     return this.candidates.map((c) => {
       if (c.address in this.walletMap) {
@@ -119,12 +121,30 @@ export default class CandidateList extends Vue {
   ];
 
   async refresh() {
+    console.log("refresh candidates");
     const candidates = await flex.meter.candidates();
     this.$store.commit("updateCandidates", candidates);
   }
 
   async created() {
     await this.refresh();
+    this.startInterval();
+  }
+
+  destroyed() {
+    this.stopInterval();
+  }
+
+  startInterval() {
+    clearInterval(this.timer);
+    const self = this;
+    this.timer = setInterval(function () {
+      self.refresh();
+    }, 5000);
+  }
+
+  stopInterval() {
+    clearInterval(this.timer);
   }
 }
 </script>

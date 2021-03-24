@@ -60,7 +60,7 @@
                   tag="span"
                   :to="{
                     name: 'delegate',
-                    params: { id: props.item.id, amount: props.item.votes },
+                    params: { id: props.item.id },
                   }"
                 >
                   <v-btn flat small outline color="teal">delegate</v-btn>
@@ -70,7 +70,7 @@
                   tag="span"
                   :to="{
                     name: 'unbound',
-                    params: { id: props.item.id, amount: props.item.votes },
+                    params: { id: props.item.id },
                   }"
                 >
                   <v-btn flat small outline color="grey">unbound</v-btn>
@@ -81,7 +81,7 @@
                   tag="span"
                   :to="{
                     name: 'undelegate',
-                    params: { id: props.item.id, amount: props.item.votes },
+                    params: { id: props.item.id },
                   }"
                 >
                   <v-btn flat small outline color="indigo">undelegate</v-btn>
@@ -144,6 +144,7 @@ export default class BucketList extends Vue {
         return b;
       });
   }
+
   get votedBuckets() {
     return this.buckets
       .filter((b) => b.candidate in this.walletMap)
@@ -196,6 +197,7 @@ export default class BucketList extends Vue {
 
   logoUrl = env.logoUrl;
   rowsPerPage = [50, 100, 200, { text: "All", value: -1 }];
+  timer: NodeJS.Timeout = {} as any;
 
   headers = [
     { text: "ID", value: "id", sortable: true },
@@ -210,12 +212,34 @@ export default class BucketList extends Vue {
   ];
 
   async refresh() {
+    console.log("refresh bucket list");
     const buckets = await flex.meter.buckets();
     this.$store.commit("updateBuckets", buckets);
+
+    console.log("refresh candidate list");
+    const candidates = await flex.meter.candidates();
+    this.$store.commit("updateCandidates", candidates);
   }
 
   async created() {
     await this.refresh();
+    this.startInterval();
+  }
+
+  destroyed() {
+    this.stopInterval();
+  }
+
+  startInterval() {
+    clearInterval(this.timer);
+    const self = this;
+    this.timer = setInterval(function () {
+      self.refresh();
+    }, 5000);
+  }
+
+  stopInterval() {
+    clearInterval(this.timer);
   }
 }
 </script>

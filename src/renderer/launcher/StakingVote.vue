@@ -153,7 +153,9 @@ export default class StakingBound extends Vue {
     (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
-  created() {
+  async created() {
+    const candidates = await flex.meter.candidates();
+    this.$store.commit("updateCandidates", candidates);
     const address = this.$route.params.candidateAddress;
     this.candAddr = address;
     let holderAddr = this.$route.query["from"];

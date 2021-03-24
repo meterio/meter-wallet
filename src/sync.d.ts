@@ -159,7 +159,9 @@ declare namespace entities {
   type AuctionCB = {
     auctionID: string;
     startHeight: number;
+    startEpoch: number;
     endHeight: number;
+    endEpoch: number;
     releasedMTRG: string;
     reservedPrice: string;
     createTime: number;
@@ -178,6 +180,7 @@ type Beat = {
   id: string;
   parentID: string;
   timestamp: number;
+  epoch:number;
 
   bloom: string;
   k: number;

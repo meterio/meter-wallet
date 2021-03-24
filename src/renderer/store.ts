@@ -40,7 +40,7 @@ class Store extends Vuex.Store<Store.Model> {
         wallets: [],
         candidates: [],
         buckets: [],
-        presentAuction: {auctionID:"", auctionTxs:[], receivedMTR:"",releasedMTRG:"",reservedPrice:"",startHeight:0,endHeight:0, createTime:0},
+        presentAuction: {auctionID:"", auctionTxs:[], receivedMTR:"",releasedMTRG:"",reservedPrice:"",startEpoch:0, startHeight:0, endEpoch:0,endHeight:0, createTime:0},
       },
       getters: {},
       mutations: {

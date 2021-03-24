@@ -105,11 +105,10 @@ export default class StakingBucketUpdate extends Vue {
     }
     try {
       let fromAddr = this.wallets[this.from].address!;
-      console.log("AMOUNT:", this.amount);
       let dataBuffer = ScriptEngine.getBucketUpdateData(
         fromAddr,
         this.bucketID,
-        this.amount
+        new BigNumber(this.amount).times(1e18).toFixed()
       );
       await flex.vendor
         .sign("tx")

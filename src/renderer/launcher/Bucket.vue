@@ -11,6 +11,7 @@
           <div>Bonus Votes:</div>
           <div>Total Votes:</div>
           <div>Option:</div>
+          <div>Type:</div>
           <div>Created At:</div>
           <div>Nonce:</div>
           <div>Unbounded:</div>
@@ -30,6 +31,7 @@
             <Amount sym="MTRG">{{ bucket.totalVotes }}</Amount>
           </div>
           <div>{{ bucket.option }}</div>
+          <div>{{ bucket.autobid >= 100 ? "autobid" : "userbid" }}</div>
           <div>{{ bucket.createTime }}</div>
           <div>{{ bucket.nonce }}</div>
           <div>{{ bucket.unbounded }}</div>
@@ -43,7 +45,7 @@
             tag="span"
             :to="{
               name: 'delegate',
-              params: { id: bucket.id, amount: bucket.votes },
+              params: { id: bucket.id },
             }"
           >
             <v-btn depressed small color="info">Delegate</v-btn>
@@ -54,7 +56,7 @@
             tag="span"
             :to="{
               name: 'unbound',
-              params: { id: bucket.id, amount: bucket.votes },
+              params: { id: bucket.id },
             }"
           >
             <v-btn depressed small color="primary">Unbound</v-btn>
@@ -65,7 +67,7 @@
             tag="span"
             :to="{
               name: 'undelegate',
-              params: { id: bucket.id, amount: bucket.votes },
+              params: { id: bucket.id },
             }"
           >
             <v-btn depressed small color="primary">Unvote</v-btn>
@@ -78,15 +80,12 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
-import env from "@/env";
 
 @Component
 export default class Bucket extends Vue {
   @State
   buckets!: entities.Bucket[];
 
-  @State
-  candidates!: entities.Candidate[];
   id = "";
   bucket = {} as entities.Bucket;
 

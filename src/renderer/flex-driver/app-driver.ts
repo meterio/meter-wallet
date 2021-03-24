@@ -22,6 +22,7 @@ export class AppDriver implements Flex.Driver {
             number: this.genesis.number,
             parentID: this.genesis.parentID,
             timestamp: this.genesis.timestamp,
+            epoch: this.genesis.epoch,
         }
     }
 

@@ -78,6 +78,7 @@ export class Node {
       number: this.headBlock.number,
       timestamp: this.headBlock.timestamp,
       parentID: this.headBlock.parentID
+      epoch: this.headBlock.epoch,
     };
   }
 

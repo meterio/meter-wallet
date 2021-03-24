@@ -245,7 +245,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: "/staking/unbound/:id/:amount",
+    path: "/staking/unbound/:id",
     name: "unbound",
     component: StakingUnbound,
     meta: {
@@ -253,7 +253,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: "/staking/delegate/:id/:amount",
+    path: "/staking/delegate/:id",
     name: "delegate",
     component: StakingDelegate,
     meta: {
@@ -261,7 +261,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: "/staking/undelegate/:id/:amount",
+    path: "/staking/undelegate/:id",
     name: "undelegate",
     component: StakingUndelegate,
     meta: {

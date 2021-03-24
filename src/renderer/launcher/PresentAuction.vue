@@ -2,25 +2,32 @@
   <v-layout column pa-5>
     <h3 class="pa-3">Present Auction</h3>
     <v-card>
-      <v-card-text>
+      <v-card-text class="mb-0">
         <v-layout justify-space-between>
           <div>
             <div class="my-2">
-              Auction amount:
+              MTRG on Auction:
               <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
             </div>
             <div class="my-2">
-              Received total bids:
+              Received bids:
               <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
+            </div>
+            <div class="my-2">
+              Estimate Price: <Amount sym="MTR">{{ estPrice }}</Amount>
             </div>
           </div>
 
           <div>
             <div class="my-2">
-              Height Range: {{ presentAuction.startHeight }} -
-              {{ presentAuction.endHeight }}
+              Epoch Range: {{ presentAuction.endEpoch }} -
+              {{ presentAuction.endEpoch + 24 }}
             </div>
-            <div class="my-2">Current Height: {{ chainHead.number }}</div>
+            <div class="my-2">Current Epoch: {{ chainHead.epoch }}</div>
+            <div class="my-2">
+              Est. End Time: in
+              {{ leftoverEpoch }} hour{{ leftoverEpoch > 1 ? "s" : "" }}
+            </div>
           </div>
         </v-layout>
       </v-card-text>
@@ -69,6 +76,7 @@
   </v-layout>
 </template>
 <script lang="ts">
+import BigNumber from "bignumber.js";
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 
@@ -84,6 +92,17 @@ export default class PresentAuction extends Vue {
 
   search = "";
   rowsPerPage = [20, 50, { text: "All", value: -1 }];
+  timer: NodeJS.Timeout = {} as any;
+
+  get estPrice() {
+    return new BigNumber(this.presentAuction.receivedMTR)
+      .dividedBy(this.presentAuction.releasedMTRG)
+      .times(1e18)
+      .toFixed();
+  }
+  get leftoverEpoch() {
+    return this.presentAuction.endEpoch + 24 - this.chainHead.epoch;
+  }
 
   get progress() {
     const start = this.presentAuction.startHeight;
@@ -96,8 +115,6 @@ export default class PresentAuction extends Vue {
   get auctionTxs() {
     return this.presentAuction.auctionTxs.map((tx) => {
       tx.createdAt = moment.unix(tx.timestamp).format("MM/DD hh:mm");
-      console.log(tx);
-
       return tx;
     });
   }
@@ -111,6 +128,11 @@ export default class PresentAuction extends Vue {
 
   async created() {
     await this.refresh();
+    this.startInterval();
+  }
+
+  async destroyed() {
+    this.stopInterval();
   }
 
   jumpToInsight(addr: string) {
@@ -121,8 +143,21 @@ export default class PresentAuction extends Vue {
   }
 
   async refresh() {
+    console.log("refresh present auction");
     const present = await flex.meter.auction();
     this.$store.commit("updatePresentAuction", present);
+  }
+
+  startInterval() {
+    clearInterval(this.timer);
+    const self = this;
+    this.timer = setInterval(function () {
+      self.refresh();
+    }, 5000);
+  }
+
+  stopInterval() {
+    clearInterval(this.timer);
   }
 }
 </script>
