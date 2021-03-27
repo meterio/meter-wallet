@@ -1,15 +1,20 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
+    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
       <div class="subheading py-4">Transfer from</div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading">To</v-card-title>
         <v-card-text>
           <v-form ref="form">
             <v-menu
               v-model="showHistory"
-              style="width:100%;"
+              style="width: 100%"
               class="unset-cursor"
               :open-on-click="false"
               offset-y
@@ -26,19 +31,27 @@
                 @click:append="onClickHistoryIcon"
               />
               <v-list two-line>
-                <template v-for="(item,i) in history">
-                  <v-divider v-if="i>0" :key="item.addr + '-divider'" />
-                  <v-list-tile :key="item.addr" @click="selectAddress(item.addr)">
+                <template v-for="(item, i) in history">
+                  <v-divider v-if="i > 0" :key="item.addr + '-divider'" />
+                  <v-list-tile
+                    :key="item.addr"
+                    @click="selectAddress(item.addr)"
+                  >
                     <v-list-tile-content>
-                      <v-list-tile-title>{{item.addr}}</v-list-tile-title>
+                      <v-list-tile-title>{{ item.addr }}</v-list-tile-title>
                       <v-list-tile-sub-title v-show="!!item.walletName">
                         <v-layout align-center>
                           <AddressLabel
                             icon
                             class="mr-2"
-                            style="width:30px;height:20px;border-radius:3px;"
-                          >{{item.addr}}</AddressLabel>
-                          {{item.walletName}}
+                            style="
+                              width: 30px;
+                              height: 20px;
+                              border-radius: 3px;
+                            "
+                            >{{ item.addr }}</AddressLabel
+                          >
+                          {{ item.walletName }}
                         </v-layout>
                       </v-list-tile-sub-title>
                     </v-list-tile-content>
@@ -80,11 +93,17 @@
               v-model="mtrgLocked"
             />
 
-            <v-textarea ref="memo" label="Memo" :rules="memoRules" validate-on-blur v-model="memo"></v-textarea>
+            <v-textarea
+              ref="memo"
+              label="Memo"
+              :rules="memoRules"
+              validate-on-blur
+              v-model="memo"
+            ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -108,8 +127,8 @@ export default class LockedTransfer extends Vue {
   errMsg = "";
   lockEpoch = 0;
   releaseEpoch = 100;
-  mtrLocked = 0;
-  mtrgLocked = 0;
+  mtrLocked = "0";
+  mtrgLocked = "0";
   showHistory = false;
   memo = "";
   history: {
@@ -127,11 +146,11 @@ export default class LockedTransfer extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
 
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
   ];
 
   readonly epochRules = [(v: number) => v > 0 || "Invalid epoch"];
@@ -143,7 +162,7 @@ export default class LockedTransfer extends Vue {
     if (fromAddr) {
       fromAddr = fromAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === fromAddr
+        (wallet) => wallet.address === fromAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -157,19 +176,13 @@ export default class LockedTransfer extends Vue {
       return;
     }
     try {
-      const value =
-        "0x" +
-        new BigNumber("1" + "0".repeat(18))
-          .times(this.amount!)
-          .integerValue()
-          .toString(16);
       const dataBuffer = ScriptEngine.getLockedTransferData(
         this.lockEpoch,
         this.releaseEpoch,
         this.wallets[this.from].address!,
         this.to,
-        this.mtrLocked,
-        this.mtrgLocked,
+        new BigNumber(this.mtrLocked).times(1e18).toFixed(),
+        new BigNumber(this.mtrgLocked).times(1e18).toFixed(),
         this.memo
       );
       const fromAddr = this.wallets[this.from].address!;
@@ -181,8 +194,8 @@ export default class LockedTransfer extends Vue {
             to: fromAddr,
             value: "0",
             token: ScriptEngine.Token.Meter,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {
@@ -203,10 +216,10 @@ export default class LockedTransfer extends Vue {
 
     const addrs: string[] = [];
     txs
-      .map(tx => (tx.data.receipt ? tx.data.receipt.outputs : []))
-      .forEach(outputs => {
-        outputs.forEach(output => {
-          output.transfers.forEach(tr => {
+      .map((tx) => (tx.data.receipt ? tx.data.receipt.outputs : []))
+      .forEach((outputs) => {
+        outputs.forEach((output) => {
+          output.transfers.forEach((tr) => {
             if (addrs.indexOf(tr.recipient) < 0) {
               addrs.push(tr.recipient);
             }
@@ -216,17 +229,17 @@ export default class LockedTransfer extends Vue {
 
     this.history = addrs
       .slice(0, 10)
-      .map<LockedTransfer["history"][number]>(addr => {
-        const wallet = this.wallets.find(wallet => addr === wallet.address);
+      .map<LockedTransfer["history"][number]>((addr) => {
+        const wallet = this.wallets.find((wallet) => addr === wallet.address);
         if (wallet) {
           return {
             addr: cry.toChecksumAddress(addr),
-            walletName: wallet.name!
+            walletName: wallet.name!,
           };
         } else {
           return {
             addr: cry.toChecksumAddress(addr),
-            walletName: null
+            walletName: null,
           };
         }
       });
