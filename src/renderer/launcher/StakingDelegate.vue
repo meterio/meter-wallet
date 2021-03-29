@@ -78,18 +78,22 @@ export default class StakingDelegate extends Vue {
   holderAddr = "";
 
   get candidatesList() {
-    return this.candidates.map((c) => {
-      return {
-        text:
-          c.name +
-          "   (" +
-          c.address.substr(0, 8) +
-          "..." +
-          c.address.substr(c.address.length - 6) +
-          ")",
-        value: c.address,
-      };
-    });
+    return this.candidates
+      .map((c) => {
+        return {
+          text:
+            c.name +
+            "   (" +
+            c.address.substr(0, 8) +
+            "..." +
+            c.address.substr(c.address.length - 6) +
+            ")",
+          value: c.address,
+        };
+      })
+      .sort((a, b) => {
+        return Math.random() > 0.5 ? 1 : -1;
+      });
   }
 
   readonly addressRules = [
