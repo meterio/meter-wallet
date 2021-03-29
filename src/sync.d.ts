@@ -99,6 +99,7 @@ declare namespace entities {
     commission: string;
     buckets: string[];
     owned: boolean;
+    pubKey: string;
   };
 
   type Bucket = {

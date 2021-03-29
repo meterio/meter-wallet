@@ -70,6 +70,7 @@ class Store extends Vuex.Store<Store.Model> {
               buckets: c.buckets,
               totalVotes: parseInt(c.totalVotes.toString()),
               commission: `${c.commission/1e7}%`,
+              pubKey: c.pubKey,
 
               owned: false
             };

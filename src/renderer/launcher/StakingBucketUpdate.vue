@@ -1,113 +1,132 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
-      <div class="subheading py-4"></div>
-      <WalletSeeker
-        style="width: 270px"
-        full-size
-        :wallets="wallets"
-        v-model="from"
-      />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading"
-          >Update staking candidate information</v-card-title
-        >
-        <v-card-text>
-          <v-form ref="form">
-            <v-text-field
-              ref="bucketID"
-              disabled
-              label="Bucket ID"
-              v-model="bucketID"
-            />
-            <v-text-field
-              ref="curAmount"
-              disabled
-              v-bind:suffix="token"
-              label="Current Amount"
-              v-model="curAmount"
-            />
-            <v-text-field
-              validate-on-blur
-              type="number"
-              label="Add Amount"
-              v-bind:suffix="token"
-              :rules="amountRules"
-              v-model="amount"
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="error--text">{{ errMsg }}</div>
-          <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-layout>
+  <v-layout column align-center class="pa-5">
+    <v-card flat tile style="width: 600px" class="mt-5 pa-2 outline">
+      <v-card-title class="card-title">Update Bucket</v-card-title>
+      <v-card-text>
+        <div class="section">
+          <label>Bucket ID</label>
+          <div>{{ bucket.id }}</div>
+        </div>
+
+        <div class="section">
+          <label>Bucket Owner</label>
+          <WalletChoice :wallet="wallet" :compact="true"></WalletChoice>
+        </div>
+
+        <div class="section">
+          <label>Current Amount</label>
+          <div>
+            <Amount sym="MTRG">{{ bucket.value }}</Amount>
+          </div>
+        </div>
+
+        <v-form ref="form">
+          <v-text-field
+            validate-on-blur
+            type="number"
+            label="Extra Amount"
+            v-bind:suffix="token"
+            :rules="amountRules"
+            v-model="amount"
+            :append-outer-icon="marker ? 'mdi-infinity' : 'mdi-window-close'"
+            @click:append-outer="maxAmount"
+          >
+          </v-text-field>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text">{{ errMsg }}</div>
+        <v-spacer />
+        <v-btn flat class="primary" @click="send">Send</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Component, Mixins } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry, ScriptEngine } from "@meterio/devkit";
+import { ScriptEngine } from "@meterio/devkit";
+import WalletChoice from "../components/WalletChoice.vue";
+import AccountLoader from "../mixins/account-loader";
 
-@Component
-export default class StakingBucketUpdate extends Vue {
+@Component({ components: { WalletChoice } })
+export default class StakingBucketUpdate extends Mixins(AccountLoader) {
   @State
   wallets!: entities.Wallet[];
-  from = 0;
-  amount = "";
+  amount = "0";
   errMsg = "";
-  curAmount = "0";
   token = "MTRG";
-  bucketID = "";
+  marker = true;
 
-  readonly addressRules = [
-    (v: string) => !!v || "Input address here",
-    (v: string) => {
-      if (!cry.isAddress(v)) {
-        return "Invalid address";
-      }
-      if (v !== v.toLowerCase() && cry.toChecksumAddress(v) !== v) {
-        return "Checksum incorrect";
-      }
-      return true;
-    },
-  ];
+  wallet: entities.Wallet = {} as any;
+  bucket: Flex.Meter.Bucket = {} as any;
+
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
+    (v: string) => new BigNumber(v).gt(0) || "Invalid amount",
   ];
 
-  created() {
-    let fromAddr = this.$route.params.addr;
-    let bucketID = this.$route.params.bucketid;
-    let curAmount = new BigNumber(this.$route.params.amount)
-      .dividedBy(1e18)
-      .toFixed();
-    this.curAmount = curAmount;
-    this.bucketID = bucketID;
-    if (fromAddr) {
-      fromAddr = fromAddr.toLowerCase();
-      const index = this.wallets.findIndex(
-        (wallet) => wallet.address === fromAddr
-      );
-      if (index >= 0) {
-        this.from = index;
+  maxAmount() {
+    if (this.marker) {
+      this.amount = this.account
+        ? new BigNumber(this.account.balance).dividedBy(1e18).toFixed()
+        : "0";
+    } else {
+      this.amount = "0";
+    }
+    this.marker = !this.marker;
+  }
+
+  get address() {
+    return this.wallet.address!;
+  }
+
+  async created() {
+    const id = this.$route.params.id;
+    const buckets = await flex.meter.buckets();
+    this.$store.commit("updateBuckets", buckets);
+
+    let bucket = undefined;
+    for (const b of buckets) {
+      if (b.id.toLowerCase() == id) {
+        bucket = b;
+        break;
       }
     }
+    if (!bucket) {
+      this.errMsg = `Could not find bucket ${id}`;
+      return;
+    }
+    this.bucket = bucket;
+
+    if (!bucket.owner) {
+      this.errMsg = `Bucket owner ${bucket.owner} does not exist`;
+      return;
+    }
+    const address = bucket.owner.toLowerCase();
+    let index = -1;
+    index = this.wallets.findIndex(
+      (wallet) => wallet.address.toLowerCase() === address
+    );
+    this.wallet = this.wallets[index];
+    if (index < 0) {
+      this.errMsg = `You don't own wallet ${bucket.owner.toLowerCase()}`;
+      return;
+    }
+    this.wallet = this.wallets[index];
   }
 
   async send() {
     this.errMsg = "";
     if (!(this.$refs.form as any).validate()) {
+      console.log("ERROR !");
       return;
     }
     try {
-      let fromAddr = this.wallets[this.from].address!;
+      const fromAddr = this.wallet.address;
       let dataBuffer = ScriptEngine.getBucketUpdateData(
         fromAddr,
-        this.bucketID,
+        this.bucket.id,
         new BigNumber(this.amount).times(1e18).toFixed()
       );
       await flex.vendor

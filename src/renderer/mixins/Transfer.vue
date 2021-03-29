@@ -9,11 +9,11 @@ export default class TransferMixin extends Vue {
   createFilter(address: string) {
     this.filter = flex.meter.filter("transfer").criteria([
       {
-        sender: address
+        sender: address,
       },
       {
-        recipient: address
-      }
+        recipient: address,
+      },
     ]);
   }
 

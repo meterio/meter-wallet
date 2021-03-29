@@ -6,11 +6,11 @@ export default Vue.extend({
   props: {
     dec: {
       type: Number,
-      default: 6
+      default: 6,
     },
     sym: String,
     prepend: String,
-    bounded: Boolean
+    bounded: Boolean,
   },
   render(h) {
     if (!this.$slots.default) {
@@ -23,24 +23,24 @@ export default Vue.extend({
     const children = [
       h("span", {
         domProps: {
-          innerText: parts[0]
-        }
+          innerText: parts[0],
+        },
       }),
       h("span", {
         style: {
-          "font-size": "80%"
+          "font-size": "90%",
         },
         domProps: {
-          innerText: parts[1]
-        }
-      })
+          innerText: parts[1],
+        },
+      }),
     ];
     if (this.prepend) {
       children.unshift(
         h("span", {
           domProps: {
-            innerText: this.prepend
-          }
+            innerText: this.prepend,
+          },
         })
       );
     }
@@ -49,7 +49,7 @@ export default Vue.extend({
       if (this.bounded) {
         unitChildren.push(
           h("i", {
-            class: "mdi mdi-lock"
+            class: "mdi mdi-lock",
           })
         );
       }
@@ -58,12 +58,13 @@ export default Vue.extend({
           "span",
           {
             style: {
-              "font-size": "60%",
-              opacity: 0.6,
+              "font-size": "70%",
+              opacity: 0.8,
+              "margin-left": "3px",
               "white-space": "pre",
               "font-family": '"Roboto Mono", monospace',
-              "padding-left": "3px"
-            }
+              "padding-left": "3px",
+            },
           },
           unitChildren
         )
@@ -76,13 +77,13 @@ export default Vue.extend({
         attrs: this.$attrs,
         on: this.$listeners,
         style: {
-          display: "inline-block"
+          display: "inline-block",
           // 'font-family': '"Roboto Mono", monospace'
-        }
+        },
       },
       children
     );
-  }
+  },
 });
 
 // split number string into integer part and decimal part

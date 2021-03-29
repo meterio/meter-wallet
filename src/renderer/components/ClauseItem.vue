@@ -2,23 +2,29 @@
   <v-expansion-panel-content v-bind="$attrs" v-on="$listeners">
     <v-layout column slot="header">
       <v-layout row align-baseline>
-        <span class="grey--text caption">Clause {{index+1}}</span>
+        <span class="grey--text caption">Clause {{ index + 1 }}</span>
         <v-spacer />
-        <b class="label primary text-uppercase">{{type}}</b>
+        <b class="label primary text-uppercase">{{ type }}</b>
       </v-layout>
       <v-layout row align-baseline>
         <span class="caption">
           To:
-          <AddressLabel abbrev placeholder="New contract">{{clause.to}}</AddressLabel>
+          <AddressLabel abbrev placeholder="New contract">{{
+            clause.to
+          }}</AddressLabel>
         </span>
         <v-spacer />
-        <Amount v-if="clause.token == 1" sym=" MTRG" class="body-1">{{clause.value}}</Amount>
-        <Amount v-if="clause.token == 0" sym=" MTR" class="body-1">{{clause.value}}</Amount>
+        <Amount v-if="clause.token == 1" sym="MTRG" class="body-1">{{
+          clause.value
+        }}</Amount>
+        <Amount v-if="clause.token == 0" sym="MTR" class="body-1">{{
+          clause.value
+        }}</Amount>
       </v-layout>
     </v-layout>
-    <v-card style="word-break:break-all;">
+    <v-card style="word-break: break-all">
       <v-card-text class="pt-1">
-        <i>{{clause.comment}}</i>
+        <i>{{ clause.comment }}</i>
       </v-card-text>
       <v-card-text v-show="!!clause.data" class="pt-0">
         <v-textarea

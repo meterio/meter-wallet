@@ -8,7 +8,7 @@
         :wallets="wallets"
         v-model="from"
       />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
+      <v-card flat tile style="width: 600px" class="mt-4 py-2 px-2 outline">
         <v-card-title class="subheading"
           >List this account as staking candidate</v-card-title
         >
@@ -22,6 +22,8 @@
               v-bind:suffix="token"
               :rules="amountRules"
               v-model="amount"
+              :append-outer-icon="marker ? 'mdi-infinity' : 'mdi-window-close'"
+              @click:append-outer="maxAmount"
             />
 
             <v-text-field
@@ -85,14 +87,15 @@
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Mixins, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
 import axios from "axios";
+import AccountLoader from "../mixins/account-loader";
 
 @Component
-export default class StakingCandidate extends Vue {
+export default class StakingCandidate extends Mixins(AccountLoader) {
   @State
   wallets!: entities.Wallet[];
   amount = "";
@@ -106,6 +109,7 @@ export default class StakingCandidate extends Vue {
   token = "MTRG";
   commission = 10.0;
   autobid = true;
+  marker = true;
   /*
   items = [
     { text: "Meter Governance Token (MTRG)", value: "MTRG" },
@@ -125,7 +129,10 @@ export default class StakingCandidate extends Vue {
     },
   ];
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount",
+    (v: string) => new BigNumber(v).gt(0) || "Invalid amount",
+    (v: string) =>
+      new BigNumber(v).gte(2000) ||
+      "Amount too small to be candidate (2000 MTRG at least)",
   ];
 
   readonly nameRules = [(v: string) => !!v || "Input name here"];
@@ -161,6 +168,27 @@ export default class StakingCandidate extends Vue {
       (100 <= v * 100 && v * 100 <= 10000) ||
       "Invalid commission rate, must be in range [1,100] %",
   ];
+
+  get address() {
+    return this.wallets[this.from].address;
+  }
+
+  maxAmount() {
+    if (this.marker) {
+      this.amount = this.account
+        ? new BigNumber(this.account.balance).dividedBy(1e18).toFixed()
+        : "0";
+    } else {
+      this.amount = "0";
+    }
+    this.marker = !this.marker;
+  }
+
+  @Watch("from")
+  fromChanged() {
+    this.marker = true;
+    this.amount = "0";
+  }
 
   created() {
     let fromAddr = this.$route.query["from"];

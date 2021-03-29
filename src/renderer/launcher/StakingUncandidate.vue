@@ -1,86 +1,112 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
-      <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">uncandidate this account</v-card-title>
-        <v-card-text>
-          <v-form ref="form"></v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
-          <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-layout>
+  <v-layout column align-center pa-5>
+    <v-card flat tile style="width: 600px" class="mt-5 pa-2 outline">
+      <v-card-title class="card-title">Uncandidate</v-card-title>
+      <v-card-text class="pt-1">
+        <v-alert color="warning" icon="warning" outline :value="true"
+          >This action will remove this node from candidate list, and all
+          related buckets will be undelegated. You could only withdraw your fund
+          after a lockd down period of 7-days.</v-alert
+        >
+        <div class="section">
+          <label>Name</label>
+          <div>{{ candidate.name }}</div>
+        </div>
+
+        <div class="section">
+          <label>Candidate Address</label>
+          <WalletChoice :wallet="wallet" />
+        </div>
+
+        <div class="section">
+          <label>Description</label>
+          <div>{{ candidate.description }}</div>
+        </div>
+
+        <div class="section">
+          <label>Candidate IP</label>
+          <div>{{ candidate.ipAddr }}</div>
+        </div>
+
+        <div class="section">
+          <label>Total Votes</label>
+          <div>
+            <Amount sym="MTRG">{{ candidate.totalVotes }}</Amount>
+          </div>
+        </div>
+
+        <v-form ref="form"></v-form>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text">{{ errMsg }}</div>
+        <v-spacer />
+        <v-btn flat class="primary" @click="send">Send</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-layout>
 </template>
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
-import BigNumber from "bignumber.js";
-import { cry, ScriptEngine } from "@meterio/devkit";
+import { ScriptEngine } from "@meterio/devkit";
+import WalletChoice from "../components/WalletChoice.vue";
 
-@Component
+@Component({ components: { WalletChoice } })
 export default class StakingUncandidate extends Vue {
   @State
   wallets!: entities.Wallet[];
-  stakingID = "";
-  from = 0;
+  @State
+  candidates!: entities.Candidate[];
+
   addr = "";
   errMsg = "";
 
-  @Watch("from")
-  onFromChange(oldVal: string, newVal: string) {
-    this.addr = this.wallets[this.from].address;
-  }
-  readonly addressRules = [
-    (v: string) => !!v || "Input address here",
-    (v: string) => {
-      if (!cry.isAddress(v)) {
-        return "Invalid address";
-      }
-      if (v !== v.toLowerCase() && cry.toChecksumAddress(v) !== v) {
-        return "Checksum incorrect";
-      }
-      return true;
-    }
-  ];
+  wallet: entities.Wallet = {} as any;
+  candidate: entities.Candidate = {} as any;
 
   created() {
-    let fromAddr = this.$route.query["from"];
-    if (fromAddr) {
-      fromAddr = fromAddr.toLowerCase();
-      const index = this.wallets.findIndex(
-        wallet => wallet.address === fromAddr
-      );
-      if (index >= 0) {
-        this.from = index;
-        this.addr = fromAddr;
+    const addr = this.$route.params.addr;
+
+    let candidate = undefined;
+    for (const c of this.candidates) {
+      if (c.address.toLowerCase() == addr) {
+        candidate = c;
+        break;
       }
     }
+    if (!candidate) {
+      this.errMsg = `Could not find candidate ${addr}`;
+      return;
+    }
+    this.candidate = candidate;
+
+    let index = -1;
+    index = this.wallets.findIndex(
+      (wallet) => wallet.address.toLowerCase() === addr
+    );
+    this.wallet = this.wallets[index];
+    if (index < 0) {
+      this.errMsg = `You don't own wallet ${addr.toLowerCase()}`;
+      return;
+    }
+    this.wallet = this.wallets[index];
   }
 
   async send() {
     this.errMsg = "";
-    if (!(this.$refs.form as any).validate()) {
-      return;
-    }
     try {
-      let fromAddr = this.wallets[this.from].address!;
+      let fromAddr = this.wallet.address!;
       const dataBuffer = ScriptEngine.getUncandidateData(fromAddr);
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(fromAddr)
         .request([
           {
             to: fromAddr,
             value: "0",
             token: ScriptEngine.Token.MeterGov,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

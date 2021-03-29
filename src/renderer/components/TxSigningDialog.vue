@@ -210,6 +210,7 @@
                   :wallets="wallets"
                   v-model="seekIndex"
                   :noseek="step === 2 || !!arg.selectedWallet"
+                  :disabled="disableWallet"
                 />
               </v-card-text>
             </v-layout>
@@ -225,10 +226,10 @@
                 <v-layout>
                   <span class="caption grey--text">Total value</span>
                   <v-spacer />
-                  <Amount v-if="token == '1'" prepend="-" sym=" MTRG ">{{
+                  <Amount v-if="token == '1'" prepend="-" sym="MTRG">{{
                     value.toString(10)
                   }}</Amount>
-                  <Amount v-if="token == '0'" prepend="-" sym=" MTR ">{{
+                  <Amount v-if="token == '0'" prepend="-" sym="MTR">{{
                     value.toString(10)
                   }}</Amount>
                 </v-layout>
@@ -236,7 +237,7 @@
                   <span class="caption grey--text">Estimated fee</span>
                   <v-spacer />
                   <Tooltip bottom :disabled="!(estimation.gas > 0)">
-                    <Amount prepend="-" sym=" MTR " slot="activator">{{
+                    <Amount prepend="-" sym="MTR" slot="activator">{{
                       fee.toString(10)
                     }}</Amount>
                     <span>Estimated gas {{ estimation.gas }}</span>
@@ -272,7 +273,7 @@
           class="green"
           v-show="step === 1"
           @click="goNext"
-          :disabled="delegation.calling"
+          :disabled="delegation.calling || fee.isNaN()"
           >Next</v-btn
         >
         <v-btn
@@ -378,6 +379,14 @@ export default class TxSigningDialog extends Mixins(
   }
   get txComment() {
     return this.arg.txComment || describeClauses(this.arg.message);
+  }
+  get disableWallet() {
+    const desc = describeClauses(this.arg.message);
+    return (
+      desc === "staking engine call" ||
+      desc === "auction engine call" ||
+      desc === "account lock engine call"
+    );
   }
   get wallets(): entities.Wallet[] | { name: string; address: string }[] {
     const wallets = this.arg.wallets.find((item) => {

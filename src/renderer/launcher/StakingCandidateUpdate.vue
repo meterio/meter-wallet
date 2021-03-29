@@ -1,101 +1,102 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
-      <div class="subheading py-4"></div>
-      <WalletSeeker
-        style="width: 270px"
-        full-size
-        :wallets="wallets"
-        v-model="from"
-      />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading"
-          >Update staking candidate information</v-card-title
-        >
-        <v-card-text>
-          <v-form ref="form">
-            <v-text-field
-              ref="name"
-              label="Name"
-              :rules="nameRules"
-              validate-on-blur
-              v-model="name"
-            ></v-text-field>
+  <v-layout column align-center pa-5>
+    <v-card flat tile style="width: 600px" class="mt-5 pa-2 outline">
+      <v-card-title class="card-title">Update candidate </v-card-title>
+      <v-card-text>
+        <div class="section">
+          <label>Candidate Address</label>
+          <WalletChoice :wallet="wallet" />
+        </div>
+        <v-form ref="form">
+          <v-text-field
+            ref="name"
+            label="Name"
+            :rules="nameRules"
+            validate-on-blur
+            v-model="name"
+          ></v-text-field>
 
-            <v-text-field
-              ref="description"
-              label="Description"
-              :rules="descRules"
-              validate-on-blur
-              v-model="description"
-            ></v-text-field>
+          <v-textarea
+            ref="description"
+            label="Description"
+            :rules="descRules"
+            validate-on-blur
+            v-model="description"
+            rows="3"
+          ></v-textarea>
 
-            <v-text-field
-              ref="ip"
-              label="IP"
-              :rules="ipRules"
-              validate-on-blur
-              v-model="ip"
-            ></v-text-field>
-            <v-text-field
-              ref="port"
-              type="number"
-              :rules="portRules"
-              validate-on-blur
-              label="Port"
-              v-model="port"
-              disabled
-            ></v-text-field>
+          <v-text-field
+            ref="ip"
+            label="IP"
+            :rules="ipRules"
+            validate-on-blur
+            v-model="ip"
+          ></v-text-field>
+          <v-text-field
+            ref="port"
+            type="number"
+            :rules="portRules"
+            validate-on-blur
+            label="Port"
+            v-model="port"
+            disabled
+          ></v-text-field>
 
-            <v-text-field
-              type="number"
-              validate-on-blur
-              label="Commission Rate"
-              :rules="commissionRules"
-              v-model="commission"
-              suffix="%"
-            ></v-text-field>
-            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+          <v-text-field
+            type="number"
+            validate-on-blur
+            label="Commission Rate"
+            :rules="commissionRules"
+            v-model="commission"
+            suffix="%"
+          ></v-text-field>
+          <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
 
-            <v-textarea
-              ref="pubkey"
-              label="Public Key"
-              :rules="pubkeyRules"
-              validate-on-blur
-              v-model="pubkey"
-            ></v-textarea>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="error--text">{{ errMsg }}</div>
-          <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-layout>
+          <v-textarea
+            ref="pubkey"
+            label="Public Key"
+            :rules="pubkeyRules"
+            validate-on-blur
+            v-model="pubkey"
+            rows="4"
+          ></v-textarea>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text">{{ errMsg }}</div>
+        <v-spacer />
+        <v-btn flat class="primary" @click="send">Send</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Mixins } from "vue-property-decorator";
 import { State } from "vuex-class";
-import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
-import { Script } from "vm";
+import AccountLoader from "../mixins/account-loader";
+import WalletChoice from "../components/WalletChoice.vue";
 
-@Component
-export default class StakingCandidateUpdate extends Vue {
+@Component({ components: { WalletChoice } })
+export default class StakingCandidateUpdate extends Mixins(AccountLoader) {
   @State
   wallets!: entities.Wallet[];
+
+  @State
+  candidates!: entities.Candidate[];
+
+  errMsg = "";
+
   name = "";
   description = "";
   pubkey = "";
   ip = "";
   port = "8670";
-  from = 0;
-  errMsg = "";
-  token = "MTRG";
   commission = 10.0;
   autobid = true;
+
+  candidate: entities.Candidate = {} as any;
+  wallet: entities.Wallet = {} as any;
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -111,6 +112,7 @@ export default class StakingCandidateUpdate extends Vue {
   ];
 
   readonly nameRules = [(v: string) => !!v || "Input name here"];
+  readonly descRules = [(v: string) => !!v || "Input description here"];
   readonly pubkeyRules = [
     (v: string) => !!v || "Input public key here",
     (v: string) => {
@@ -144,16 +146,36 @@ export default class StakingCandidateUpdate extends Vue {
   ];
 
   created() {
-    let fromAddr = this.$route.params.addr;
-    if (fromAddr) {
-      fromAddr = fromAddr.toLowerCase();
-      const index = this.wallets.findIndex(
-        (wallet) => wallet.address === fromAddr
-      );
-      if (index >= 0) {
-        this.from = index;
+    const addr = this.$route.params.addr;
+    console.log("CANDIATE ADDRESS: ", addr);
+    let candidate = undefined;
+    for (const c of this.candidates) {
+      if (c.address.toLowerCase() == addr) {
+        candidate = c;
+        break;
       }
     }
+    if (!candidate) {
+      this.errMsg = `Could not find candidate ${addr}`;
+      return;
+    }
+    this.candidate = candidate;
+    this.name = candidate.name;
+    this.description = candidate.description;
+    this.ip = candidate.ipAddr;
+    this.commission = parseInt(candidate.commission);
+    this.pubkey = candidate.pubKey;
+
+    let index = -1;
+    index = this.wallets.findIndex(
+      (wallet) => wallet.address.toLowerCase() === addr
+    );
+    this.wallet = this.wallets[index];
+    if (index < 0) {
+      this.errMsg = `You don't own wallet ${addr.toLowerCase()}`;
+      return;
+    }
+    this.wallet = this.wallets[index];
   }
 
   async send() {
@@ -162,7 +184,7 @@ export default class StakingCandidateUpdate extends Vue {
       return;
     }
     try {
-      let fromAddr = this.wallets[this.from].address!;
+      let fromAddr = this.wallet.address!;
       let dataBuffer = ScriptEngine.getCandidateUpdateData(
         fromAddr,
         this.name,

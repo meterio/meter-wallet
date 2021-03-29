@@ -2,23 +2,33 @@
   <v-card
     v-bind="$attrs"
     v-on="$listeners"
-    :style="{'font-size': compact? '90%':'inherit'}"
-    style="cursor:default;"
+    :style="{ 'font-size': compact ? '90%' : 'inherit' }"
+    style="cursor: default"
   >
     <IdentBox :text="wallet.address.toLowerCase()">
-      <v-card-text class="white--text" :class="compact?'py-1':'py-2'">
+      <v-card-text class="white--text" :class="compact ? 'py-1' : 'py-2'">
         <v-layout column fill-height justify-center>
-          <span class="text-truncate" :class="compact?'body-2':'subheading'">{{wallet.name}}</span>
-          <AddressLabel abbrev class="text-truncate caption">{{wallet.address}}</AddressLabel>
+          <span
+            class="text-truncate"
+            :class="compact ? 'body-2' : 'subheading'"
+            >{{ wallet.name }}</span
+          >
+          <AddressLabel abbrev class="text-truncate caption">{{
+            wallet.address
+          }}</AddressLabel>
         </v-layout>
       </v-card-text>
     </IdentBox>
     <v-card-text class="py-1">
-      <v-layout column align-end :style="{'line-height': compact ? '120%':'inherit'}">
-        <Amount sym=" MTRG">{{mtrgBalance}}</Amount>
-        <Amount sym=" MTR ">{{mtrBalance}}</Amount>
+      <v-layout
+        column
+        align-end
+        :style="{ 'line-height': compact ? '120%' : 'inherit' }"
+      >
+        <Amount sym="MTRG">{{ mtrgBalance }}</Amount>
+        <Amount sym="MTR">{{ mtrBalance }}</Amount>
         <hr />
-        <Amount sym=" MTRG" :bounded="true">{{boundMTRGBalance}}</Amount>
+        <Amount sym="MTRG" :bounded="true">{{ boundMTRGBalance }}</Amount>
       </v-layout>
     </v-card-text>
   </v-card>

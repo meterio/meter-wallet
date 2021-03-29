@@ -1,11 +1,39 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
-      <div class="subheading py-4"></div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
-      <v-card flat tile style="width:500px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">Auction Bid</v-card-title>
+    <v-layout column align-center pa-5>
+      <div class="subheading mt-5 pa-2"></div>
+      <WalletSeeker
+        style="width: 270px"
+        full-size
+        :wallets="wallets"
+        v-model="from"
+      />
+      <v-card flat tile style="width: 600px" class="mt-4 pa-2 outline">
+        <v-card-title class="card-title">Auction Bid</v-card-title>
         <v-card-text>
+          <div class="section">
+            <label>Auction ID</label>
+            <div>{{ presentAuction.auctionID }}</div>
+          </div>
+          <div class="section">
+            <label>MTRG on Auction</label>
+            <div>
+              <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
+            </div>
+          </div>
+          <div class="section">
+            <label>Received MTR</label>
+            <div>
+              <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
+            </div>
+          </div>
+          <div class="section">
+            <label>Expected Price</label>
+            <div>
+              <Amount sym="MTR">{{ expectedPrice }}</Amount>
+            </div>
+          </div>
+
           <v-form ref="form">
             <v-text-field
               validate-on-blur
@@ -14,11 +42,20 @@
               v-bind:suffix="token"
               :rules="amountRules"
               v-model="amount"
+              :append-outer-icon="marker ? 'mdi-infinity' : 'mdi-window-close'"
+              @click:append-outer="maxAmount"
             />
           </v-form>
+
+          <div class="section">
+            <label>Estimated result MTRG with current price</label>
+            <div>
+              <Amount sym="MTRG">{{ expectedReceive }}</Amount>
+            </div>
+          </div>
         </v-card-text>
         <v-card-actions>
-          <div class="error--text">{{errMsg}}</div>
+          <div class="error--text">{{ errMsg }}</div>
           <v-spacer />
           <v-btn flat class="primary" @click="send">Send</v-btn>
         </v-card-actions>
@@ -27,21 +64,85 @@
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Mixins, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
+import AccountLoader from "../mixins/account-loader";
 
 @Component
-export default class StakingBound extends Vue {
+export default class StakingBound extends Mixins(AccountLoader) {
   @State
   wallets!: entities.Wallet[];
-  amount = 0;
+
+  @State
+  presentAuction!: entities.AuctionCB;
+
+  amount = "0";
   from = 0;
   errMsg = "";
   token = "MTR";
 
   bidderAddr = "";
+  marker = true;
+
+  get address() {
+    return this.wallets[this.from].address;
+  }
+
+  get expectedPrice() {
+    if (!this.presentAuction) {
+      return NaN;
+    }
+    let price = new BigNumber(this.presentAuction.receivedMTR)
+      .dividedBy(this.presentAuction.releasedMTRG)
+      .times(1e18);
+    if (price.isLessThan(this.presentAuction.reservedPrice)) {
+      return this.presentAuction.reservedPrice;
+    } else {
+      return price.toFixed();
+    }
+  }
+
+  get expectedReceive() {
+    if (Number.isNaN(this.expectedPrice)) {
+      return NaN;
+    }
+    return new BigNumber(this.amount)
+      .times(1e18)
+      .times(1e18)
+      .dividedBy(this.expectedPrice)
+      .toFixed();
+  }
+
+  maxAmount() {
+    if (this.marker) {
+      if (this.token === "MTR") {
+        if (!this.account) {
+          this.amount = "0";
+          return;
+        }
+        const energy = new BigNumber(this.account.energy);
+        if (energy.isGreaterThan(new BigNumber(0.0105).times(1e18))) {
+          this.amount = energy
+            .minus(new BigNumber(0.0105).times(1e18))
+            .dividedBy(1e18)
+            .toFixed();
+        } else {
+          this.amount = energy.dividedBy(1e18).toFixed();
+        }
+      }
+    } else {
+      this.amount = "0";
+    }
+    this.marker = !this.marker;
+  }
+
+  @Watch("from")
+  fromChanged() {
+    this.marker = true;
+    this.amount = "0";
+  }
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",
@@ -53,18 +154,26 @@ export default class StakingBound extends Vue {
         return "Checksum incorrect";
       }
       return true;
-    }
+    },
   ];
   readonly amountRules = [
-    (v: string) => new BigNumber(0).lte(v) || "Invalid amount"
+    (v: string) => new BigNumber(0).lt(v) || "Invalid amount",
   ];
 
-  created() {
+  async created() {
+    const present = await flex.meter.auction();
+    if (present) {
+      this.$store.commit("updatePresentAuction", present);
+      this.presentAuction = present;
+    } else {
+      this.errMsg = "No present auction";
+      return;
+    }
     let holderAddr = this.$route.query["from"];
     if (holderAddr) {
       holderAddr = holderAddr.toLowerCase();
       const index = this.wallets.findIndex(
-        wallet => wallet.address === holderAddr
+        (wallet) => wallet.address === holderAddr
       );
       if (index >= 0) {
         this.from = index;
@@ -81,8 +190,7 @@ export default class StakingBound extends Vue {
     try {
       const value = new BigNumber("1" + "0".repeat(18))
         .times(this.amount!)
-        .integerValue()
-        .toString(10);
+        .toFixed();
       let holderAddr = this.wallets[this.from].address!;
       const dataBuffer = ScriptEngine.getBidData(holderAddr, value);
       console.log("DATA: ", dataBuffer.toString("hex"));
@@ -94,8 +202,8 @@ export default class StakingBound extends Vue {
             to: holderAddr,
             value: "0",
             token: ScriptEngine.Token.Meter,
-            data: "0x" + dataBuffer.toString("hex")
-          }
+            data: "0x" + dataBuffer.toString("hex"),
+          },
         ]);
       this.$router.back();
     } catch (err) {

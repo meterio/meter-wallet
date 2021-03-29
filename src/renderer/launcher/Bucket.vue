@@ -1,93 +1,157 @@
 <template>
-  <v-layout column align-center justify-center>
-    <h3 class="pa-3">Staking Bucket</h3>
-    <v-card justify-start>
-      <v-layout row justify-start>
-        <v-flex class="pa-4">
-          <div>Id:</div>
-          <div>Owner:</div>
-          <div>Candidate:</div>
-          <div>Original Votes:</div>
-          <div>Bonus Votes:</div>
-          <div>Total Votes:</div>
-          <div>Option:</div>
-          <div>Type:</div>
-          <div>Created At:</div>
-          <div>Nonce:</div>
-          <div>Unbounded:</div>
-          <div v-if="bucket.unbounded">Mature At:</div>
-        </v-flex>
-        <v-flex class="pa-4 pl-0">
+  <v-layout column align-center pa-5>
+    <v-card flat tile style="width: 600px" class="mt-5 pa-2 outline">
+      <v-card-title class="card-title">Bucket Information</v-card-title>
+      <v-card-text>
+        <div class="section">
+          <label>ID</label>
           <div>{{ bucket.id }}</div>
-          <div>{{ bucket.owner }}</div>
+        </div>
+
+        <div class="section">
+          <label>Bucket Owner</label>
+
+          <WalletChoice v-if="ownerInWallets" :wallet="wallet" />
+          <div v-else>{{ bucket.owner }}</div>
+        </div>
+
+        <div class="section">
+          <label>Candidate</label>
           <div>{{ bucket.candidate }}</div>
+        </div>
+
+        <div class="section">
+          <label>Votes</label>
           <div>
             <Amount sym="MTRG">{{ bucket.votes }}</Amount>
           </div>
+        </div>
+
+        <div class="section">
+          <label>Bonus Votes</label>
           <div>
             <Amount sym="MTRG">{{ bucket.bonus }}</Amount>
           </div>
-          <div>
-            <Amount sym="MTRG">{{ bucket.totalVotes }}</Amount>
-          </div>
-          <div>{{ bucket.option }}</div>
+        </div>
+
+        <div class="section">
+          <label>Type</label>
           <div>{{ bucket.autobid >= 100 ? "autobid" : "userbid" }}</div>
-          <div>{{ bucket.createTime }}</div>
-          <div>{{ bucket.nonce }}</div>
-          <div>{{ bucket.unbounded }}</div>
-          <div v-if="bucket.unbounded">{{ bucket.matureTime | fromNow }}</div>
-        </v-flex>
-      </v-layout>
+        </div>
 
-      <v-layout row justify-center>
-        <v-flex class="pa-4">
-          <router-link
-            tag="span"
-            :to="{
-              name: 'delegate',
-              params: { id: bucket.id },
-            }"
-          >
-            <v-btn depressed small color="info">Delegate</v-btn>
-          </router-link>
-
-          <router-link
-            v-if="isZeroCandidate && !bucket.unbounded"
-            tag="span"
+        <div class="section">
+          <label>Status</label>
+          <div>
+            {{ bucket.unbounded ? "Unbounded " + matureFromNow : "Valid" }}
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text">{{ errMsg }}</div>
+        <v-spacer />
+        <div v-if="ownerInWallets">
+          <v-btn
+            depressed
+            small
+            color="grey"
+            outline
             :to="{
               name: 'unbound',
               params: { id: bucket.id },
             }"
           >
-            <v-btn depressed small color="primary">Unbound</v-btn>
-          </router-link>
+            Unbound</v-btn
+          >
 
-          <router-link
+          <v-btn
+            v-if="isZeroCandidate"
+            depressed
+            small
+            outline
+            color="teal"
+            :to="{
+              name: 'delegate',
+              params: { id: bucket.id },
+            }"
+          >
+            Delegate</v-btn
+          >
+
+          <v-btn
             v-else
-            tag="span"
+            depressed
+            small
+            outline
+            color="primary"
             :to="{
               name: 'undelegate',
               params: { id: bucket.id },
             }"
           >
-            <v-btn depressed small color="primary">Unvote</v-btn>
-          </router-link>
-        </v-flex>
-      </v-layout>
+            Undelegate</v-btn
+          >
+          <v-btn
+            depressed
+            small
+            outline
+            color="indigo"
+            :to="{
+              name: 'update-bucket',
+              params: { id: bucket.id },
+            }"
+          >
+            Add more</v-btn
+          >
+        </div>
+      </v-card-actions>
     </v-card>
   </v-layout>
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
+const moment = require("moment");
+import WalletChoice from "../components/WalletChoice.vue";
 
-@Component
+@Component({ components: { WalletChoice } })
 export default class Bucket extends Vue {
   @State
   buckets!: entities.Bucket[];
 
+  @State
+  wallets!: entities.Wallet[];
+
   id = "";
   bucket = {} as entities.Bucket;
+
+  get wallet() {
+    if (!this.ownerInWallets) {
+      return {} as entities.Wallet;
+    }
+    for (const w of this.wallets) {
+      if (w.address.toLowerCase() === this.bucket.owner.toLowerCase()) {
+        return w;
+      }
+    }
+    return {} as entities.Wallet;
+  }
+
+  get ownerInWallets() {
+    if (!this.bucket || !this.bucket.owner) {
+      return false;
+    }
+    for (const w of this.wallets) {
+      if (w.address.toLowerCase() === this.bucket.owner.toLowerCase()) {
+        return true;
+      }
+    }
+  }
+
+  get matureFromNow() {
+    return this.bucket.unbounded
+      ? moment.utc(1000 * Number(this.bucket.matureTime)).fromNow()
+      : "";
+  }
 
   get isZeroCandidate() {
     return (

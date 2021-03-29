@@ -8,26 +8,15 @@
         :wallets="wallets"
         v-model="from"
       />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading"
-          >Bound locked bucket to candidate</v-card-title
-        >
+      <v-card flat tile style="width: 600px" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="card-title">Vote to candidate</v-card-title>
         <v-card-text>
-          <v-form ref="form">
-            <!--<v-text-field
-              validate-on-blur
-              type="string"
-              label="Candidate Address"
-              v-model="candAddr"
-            />-->
+          <div class="section">
+            <label>Lock period</label>
+            <div>One Week (default)</div>
+          </div>
 
-            <v-select
-              :items="options"
-              label="Option"
-              v-model="optionVal"
-              disabled
-            ></v-select>
-            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+          <v-form ref="form">
             <v-select :items="items" label="Source" v-model="source"></v-select>
             <v-select
               :items="candidatesList"
@@ -46,6 +35,10 @@
                 v-bind:suffix="token"
                 :rules="amountRules"
                 v-model="amount"
+                :append-outer-icon="
+                  marker ? 'mdi-infinity' : 'mdi-window-close'
+                "
+                @click:append-outer="maxAmount"
               />
             </div>
             <div v-if="source == 'delegate'">
@@ -55,6 +48,8 @@
                 v-model="bucketID"
               ></v-select>
             </div>
+
+            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -67,13 +62,14 @@
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Mixins, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
 import { cry, ScriptEngine } from "@meterio/devkit";
+import AccountLoader from "../mixins/account-loader";
 
 @Component
-export default class StakingBound extends Vue {
+export default class StakingBound extends Mixins(AccountLoader) {
   @State
   wallets!: entities.Wallet[];
 
@@ -82,6 +78,23 @@ export default class StakingBound extends Vue {
 
   @State
   candidates!: entities.Candidate[];
+
+  marker = true;
+
+  get address() {
+    return this.wallets[this.from].address;
+  }
+
+  maxAmount() {
+    if (this.marker) {
+      this.amount = this.account
+        ? new BigNumber(this.account.balance).dividedBy(1e18).toFixed()
+        : "0";
+    } else {
+      this.amount = "0";
+    }
+    this.marker = !this.marker;
+  }
 
   get candidatesList() {
     return this.candidates.map((c) => {
@@ -98,13 +111,19 @@ export default class StakingBound extends Vue {
     });
   }
 
+  @Watch("from")
+  fromChanged() {
+    this.marker = true;
+    this.amount = "0";
+  }
+
   amount = "";
   from = 0;
   errMsg = "";
   token = "MTRG";
   source = "bound";
   items = [
-    { text: "My balance", value: "bound" },
+    { text: "MTRG balance", value: "bound" },
     { text: "Existing bucket", value: "delegate" },
   ];
   optionVal = 1;

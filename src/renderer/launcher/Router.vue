@@ -83,6 +83,7 @@ import CandidateList from "./CandidateList.vue";
 import BucketList from "./BucketList.vue";
 import BridgeTransfer from "./BridgeTransfer.vue";
 import Bucket from "./Bucket.vue";
+import Candidate from "./Candidate.vue";
 import StakingVote from "./StakingVote.vue";
 import AuctionBid from "./AuctionBid.vue";
 import PastAuctions from "./PastAuctions.vue";
@@ -229,7 +230,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: "/staking/uncandidate",
+    path: "/staking/uncandidate/:addr",
     name: "uncandidate",
     component: StakingUncandidate,
     meta: {
@@ -317,6 +318,14 @@ const routes: RouteConfig[] = [
     },
   },
   {
+    path: "/candidate/:addr",
+    name: "candidate-detail",
+    component: Candidate,
+    meta: {
+      title: "Candidate",
+    },
+  },
+  {
     path: "/staking/candidate/:addr/update",
     name: "update-candidate",
     component: StakingCandidateUpdate,
@@ -325,7 +334,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: "/staking/bucket/:addr/:bucketid/:amount/update",
+    path: "/staking/bucket/:id/update",
     name: "update-bucket",
     component: StakingBucketUpdate,
     meta: {

@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { cry } from "@meterio/devkit";
+import { cry, ScriptEngine } from "@meterio/devkit";
+import { Script } from "vm";
 
 export namespace Address {
   export function isValid(addr: any): addr is string {
@@ -74,7 +75,21 @@ export function describeClauses(clauses: Flex.Meter.Clause[]) {
         return "transfer";
       }
     }
-    return "make contract call";
+    try{
+    let scriptData = ScriptEngine.decodeScriptData(clauses[0].data);
+      if (scriptData.header.modId === ScriptEngine.ModuleID.Staking){
+        return "staking engine call"
+      }
+      if (scriptData.header.modId === ScriptEngine.ModuleID.AccountLock){
+        return "account lock engine call"
+      }
+       if (scriptData.header.modId === ScriptEngine.ModuleID.Auction){
+        return "auction engine call"
+      }
+      return "contract call"
+    }catch(e){
+      return "contract call";
+    }
   }
 
   return "perform a batch of actions";

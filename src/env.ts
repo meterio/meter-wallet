@@ -33,8 +33,8 @@ const env = {
     : UrlUtils.filePathToUrl(Path.resolve(__dirname, "static", "about.html")),
 
   logoUrl: devMode
-    ? "http://localhost:9080/static/logo.png"
-    : UrlUtils.filePathToUrl(Path.resolve(__dirname, "static", "logo.png")),
+    ? "http://localhost:9080/static/newlogo.png"
+    : UrlUtils.filePathToUrl(Path.resolve(__dirname, "static", "newlogo.png")),
 
   logoOnlyUrl: devMode
     ? "http://localhost:9080/static/logo-only.png"

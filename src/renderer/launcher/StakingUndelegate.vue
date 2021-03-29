@@ -1,65 +1,45 @@
 <template>
-  <v-layout v-if="bucketNotFound" column align-center>
-    Bucket with id {{ stakingID }} is not found
-  </v-layout>
-  <v-layout v-else column align-center>
-    <v-layout v-if="addressNotFound" column align-center>
-      Bucket owner address {{ addr }} is not found
-    </v-layout>
-    <v-layout
-      v-else
-      column
-      align-center
-      style="max-width: 1000px; width: 100%"
-      pa-3
-    >
-      <div class="subheading py-4"></div>
-      <WalletSeeker
-        disabled
-        style="width: 270px"
-        full-size
-        :wallets="wallets"
-        v-model="from"
-      />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">Undelegate buckets</v-card-title>
-        <v-card-text>
-          <v-form ref="form">
-            <!-- <v-select :items="items" label="Token" v-model="token"></v-select> -->
-            <v-text-field
-              ref="stakingID"
-              :rules="stakingIDRules"
-              validate-on-blur
-              label="Staking ID"
-              v-model="stakingID"
-              disabled
-            />
-            <v-text-field
-              validate-on-blur
-              label="Amount"
-              v-bind:suffix="token"
-              :rules="amountRules"
-              v-model="amount"
-              disabled
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="error--text">{{ errMsg }}</div>
-          <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-layout>
+  <v-layout column align-center class="pa-5">
+    <v-card flat tile style="width: 600px" class="mt-5 pa-2 outline">
+      <v-card-title class="card-title">Undelegate Bucket</v-card-title>
+      <v-card-text>
+        <!-- <v-alert color="info" icon="info" outline :value="true"
+          >Undelegate will remove candidate from bucket</v-alert
+        > -->
+
+        <div class="section">
+          <label>Bucket ID</label>
+          <div>{{ bucket.id }}</div>
+        </div>
+
+        <div class="section">
+          <label>Bucket Owner</label>
+          <WalletChoice :wallet="wallet" :compact="true"></WalletChoice>
+        </div>
+
+        <div class="section">
+          <label> Bucket Amount </label>
+          <div class="content">
+            <Amount sym="MTRG">{{ bucket.value }}</Amount>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text">{{ errMsg }}</div>
+        <v-spacer />
+        <v-btn flat class="primary" @click="send">Send</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-layout>
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import BigNumber from "bignumber.js";
-import { cry, ScriptEngine } from "@meterio/devkit";
+import { ScriptEngine } from "@meterio/devkit";
+import WalletChoice from "../components/WalletChoice.vue";
 
-@Component
+@Component({ components: { WalletChoice } })
 export default class StakingUndelegate extends Vue {
   @State
   wallets!: entities.Wallet[];
@@ -67,34 +47,10 @@ export default class StakingUndelegate extends Vue {
   @State
   buckets!: entities.Bucket[];
 
-  amount = "0";
-  stakingID = "";
-  ip = "";
-  from = 0;
   errMsg = "";
-  token = "MTRG";
 
-  optionVal = 1;
-  holderAddr = "";
-  bucketNotFound = false;
-  addressNotFound = false;
-
-  readonly addressRules = [
-    (v: string) => !!v || "Input address here",
-    (v: string) => {
-      if (!cry.isAddress(v)) {
-        return "Invalid address";
-      }
-      if (v !== v.toLowerCase() && cry.toChecksumAddress(v) !== v) {
-        return "Checksum incorrect";
-      }
-      return true;
-    },
-  ];
-  readonly stakingIDRules = [(v: string) => !!v || "Input staking ID here"];
-  readonly amountRules = [
-    (v: number) => new BigNumber(0).lte(v) || "Invalid amount",
-  ];
+  bucket: Flex.Meter.Bucket = {} as any;
+  wallet: entities.Wallet = {} as any;
 
   async created() {
     const id = this.$route.params.id;
@@ -108,48 +64,42 @@ export default class StakingUndelegate extends Vue {
         break;
       }
     }
-
     if (!bucket) {
-      this.bucketNotFound = true;
-    } else {
-      const amount = new BigNumber(bucket.value).dividedBy(1e18).toFixed();
-      this.stakingID = id;
-      this.amount = amount;
-
-      let holderAddr = bucket.owner.toLowerCase();
-      if (holderAddr) {
-        const index = this.wallets.findIndex(
-          (wallet) => wallet.address === holderAddr
-        );
-        this.holderAddr = holderAddr;
-        if (index >= 0) {
-          this.from = index;
-        } else {
-          this.addressNotFound = true;
-        }
-      }
+      this.errMsg = `Could not find bucket ${id}`;
+      return;
     }
+    this.bucket = bucket;
+
+    if (!bucket.owner) {
+      this.errMsg = `Bucket owner ${bucket.owner} does not exist`;
+      return;
+    }
+    const address = bucket.owner.toLowerCase();
+    let index = -1;
+    index = this.wallets.findIndex(
+      (wallet) => wallet.address.toLowerCase() === address
+    );
+    this.wallet = this.wallets[index];
+    if (index < 0) {
+      this.errMsg = `You don't own wallet ${bucket.owner.toLowerCase()}`;
+      return;
+    }
+    this.wallet = this.wallets[index];
   }
 
   async send() {
     this.errMsg = "";
-    if (!(this.$refs.form as any).validate()) {
-      return;
-    }
     try {
-      const value = new BigNumber("1" + "0".repeat(18))
-        .times(this.amount!)
-        .integerValue()
-        .toString(10);
-      let holderAddr = this.wallets[this.from].address!;
+      const value = new BigNumber(this.bucket.value).toFixed();
+      let holderAddr = this.wallet.address;
       const dataBuffer = ScriptEngine.getUndelegateData(
         holderAddr,
-        this.stakingID,
+        this.bucket.id,
         value
       );
       await flex.vendor
         .sign("tx")
-        .signer(this.wallets[this.from].address!)
+        .signer(this.wallet.address!)
         .request([
           {
             to: holderAddr,

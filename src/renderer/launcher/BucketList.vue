@@ -1,30 +1,52 @@
 <template>
   <v-layout column pa-5>
-    <h3 class="pa-3">Staking Buckets</h3>
+    <h3 class="pa-3">Bucket List</h3>
     <v-card>
       <v-card-title>
-        <v-select
-          :items="bucketFilters"
-          small
-          v-model="filterSelection"
-          label="Select inputs"
-          class="input-group--focused"
-          item-value="text"
-        ></v-select>
+        <v-layout justify-space-between>
+          <v-select
+            :items="bucketFilters"
+            small
+            v-model="filterSelection"
+            label="Select inputs"
+            class="input-group--focused"
+            item-value="text"
+            :style="{ maxWidth: '300px' }"
+          ></v-select>
 
-        <router-link :to="{ name: 'create-vote' }">
-          <v-btn depressed small color="primary">Create vote</v-btn>
-        </router-link>
-        <v-btn flat icon small color="green" v-on:click.native="refresh">
-          <v-icon>cached</v-icon>
-        </v-btn>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            :style="{ maxWidth: '400px' }"
+          ></v-text-field>
 
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-        ></v-text-field>
+          <div>
+            <v-btn
+              flat
+              icon
+              small
+              :style="{ marginTop: '20px' }"
+              color="green"
+              v-on:click.native="refresh"
+            >
+              <v-icon>cached</v-icon>
+            </v-btn>
+            <v-btn
+              depressed
+              small
+              color="primary"
+              :style="{ marginTop: '20px' }"
+              :to="{ name: 'create-vote' }"
+            >
+              <v-icon small class="mr-1" :style="{ color: 'white' }"
+                >add</v-icon
+              >
+              Create vote</v-btn
+            >
+          </div>
+        </v-layout>
       </v-card-title>
       <div v-if="filteredBuckets.length > 0">
         <v-data-table
@@ -46,9 +68,14 @@
             <td>
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
-            <td>{{ props.item.state }}</td>
-            <td>{{ props.item.matureFromNow }}</td>
             <td>{{ props.item.type }}</td>
+            <td>
+              {{
+                props.item.unbounded
+                  ? "Mature at" + props.item.matureFromNow
+                  : props.item.state
+              }}
+            </td>
             <td>
               <div
                 v-if="
@@ -65,40 +92,30 @@
                 >
                   <v-btn flat small outline color="teal">delegate</v-btn>
                 </router-link>
-                <router-link
-                  v-if="!props.item.unbounded"
-                  tag="span"
-                  :to="{
-                    name: 'unbound',
-                    params: { id: props.item.id },
-                  }"
-                >
-                  <v-btn flat small outline color="grey">unbound</v-btn>
-                </router-link>
               </div>
               <div v-else>
-                <router-link
+                <v-btn
+                  flat
+                  small
+                  outline
+                  color="grey"
+                  v-if="!props.item.unbounded"
                   tag="span"
-                  :to="{
-                    name: 'undelegate',
-                    params: { id: props.item.id },
-                  }"
+                  :to="{ name: 'unbound', params: { id: props.item.id } }"
                 >
-                  <v-btn flat small outline color="indigo">undelegate</v-btn>
-                </router-link>
-                <router-link
+                  unbound</v-btn
+                >
+
+                <v-btn
+                  flat
+                  small
+                  outline
+                  color="indigo"
                   tag="span"
-                  :to="{
-                    name: 'update-bucket',
-                    params: {
-                      bucketid: props.item.id,
-                      addr: props.item.candidateAddress,
-                      amount: props.item.votes,
-                    },
-                  }"
+                  :to="{ name: 'update-bucket', params: { id: props.item.id } }"
                 >
-                  <v-btn flat small outline color="indigo">add more</v-btn>
-                </router-link>
+                  add more</v-btn
+                >
               </div>
             </td>
           </template>
@@ -109,12 +126,10 @@
   </v-layout>
 </template>
 <script lang="ts">
-import { Vue, Component, Emit } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
-import { mapMutations } from "vuex";
 
 import env from "@/env";
-import BigNumber from "bignumber.js";
 const moment = require("moment");
 
 @Component
@@ -135,7 +150,7 @@ export default class BucketList extends Vue {
       .filter((b) => b.owner in this.walletMap)
       .map((b) => {
         b.owned = true;
-        b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
+        b.candidateName = this.candidateNameMap[b.candidate] || "-";
         b.matureFromNow = b.unbounded
           ? moment.utc(1000 * Number(b.matureTime)).fromNow()
           : "";
@@ -150,11 +165,11 @@ export default class BucketList extends Vue {
       .filter((b) => b.candidate in this.walletMap)
       .map((b) => {
         b.owned = false;
-        b.candidateName = this.candidateNameMap[b.candidate] || "nobody";
+        b.candidateName = this.candidateNameMap[b.candidate] || "-";
         b.matureFromNow = b.unbounded
           ? moment.utc(1000 * Number(b.matureTime)).fromNow()
           : "";
-        b.state = b.unbounded ? "unbounded" : "created";
+        b.state = b.unbounded ? "unbounded" : "valid";
         b.type = b.autobid >= 100 ? "autobid" : "userbid";
         return b;
       });
@@ -195,7 +210,6 @@ export default class BucketList extends Vue {
     };
   }
 
-  logoUrl = env.logoUrl;
   rowsPerPage = [50, 100, 200, { text: "All", value: -1 }];
   timer: NodeJS.Timeout = {} as any;
 
@@ -205,9 +219,8 @@ export default class BucketList extends Vue {
     { text: "Candidate Address", value: "candidate", sortable: true },
     { text: "Name", value: "candidateName", sortable: true },
     { text: "Total Votes", value: "totalVotes", sortable: true },
-    { text: "State", value: "state", sortable: true },
-    { text: "Mature", value: "matureFromNow", sortable: true },
     { text: "Type", value: "type", sortable: false },
+    { text: "State", value: "state", sortable: true },
     { text: "Action", value: "action", sortable: true },
   ];
 

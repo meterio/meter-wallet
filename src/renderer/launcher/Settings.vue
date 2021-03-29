@@ -1,13 +1,11 @@
 <template>
   <div>
     <v-layout align-center>
-      <v-layout column>
-        <v-layout justify-center>
-          <img :src="logoUrl" style="height:12rem;margin:3rem 0 2rem 0;" />
-        </v-layout>
+      <v-layout justify-center>
+        <img :src="logoUrl" style="height: 10rem; margin: 6rem 0 0 0" />
       </v-layout>
     </v-layout>
-    <div style="max-width: 800px; width: 100%; margin: 0 auto;">
+    <div style="max-width: 600px; width: 100%; margin: 0 auto">
       <div>
         <Update></Update>
       </div>
@@ -26,8 +24,8 @@ import env from "@/env";
 @Component({
   components: {
     Nodes,
-    Update
-  }
+    Update,
+  },
 })
 export default class Settings extends Vue {
   name: string = "settings";

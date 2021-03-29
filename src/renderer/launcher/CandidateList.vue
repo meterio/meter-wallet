@@ -1,21 +1,41 @@
 <template>
   <v-layout column pa-5>
-    <h3 class="pa-3">Staking Candidates</h3>
+    <h3 class="pa-3">Candidate List</h3>
     <v-card>
       <v-card-title>
-        <router-link :to="{ name: 'candidate' }">
-          <v-btn depressed small color="primary">List me as candidate</v-btn>
-        </router-link>
-        <v-btn flat icon small color="green" v-on:click.native="refresh">
-          <v-icon>cached</v-icon>
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-        ></v-text-field>
+        <v-layout justify-space-between>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            :style="{ maxWidth: '400px' }"
+          ></v-text-field>
+
+          <div>
+            <v-btn
+              flat
+              icon
+              small
+              color="green"
+              v-on:click.native="refresh"
+              :style="{ marginTop: '20px' }"
+            >
+              <v-icon>cached</v-icon>
+            </v-btn>
+
+            <v-btn
+              small
+              depressed
+              color="primary"
+              :to="{ name: 'candidate' }"
+              :style="{ marginTop: '20px' }"
+            >
+              <v-icon small color="white" class="mr-2">mdi-plus</v-icon>
+              List me as candidate</v-btn
+            >
+          </div>
+        </v-layout>
       </v-card-title>
       <div v-if="candidates.length > 0">
         <v-data-table
@@ -25,7 +45,15 @@
           :rows-per-page-items="rowsPerPage"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.name }}</td>
+            <td>
+              <router-link
+                :to="{
+                  name: 'candidate-detail',
+                  params: { addr: props.item.address },
+                }"
+                >{{ props.item.name }}</router-link
+              >
+            </td>
             <td>{{ props.item.address }}</td>
             <td>{{ props.item.ipAddr }}</td>
             <td>{{ props.item.commission }}</td>
@@ -33,11 +61,7 @@
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
             <td>
-              <div v-for="id in props.item.buckets" :key="id">
-                <router-link :to="{ name: 'bucket', params: { id: id } }">{{
-                  id | shortID
-                }}</router-link>
-              </div>
+              {{ props.item.buckets.length }}
             </td>
             <td>
               <router-link
@@ -48,17 +72,14 @@
                 }"
               >
                 <v-btn flat small outline color="teal">Vote</v-btn>
+
                 <router-link
                   v-if="props.item.owned"
                   tag="span"
-                  :to="{ name: 'uncandidate', params: {} }"
-                >
-                  <v-btn flat small outline color="grey">Uncandidate</v-btn>
-                </router-link>
-                <router-link
-                  v-if="props.item.owned"
-                  tag="span"
-                  :to="{ name: 'update-candidate', params: {} }"
+                  :to="{
+                    name: 'update-candidate',
+                    params: { addr: props.item.address },
+                  }"
                 >
                   <v-btn flat small outline color="blue">Update</v-btn>
                 </router-link>
@@ -107,7 +128,6 @@ export default class CandidateList extends Vue {
   data() {
     return { search: "" };
   }
-  logoUrl = env.logoUrl;
   rowsPerPage = [20, 40, 100, { text: "All", value: -1 }];
 
   headers = [
@@ -116,7 +136,7 @@ export default class CandidateList extends Vue {
     { text: "IP", value: "ipAddr" },
     { text: "Commission", value: "commission" },
     { text: "Total Votes", value: "totalVotes" },
-    { text: "Buckets", value: "buckets" },
+    { text: "nBkt", value: "buckets" },
     { text: "Action", value: "action" },
   ];
 
