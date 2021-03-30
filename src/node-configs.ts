@@ -32,7 +32,7 @@ export const presets: NodeConfig[] = [
       powBlocks:[],
     }
   },
-  {
+  /*{
     name: "tetra",
     url: "http://t01.meter.io:8669",
     genesis: {
@@ -65,6 +65,7 @@ export const presets: NodeConfig[] = [
       powBlocks:[],
     }
   },
+  */
   {
     name: "Warringstakes",
     url: "https://warringstakes.meter.io",

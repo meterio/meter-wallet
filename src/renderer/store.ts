@@ -12,6 +12,7 @@ namespace Store {
     shortcuts: entities.Shortcut[];
     nodes: entities.Node[];
     wallets: entities.Wallet[];
+    jaileds: entities.Jailed[];
     candidates: entities.Candidate[];
     buckets: entities.Bucket[];
     presentAuction: entities.AuctionCB;
@@ -25,6 +26,7 @@ class Store extends Vuex.Store<Store.Model> {
   public static readonly UPDATE_NODES = "updateNodes";
   public static readonly UPDATE_WALLETS = "updateWallets";
   public static readonly UPDATE_CANDIDATES = "updateCandidates";
+  public static readonly UPDATE_JAILEDS = "updateJaileds";
   public static readonly UPDATE_BUCKETS = "updateBuckets";
   public static readonly UPDATE_PRESENT_AUCTION = "updatePresentAuction";
   constructor() {
@@ -39,6 +41,7 @@ class Store extends Vuex.Store<Store.Model> {
         nodes: [],
         wallets: [],
         candidates: [],
+        jaileds: [],
         buckets: [],
         presentAuction: {auctionID:"", auctionTxs:[], receivedMTR:"",releasedMTRG:"",reservedPrice:"",startEpoch:0, startHeight:0, endEpoch:0,endHeight:0, createTime:0},
       },
@@ -73,6 +76,20 @@ class Store extends Vuex.Store<Store.Model> {
               pubKey: c.pubKey,
 
               owned: false
+            };
+            return t;
+          });
+        },
+        [Store.UPDATE_JAILEDS](state, payload) {
+          // console.log('update candidate in store');
+          state.jaileds = payload.map(function(c: Flex.Meter.Jailed) {
+            let t: entities.Jailed = {
+              name: c.name,
+              address: c.address,
+              totalPoints: parseInt(c.totalPoints.toString()),
+              bailAmount: c.bailAmount,
+              pubKey: c.pubKey,
+              jailedTime: c.jailedTime,
             };
             return t;
           });

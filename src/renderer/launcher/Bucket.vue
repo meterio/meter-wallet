@@ -116,9 +116,6 @@ import WalletChoice from "../components/WalletChoice.vue";
 @Component({ components: { WalletChoice } })
 export default class Bucket extends Vue {
   @State
-  buckets!: entities.Bucket[];
-
-  @State
   wallets!: entities.Wallet[];
 
   id = "";
@@ -159,15 +156,10 @@ export default class Bucket extends Vue {
     );
   }
 
-  created() {
+  async created() {
     const id = this.$route.params.id;
     this.id = id;
-    for (var i in this.buckets) {
-      const bucket = this.buckets[i];
-      if (bucket.id === id) {
-        this.bucket = bucket;
-      }
-    }
+    this.bucket = await flex.meter.bucket(id).get();
   }
 }
 </script>

@@ -10,7 +10,7 @@ export namespace Address {
     if (!cry.isAddress(addr)) {
       return null;
     }
-    return addr.slice(0, 8) + "…" + addr.slice(addr.length - 6);
+    return addr.slice(0, 12) + "...";
   }
 
   export function toChecksum(addr: string) {
@@ -23,7 +23,7 @@ export namespace Address {
 
 export namespace Bucket {
   export function abbrev(id: string) {
-    return id.slice(0, 8) + "…" + id.slice(id.length - 6);
+    return id.slice(0, 12)+"...";
   }
 }
 

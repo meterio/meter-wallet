@@ -53,6 +53,16 @@ export class AppDriver implements Flex.Driver {
     public getCandidates(): Promise<Flex.Meter.Candidate[]>{
         return this.callToHost('getCandidates')
     }
+    public getJaileds(): Promise<Flex.Meter.Jailed[]>{
+        return this.callToHost('getJaileds')
+    }
+    public getCandidate(addr:string): Promise<Flex.Meter.Candidate>{
+        return this.callToHost('getCandidate', addr)
+    }
+     public getBucket(id:string): Promise<Flex.Meter.Bucket>{
+        return this.callToHost('getBucket', id)
+    }
+ 
     public getAuctionSummaries(): Promise<Flex.Meter.AuctionSummary[]>{
         return this.callToHost('getAuctionSummaries')
     }

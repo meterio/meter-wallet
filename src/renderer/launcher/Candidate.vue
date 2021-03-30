@@ -66,7 +66,7 @@
             color="grey"
             :to="{
               name: 'uncandidate',
-              params: { addr: candidate.addr },
+              params: { addr: candidate.address },
             }"
           >
             Uncandidate</v-btn

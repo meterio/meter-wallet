@@ -72,8 +72,8 @@
   "dependencies": {
     "@meterio/bridge-interface": "0.0.3",
     "@meterio/devkit": "^1.4.6",
-    "@meterio/flex": "^0.5.7",
-    "@meterio/flex-framework": "^0.5.7",
+    "@meterio/flex": "^0.5.8",
+    "@meterio/flex-framework": "^0.5.8",
     "axios": "^0.19.2",
     "electron-context-menu": "^0.10.0",
     "electron-log": "^4.1.1",

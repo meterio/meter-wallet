@@ -1,6 +1,6 @@
 <template>
   <v-layout column align-center>
-    <v-layout column align-center style="max-width: 1000px; width: 100%" pa-3>
+    <v-layout column align-center pa-5>
       <div class="subheading py-4">Transfer from</div>
       <WalletSeeker
         style="width: 270px"
@@ -8,8 +8,8 @@
         :wallets="wallets"
         v-model="from"
       />
-      <v-card flat tile style="width: 500px" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">To</v-card-title>
+      <v-card flat tile style="width: 600px" class="mt-4 py-2 px-2 outline">
+        <v-card-title class="card-title">Transfer</v-card-title>
         <v-card-text>
           <v-form ref="form">
             <v-select :items="items" label="Token" v-model="token"></v-select>
@@ -182,12 +182,9 @@ export default class Transfer extends Mixins(AccountLoader) {
       return;
     }
     try {
-      const value =
-        "0x" +
-        new BigNumber("1" + "0".repeat(18))
-          .times(this.amount!)
-          .integerValue()
-          .toString(16);
+      const value = new BigNumber("1" + "0".repeat(18))
+        .times(this.amount!)
+        .toFixed();
       let tokenValue = this.token == "MTRG" ? 1 : 0;
       console.log("TOKEN_VAL=", tokenValue);
 

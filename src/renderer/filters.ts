@@ -21,7 +21,7 @@ function removeZero(str: string) {
 }
 
 Vue.filter("balance", (value: string, decimal: number) => {
-  return Num.formatBalance(value, decimal);
+  return Num.formatBalance(value, decimal, true);
 });
 
 Vue.filter("shortAddr", (addr: string) => {
@@ -33,7 +33,7 @@ Vue.filter("shortID", (id: string) => {
 });
 
 Vue.filter("shortTxId", (txId: string) => {
-  return txId.slice(0, 8) + "…" + txId.slice(txId.length - 9);
+  return txId.slice(0, 12) + "...";
 });
 // Vue.filter('date', (val: number) => {
 //   const date = new Date(val * 10e2)

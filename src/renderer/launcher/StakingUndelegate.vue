@@ -44,9 +44,6 @@ export default class StakingUndelegate extends Vue {
   @State
   wallets!: entities.Wallet[];
 
-  @State
-  buckets!: entities.Bucket[];
-
   errMsg = "";
 
   bucket: Flex.Meter.Bucket = {} as any;
@@ -54,16 +51,7 @@ export default class StakingUndelegate extends Vue {
 
   async created() {
     const id = this.$route.params.id;
-    const buckets = await flex.meter.buckets();
-    this.$store.commit("updateBuckets", buckets);
-
-    let bucket = undefined;
-    for (const b of buckets) {
-      if (b.id.toLowerCase() == id) {
-        bucket = b;
-        break;
-      }
-    }
+    const bucket = await flex.meter.bucket(id).get();
     if (!bucket) {
       this.errMsg = `Could not find bucket ${id}`;
       return;

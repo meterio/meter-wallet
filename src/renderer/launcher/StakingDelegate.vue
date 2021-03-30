@@ -62,9 +62,6 @@ export default class StakingDelegate extends Vue {
   @State
   candidates!: entities.Candidate[];
 
-  @State
-  buckets!: entities.Bucket[];
-
   bucket: Flex.Meter.Bucket = {} as any;
   wallet: entities.Wallet = {} as any;
 
@@ -111,16 +108,8 @@ export default class StakingDelegate extends Vue {
 
   async created() {
     const id = this.$route.params.id;
-    const buckets = await flex.meter.buckets();
-    this.$store.commit("updateBuckets", buckets);
+    const bucket = await flex.meter.bucket(id).get();
 
-    let bucket = undefined;
-    for (const b of buckets) {
-      if (b.id.toLowerCase() == id) {
-        bucket = b;
-        break;
-      }
-    }
     if (!bucket) {
       this.errMsg = `Could not find bucket ${id}`;
       return;

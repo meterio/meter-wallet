@@ -90,6 +90,15 @@ declare namespace entities {
     createdTime: number;
   };
 
+  type Jailed = {
+    name:string;
+    address: string;
+    pubKey: string;
+    totalPoints: number;
+    bailAmount: string;
+    jailedTime: number;
+  }
+
   type Candidate = {
     name: string;
     description: string;

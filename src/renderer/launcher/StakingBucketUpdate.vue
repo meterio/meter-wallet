@@ -83,16 +83,8 @@ export default class StakingBucketUpdate extends Mixins(AccountLoader) {
 
   async created() {
     const id = this.$route.params.id;
-    const buckets = await flex.meter.buckets();
-    this.$store.commit("updateBuckets", buckets);
+    const bucket = await flex.meter.bucket(id).get();
 
-    let bucket = undefined;
-    for (const b of buckets) {
-      if (b.id.toLowerCase() == id) {
-        bucket = b;
-        break;
-      }
-    }
     if (!bucket) {
       this.errMsg = `Could not find bucket ${id}`;
       return;

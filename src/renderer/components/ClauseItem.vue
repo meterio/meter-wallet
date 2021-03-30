@@ -9,7 +9,7 @@
       <v-layout row align-baseline>
         <span class="caption">
           To:
-          <AddressLabel abbrev placeholder="New contract">{{
+          <AddressLabel placeholder="New contract">{{
             clause.to
           }}</AddressLabel>
         </span>
@@ -36,6 +36,12 @@
           label="Input Data"
           style="font-family: 'Roboto Mono', monospace"
         ></v-textarea>
+        <div v-if="decoded">
+          Decoded {{ decoded.op }} Data:
+          <pre style="font-size: 90%; font-family: 'Roboto Mono', monospace">{{
+            decoded.text
+          }}</pre>
+        </div>
       </v-card-text>
     </v-card>
   </v-expansion-panel-content>
@@ -43,6 +49,8 @@
 <script lang="ts">
 import { Vue, Component, Model, Prop } from "vue-property-decorator";
 type ClauseType = Flex.Vendor.TxMessage[number];
+import { ScriptEngine } from "@meterio/devkit";
+import { Script } from "vm";
 
 @Component
 export default class ClauseItem extends Vue {
@@ -60,6 +68,41 @@ export default class ClauseItem extends Vue {
       return "Call";
     }
     return "Transfer";
+  }
+
+  get decoded() {
+    if (this.clause.data === "0x") {
+      return undefined;
+    }
+    try {
+      const scriptData = ScriptEngine.decodeScriptData(this.clause.data);
+      if (scriptData.header.modId === ScriptEngine.ModuleID.Staking) {
+        const body = ScriptEngine.decodeStakingBody(scriptData.payload);
+        const j = ScriptEngine.jsonFromStakingBody(body);
+        return {
+          op: ScriptEngine.explainStakingOpCode(j.opCode),
+          text: JSON.stringify(j, null, 2),
+        };
+      }
+      if (scriptData.header.modId === ScriptEngine.ModuleID.Auction) {
+        const body = ScriptEngine.decodeAuctionBody(scriptData.payload);
+        const j = ScriptEngine.jsonFromAuctionBody(body) as any;
+        return {
+          op: ScriptEngine.explainAuctionOpCode(j.opCode, j.option),
+          text: JSON.stringify(j, null, 2),
+        };
+      }
+      if (scriptData.header.modId === ScriptEngine.ModuleID.AccountLock) {
+        const body = ScriptEngine.decodeAccountLockBody(scriptData.payload);
+        const j = ScriptEngine.jsonFromAccountLockBody(body) as any;
+        return {
+          op: ScriptEngine.explainAccountLockOpCode(j.opCode),
+          text: JSON.stringify(j, null, 2),
+        };
+      }
+    } catch (e) {
+      return undefined;
+    }
   }
 }
 </script>
