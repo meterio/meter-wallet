@@ -119,6 +119,7 @@ export default class Bucket extends Vue {
   wallets!: entities.Wallet[];
 
   id = "";
+  errMsg = "";
   bucket = {} as entities.Bucket;
 
   get wallet() {
@@ -159,7 +160,37 @@ export default class Bucket extends Vue {
   async created() {
     const id = this.$route.params.id;
     this.id = id;
-    this.bucket = await flex.meter.bucket(id).get();
+    const bucket = await flex.meter.bucket(id).get();
+    if (!bucket) {
+      this.errMsg = `could not find bucket ${id}`;
+      return;
+    }
+    let b: entities.Bucket = {
+      id: bucket.id,
+      owner: bucket.owner,
+      candidate: bucket.candidate,
+      votes: bucket.value.toString(),
+      totalVotes: "0",
+      createTime: bucket.createTime.toString(),
+      matureTime: bucket.matureTime.toString(),
+      unbounded: bucket.unbounded,
+      option: bucket.option.toString(),
+      bonus: "0",
+      nonce: bucket.nonce,
+      autobid: bucket.autobid,
+
+      owned: false,
+      candidateName: "",
+      matureFromNow: "",
+      state: "",
+    };
+    if (bucket.bonusVotes) {
+      b.bonus = bucket.bonusVotes.toString();
+    }
+    if (b.totalVotes) {
+      b.totalVotes = bucket.totalVotes.toString();
+    }
+    this.bucket = b;
   }
 }
 </script>

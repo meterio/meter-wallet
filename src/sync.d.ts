@@ -115,9 +115,9 @@ declare namespace entities {
     id: string;
     owner: string;
     candidate: string;
-    votes: number;
-    bonus: number;
-    totalVotes: number;
+    votes: string;
+    bonus: string;
+    totalVotes: string;
     createTime: string;
     matureTime: string;
     unbounded: boolean;

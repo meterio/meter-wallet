@@ -101,13 +101,13 @@ class Store extends Vuex.Store<Store.Model> {
               id: b.id,
               owner: b.owner,
               candidate: b.candidate,
-              votes: parseInt(b.value.toString()),
-              totalVotes: 0,
+              votes: b.value.toString(),
+              totalVotes: '0',
               createTime: b.createTime,
               matureTime: b.matureTime,
               unbounded: b.unbounded,
               option: b.option,
-              bonus: 0,
+              bonus: '0',
               nonce: b.nonce,
               autobid: b.autobid,
 
@@ -117,10 +117,10 @@ class Store extends Vuex.Store<Store.Model> {
               state: ""
             };
             if (b.bonusVotes) {
-              t.bonus = parseInt(b.bonusVotes.toString());
+              t.bonus = b.bonusVotes.toString();
             }
             if (b.totalVotes) {
-              t.totalVotes = parseInt(b.totalVotes.toString());
+              t.totalVotes = b.totalVotes.toString();
             }
 
             return t;

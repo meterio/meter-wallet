@@ -11,7 +11,7 @@
             label="Select inputs"
             class="input-group--focused"
             item-value="text"
-            :style="{ maxWidth: '300px' }"
+            :style="{ maxWidth: '200px' }"
           ></v-select>
 
           <v-text-field
@@ -23,6 +23,14 @@
           ></v-text-field>
 
           <div>
+            <v-progress-circular
+              class="mr-2 mt-2"
+              size="22"
+              :width="2"
+              indeterminate
+              color="primary"
+              v-if="loading"
+            ></v-progress-circular>
             <v-btn
               flat
               icon
@@ -94,6 +102,7 @@
                 </router-link>
               </div>
               <div v-else>
+                <!--
                 <v-btn
                   flat
                   small
@@ -105,6 +114,7 @@
                 >
                   unbound</v-btn
                 >
+                -->
 
                 <v-btn
                   flat
@@ -129,7 +139,6 @@
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 
-import env from "@/env";
 const moment = require("moment");
 
 @Component
@@ -144,6 +153,7 @@ export default class BucketList extends Vue {
   candidates!: entities.Candidate[];
 
   filterSelection = "buckets owned by me";
+  loading = true;
 
   get ownedBuckets() {
     return this.buckets
@@ -226,12 +236,14 @@ export default class BucketList extends Vue {
 
   async refresh() {
     console.log("refresh bucket list");
+    this.loading = true;
     const buckets = await flex.meter.buckets();
     this.$store.commit("updateBuckets", buckets);
 
     console.log("refresh candidate list");
     const candidates = await flex.meter.candidates();
     this.$store.commit("updateCandidates", candidates);
+    this.loading = false;
   }
 
   async created() {

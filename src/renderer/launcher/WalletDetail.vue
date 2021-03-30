@@ -189,18 +189,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Watch, Prop, Mixins } from "vue-property-decorator";
+import { Component, Watch, Mixins } from "vue-property-decorator";
 import TransferMixin from "../mixins/Transfer.vue";
 import { State } from "vuex-class";
-import Store from "../store";
-import { Num } from "@/common/formatter";
 import { ResetPwdDialog } from "@/renderer/components";
 import { ExportWalletDialog } from "@/renderer/components";
 import { DeleteWalletDialog } from "@/renderer/components";
 import TransferItem from "./TransferItem.vue";
 import AccountLoader from "../mixins/account-loader";
-import { setTimeout } from "timers";
-import { Stats } from "fs";
 
 @Component({
   components: {

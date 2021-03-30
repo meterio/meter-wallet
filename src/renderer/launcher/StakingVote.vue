@@ -153,7 +153,7 @@ export default class StakingBound extends Mixins(AccountLoader) {
             "..." +
             b.id.substr(b.id.length - 6) +
             " (" +
-            b.votes / 1e18 +
+            new BigNumber(b.votes).dividedBy(1e18).toFixed() +
             " MTRG)",
           value: b.id,
         };

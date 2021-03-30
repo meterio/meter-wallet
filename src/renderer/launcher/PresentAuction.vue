@@ -2,7 +2,7 @@
   <v-layout column pa-5>
     <h3 class="pa-3">Present Auction</h3>
     <v-card>
-      <v-card-text class="mb-0">
+      <v-card-text class="pb-0">
         <v-layout justify-space-between>
           <div>
             <div class="my-2">
@@ -34,26 +34,48 @@
 
       <v-card-title>
         <v-layout justify-space-between>
-          <router-link :to="{ name: 'auction-bid' }">
-            <v-btn depressed small color="primary" class="ml-0"
-              >Auction Bid</v-btn
-            >
-          </router-link>
-          <router-link :to="{ name: 'past-auctions' }">
-            <v-btn depressed small outline color="primary">Past Auctions</v-btn>
-          </router-link>
-          <v-btn flat icon small color="green" v-on:click.native="refresh">
-            <v-icon>cached</v-icon>
-          </v-btn>
-
-          <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
             append-icon="search"
             label="Search"
             single-line
             hide-details
+            style="max-width: 400px"
           ></v-text-field>
+
+          <div>
+            <v-progress-circular
+              class="ml-3"
+              size="22"
+              :width="2"
+              indeterminate
+              color="primary"
+              v-if="loading"
+            ></v-progress-circular>
+            <v-btn flat icon small color="green" v-on:click.native="refresh">
+              <v-icon>cached</v-icon>
+            </v-btn>
+            <v-btn
+              depressed
+              small
+              color="primary"
+              :to="{ name: 'auction-bid' }"
+            >
+              <v-icon small class="mr-1" style="color: white">add</v-icon>
+              Auction Bid</v-btn
+            >
+            <!--
+            <v-btn
+              depressed
+              small
+              outline
+              color="primary"
+              :to="{ name: 'past-auctions' }"
+            >
+              Past Auctions</v-btn
+            >
+            -->
+          </div>
         </v-layout>
       </v-card-title>
 
@@ -93,6 +115,7 @@ export default class PresentAuction extends Vue {
   search = "";
   rowsPerPage = [20, 50, { text: "All", value: -1 }];
   timer: NodeJS.Timeout = {} as any;
+  loading = true;
 
   get estPrice() {
     return new BigNumber(this.presentAuction.receivedMTR)
@@ -144,8 +167,10 @@ export default class PresentAuction extends Vue {
 
   async refresh() {
     console.log("refresh present auction");
+    this.loading = true;
     const present = await flex.meter.auction();
     this.$store.commit("updatePresentAuction", present);
+    this.loading = false;
   }
 
   startInterval() {
