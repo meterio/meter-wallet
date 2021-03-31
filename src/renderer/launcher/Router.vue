@@ -16,32 +16,29 @@
       />
     </transition>
     <v-layout style="position: absolute; left: 0; top: 0; background: #fafafa">
-      <v-btn flat class="ml-0" to="/bridge/transfer">
-        <v-icon small mr-5 style="margin-right: 3px">mdi-bridge</v-icon>Bridge
+      <v-btn flat to="/bridge/transfer" class="mr-1">
+        <v-icon small style="margin-right: 3px">mdi-bridge</v-icon>Bridge
       </v-btn>
 
-      <div v-if="enableScriptEngine">
-        <v-btn flat class="ml-0" to="/candidates">
-          <v-icon small mr-5 style="margin-right: 3px"
-            >mdi-account-multiple</v-icon
-          >Candidates
-        </v-btn>
+      <v-btn v-if="enableScriptEngine" flat class="mx-0 mr-1" to="/candidates">
+        <v-icon small style="margin-right: 3px">mdi-account-multiple</v-icon
+        >Candidates
+      </v-btn>
 
-        <v-btn flat class="ml-0" to="/buckets">
-          <v-icon small mr-5 style="margin-right: 3px">mdi-lock-outline</v-icon
-          >Staking
-        </v-btn>
+      <v-btn v-if="enableScriptEngine" flat class="mx-0 mr-1" to="/buckets">
+        <v-icon small style="margin-right: 3px">mdi-lock-outline</v-icon>Staking
+      </v-btn>
 
-        <v-btn
-          flat
-          class="ml-0"
-          to="/auction/present"
-          :input-value="$route.path.startsWith('/auction')"
-        >
-          <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
-          >Auction
-        </v-btn>
-      </div>
+      <v-btn
+        v-if="enableScriptEngine"
+        flat
+        class="mx-0"
+        to="/auction/present"
+        :input-value="$route.path.startsWith('/auction')"
+      >
+        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
+        >Auction
+      </v-btn>
     </v-layout>
 
     <v-layout style="position: absolute; right: 0; top: 0; background: #fafafa">
@@ -368,7 +365,7 @@ const routes: RouteConfig[] = [
   },
 ];
 </script>
-<style>
+<style lang="scss">
 @keyframes slide-in {
   from {
     opacity: 0;
@@ -416,5 +413,15 @@ const routes: RouteConfig[] = [
 }
 .animated.faster {
   animation-duration: 240ms;
+}
+.v-btn {
+  border-radius: 10px;
+}
+.v-btn--active {
+  color: #6171ff !important;
+  background: lighten(#b3d4fc, 15%);
+  .v-icon {
+    color: #6171ff !important;
+  }
 }
 </style>

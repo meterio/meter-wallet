@@ -72,7 +72,7 @@ class Store extends Vuex.Store<Store.Model> {
               ipAddr: c.ipAddr,
               buckets: c.buckets,
               totalVotes: parseInt(c.totalVotes.toString()),
-              commission: `${c.commission/1e7}%`,
+              commission: c.commission/1e7,
               pubKey: c.pubKey,
 
               owned: false

@@ -9,12 +9,7 @@
         </div>
 
         <div class="section">
-          <label>Name</label>
-          <div>{{ candidate.description }}</div>
-        </div>
-
-        <div class="section">
-          <label>Name</label>
+          <label>Description</label>
           <div :style="{ wordBreak: 'break-all' }">
             {{ candidate.description }}
           </div>
@@ -45,13 +40,11 @@
 
         <div class="section">
           <label>Buckets</label>
-          <div>
-            <router-link
-              :to="{ name: 'bucket', params: { id: bucket } }"
-              v-for="bucket in candidate.buckets"
-              :key="bucket"
-              >{{ bucket }}</router-link
-            >
+          <div v-for="(bucket, i) in candidate.buckets" :key="i">
+            <span>#{{ i + 1 }}</span>
+            <router-link :to="{ name: 'bucket', params: { id: bucket } }">{{
+              bucket
+            }}</router-link>
           </div>
         </div>
       </v-card-text>

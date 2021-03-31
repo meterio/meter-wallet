@@ -1,16 +1,16 @@
 <template>
   <v-layout column align-center pa-5>
     <v-layout column style="max-width: 1000px; width: 100%">
-      <div class="mt-4">
+      <div class="mt-5">
         <v-layout justify-center>
-          <v-btn flat small class="caption" color="primary" @click="onCreate"
+          <v-btn flat class="caption" color="primary" @click="onCreate"
             >New</v-btn
           >
-          <v-btn flat small class="caption" color="primary" @click="onImport"
+          <v-btn flat class="caption" color="primary" @click="onImport"
             >Import</v-btn
           >
           <router-link tag="span" to="/transfer">
-            <v-btn flat small class="caption" color="primary">Transfer</v-btn>
+            <v-btn flat class="caption" color="primary">Transfer</v-btn>
           </router-link>
           <!--
           <router-link tag="span" to="/auction/bid">

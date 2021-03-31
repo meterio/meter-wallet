@@ -105,7 +105,7 @@ declare namespace entities {
     ipAddr: string;
     address: string;
     totalVotes: number;
-    commission: string;
+    commission: number;
     buckets: string[];
     owned: boolean;
     pubKey: string;

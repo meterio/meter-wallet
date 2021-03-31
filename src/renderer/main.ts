@@ -12,7 +12,11 @@ import Store from "./store";
 import DialogHelper from "./mixins/dialog-helper";
 
 Vue.use(Vuetify, {
-  iconfont: "mdi" // 'md' || 'mdi' || 'fa' || 'fa4'
+  iconfont: "mdi", // 'md' || 'mdi' || 'fa' || 'fa4',
+  theme:{
+    primary:'#6171ff',
+    error:'#FC427B'
+  } 
 });
 Vue.use(Vuex);
 Vue.use(VueRouter);

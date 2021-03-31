@@ -1,79 +1,103 @@
 <template>
-  <v-layout column align-center>
-    <v-layout column align-center style="max-width:1000px;width:100%;" pa-3>
-      <div class="subheading py-4">Transfer from</div>
-      <WalletSeeker style="width:270px" full-size :wallets="wallets" v-model="from" />
+  <v-layout column align-center pa-5>
+    <div class="subheading py-4">Transfer from</div>
+    <WalletSeeker
+      style="width: 270px"
+      full-size
+      :wallets="wallets"
+      v-model="from"
+    />
 
-      <v-card flat tile style="width:700px;" class="mt-4 py-2 px-2 outline">
-        <v-card-title class="subheading">
+    <v-card flat tile style="width: 600px" class="mt-4 py-2 px-2 outline">
+      <v-card-title class="subheading">
+        <v-layout row wrap>
+          <v-flex xs12>
+            <h3>Bridge Rules</h3>
+            <!-- <div v-if="lauched">{{countdown}} from launch</div> -->
+          </v-flex>
+          <v-alert color="error" icon="error" outline :value="true"
+            >Disclaimer: This bridge functionality is still under beta test. By
+            clicking the “Send” button, you agree that you understand and accept
+            all risks involved, including without limitation any loss of funds,
+            errors or bugs in the relevant smart contract, calculation mistakes,
+            delay of receiving funds etc</v-alert
+          >
+
+          <v-flex xs-12 class="mt-2">
+            <ol style="fontsize: 90%">
+              <li>
+                To avoid abusing the bridge and cover the ETH gas cost. We
+                currently charge a fee of 0.5% transfer amount with a minimum 10
+                MTRG or 20 MTR (depend on which token is being mapped). This fee
+                is subject to change.
+              </li>
+              <li>
+                Please backup your wallet to keystore file and import it to an
+                ETH wallet (such as Metamask) and make sure the imported ETH
+                wallet address is the same as your Meter wallet address. eMTRG
+                and eMTR will be mapped to the same address by the bridge.
+              </li>
+              <li>
+                Please allow 5 minutes for the fund to settle. If you do not see
+                the tokens in 5 mins, please save your Meter network transaction
+                hash and contact us in telegram or discord channels
+              </li>
+            </ol>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+      <v-card-text>
+        <v-form ref="form">
+          <v-text-field
+            validate-on-blur
+            :rules="addressRules"
+            label="Bridge Address"
+            v-model="to"
+            disabled
+          />
           <v-layout row wrap>
-            <v-flex xs12>
-              <h3>Bridge Rules</h3>
-              <!-- <div v-if="lauched">{{countdown}} from launch</div> -->
+            <v-flex xs12 sm8>
+              <v-text-field
+                validate-on-blur
+                type="number"
+                label="Amount"
+                :rules="amountRules"
+                v-model="amount"
+                autofocus
+              />
             </v-flex>
-            <Tip
-              class="ma-1"
-              type="error"
-            >Disclaimer: This bridge functionality is still under beta test. By clicking the “Send” button, you agree that you understand and accept all risks involved, including without limitation any loss of funds, errors or bugs in the relevant smart contract, calculation mistakes, delay of receiving funds etc</Tip>
-
-            <v-flex xs-12 style="marginTop:20px;">
-              <ol style="fontSize:90%">
-                <li>To avoid abusing the bridge and cover the ETH gas cost. We currently charge a fee of 0.5% transfer amount with a minimum 10 MTRG or 20 MTR (depend on which token is being mapped). This fee is subject to change.</li>
-                <li>Please backup your wallet to keystore file and import it to an ETH wallet (such as Metamask) and make sure the imported ETH wallet address is the same as your Meter wallet address. eMTRG and eMTR will be mapped to the same address by the bridge.</li>
-                <li>Please allow 5 minutes for the fund to settle. If you do not see the tokens in 5 mins, please save your Meter network transaction hash and contact us in telegram or discord channels</li>
-              </ol>
+            <v-flex xs12 sm4>
+              <v-select
+                :items="tokenItems"
+                label="Token"
+                v-model="token"
+                :hint="`${token.fullname}`"
+                item-text="symbol"
+                item-value="symbol"
+                return-object
+                persistent-hint
+                v-on:change="getCapacity"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12 sm8>
+              <v-text-field
+                label="Available Capacity"
+                v-model="availableCapacity"
+                disabled
+              />
+            </v-flex>
+            <v-flex xs12 sm4>
+              <v-text-field label="Toll fee" v-model="toll" disabled />
             </v-flex>
           </v-layout>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="form">
-            <v-text-field
-              validate-on-blur
-              :rules="addressRules"
-              label="Bridge Address"
-              v-model="to"
-              disabled
-            />
-            <v-layout row wrap>
-              <v-flex xs12 sm8>
-                <v-text-field
-                  validate-on-blur
-                  type="number"
-                  label="Amount"
-                  :rules="amountRules"
-                  v-model="amount"
-                  autofocus
-                />
-              </v-flex>
-              <v-flex xs12 sm4>
-                <v-select
-                  :items="tokenItems"
-                  label="Token"
-                  v-model="token"
-                  :hint="`${token.fullname}`"
-                  item-text="symbol"
-                  item-value="symbol"
-                  return-object
-                  persistent-hint
-                  v-on:change="getCapacity"
-                ></v-select>
-              </v-flex>
-              <v-flex xs12 sm8>
-                <v-text-field label="Available Capacity" v-model="availableCapacity" disabled />
-              </v-flex>
-              <v-flex xs12 sm4>
-                <v-text-field label="Toll fee" v-model="toll" disabled />
-              </v-flex>
-            </v-layout>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="error--text" v-if="errMsg">{{errMsg}}</div>
-          <v-spacer />
-          <v-btn flat class="primary" @click="send">Send</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-layout>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <div class="error--text" v-if="errMsg">{{ errMsg }}</div>
+        <v-spacer />
+        <v-btn flat class="primary" @click="send">Send</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-layout>
 </template>
 <script lang="ts">

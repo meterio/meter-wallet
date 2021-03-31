@@ -163,7 +163,7 @@ export default class StakingCandidateUpdate extends Mixins(AccountLoader) {
     this.name = candidate.name;
     this.description = candidate.description;
     this.ip = candidate.ipAddr;
-    this.commission = parseInt(candidate.commission);
+    this.commission = candidate.commission;
     this.pubkey = candidate.pubKey;
 
     let index = -1;

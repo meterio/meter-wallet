@@ -43,14 +43,11 @@
             </v-btn>
             <v-btn
               depressed
-              small
               color="primary"
               :style="{ marginTop: '20px' }"
               :to="{ name: 'create-vote' }"
             >
-              <v-icon small class="mr-1" :style="{ color: 'white' }"
-                >add</v-icon
-              >
+              <v-icon class="mr-1" :style="{ color: 'white' }">add</v-icon>
               Create vote</v-btn
             >
           </div>
@@ -72,7 +69,16 @@
             </td>
             <td>{{ props.item.owner | shortAddr }}</td>
             <td>{{ props.item.candidate | shortAddr }}</td>
-            <td>{{ props.item.candidateName }}</td>
+            <td>
+              <router-link
+                :to="{
+                  name: 'candidate-detail',
+                  params: { addr: props.item.candidate },
+                }"
+              >
+                {{ props.item.candidateName }}
+              </router-link>
+            </td>
             <td>
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
@@ -224,7 +230,7 @@ export default class BucketList extends Vue {
   timer: NodeJS.Timeout = {} as any;
 
   headers = [
-    { text: "ID", value: "id", sortable: true },
+    { text: "Bucket ID", value: "id", sortable: true },
     { text: "Owner Address", value: "owner", sortable: true },
     { text: "Candidate Address", value: "candidate", sortable: true },
     { text: "Name", value: "candidateName", sortable: true },

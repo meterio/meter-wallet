@@ -19,22 +19,37 @@ export default Vue.extend({
 
     const numStr = (this.$slots.default[0].text || "").trim();
     const parts = splitNum(numStr, this.dec);
+    let mantissa = parts[1];
+    for (mantissa; ; ) {
+      const lastDigit = mantissa[mantissa.length - 1];
+      if (lastDigit === "0") {
+        mantissa = mantissa.substring(0, mantissa.length - 1);
+      } else {
+        break;
+      }
+    }
 
-    const children = [
+    let children = [
       h("span", {
+        style: {},
         domProps: {
           innerText: parts[0],
         },
       }),
-      h("span", {
-        style: {
-          "font-size": "90%",
-        },
-        domProps: {
-          innerText: parts[1],
-        },
-      }),
     ];
+    if (mantissa !== ".") {
+      children.push(
+        h("span", {
+          style: {
+            "font-size": "90%",
+            color: "grey",
+          },
+          domProps: {
+            innerText: mantissa,
+          },
+        })
+      );
+    }
     if (this.prepend) {
       children.unshift(
         h("span", {
@@ -45,14 +60,16 @@ export default Vue.extend({
       );
     }
     if (this.sym) {
-      let unitChildren = [h("span", { domProps: { innerText: this.sym } })];
+      let unitChildren = [];
       if (this.bounded) {
         unitChildren.push(
           h("i", {
-            class: "mdi mdi-lock",
+            class: "mdi mdi-lock mr-1",
           })
         );
       }
+
+      unitChildren.push(h("span", { domProps: { innerText: this.sym } }));
       children.push(
         h(
           "span",

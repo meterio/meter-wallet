@@ -25,13 +25,12 @@
             </v-btn>
 
             <v-btn
-              small
               depressed
               color="primary"
               :to="{ name: 'candidate' }"
               :style="{ marginTop: '20px' }"
             >
-              <v-icon small color="white" class="mr-2">mdi-plus</v-icon>
+              <v-icon color="white" class="mr-2">mdi-plus</v-icon>
               List me as candidate</v-btn
             >
           </div>
@@ -54,9 +53,9 @@
                 >{{ props.item.name }}</router-link
               >
             </td>
-            <td>{{ props.item.address }}</td>
+            <td>{{ props.item.address | shortAddr }}</td>
             <td>{{ props.item.ipAddr }}</td>
-            <td>{{ props.item.commission }}</td>
+            <td>{{ props.item.commission }}%</td>
             <td>
               <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
             </td>
@@ -95,8 +94,6 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
-import { Address, Bucket } from "@/common/formatter";
-import env from "@/env";
 
 @Component
 export default class CandidateList extends Vue {
@@ -136,7 +133,7 @@ export default class CandidateList extends Vue {
     { text: "IP", value: "ipAddr" },
     { text: "Commission", value: "commission" },
     { text: "Total Votes", value: "totalVotes" },
-    { text: "nBkt", value: "buckets" },
+    { text: "nBkt", value: "buckets", title: "Bucket Count" },
     { text: "Action", value: "action" },
   ];
 

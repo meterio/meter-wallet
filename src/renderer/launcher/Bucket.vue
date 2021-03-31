@@ -9,7 +9,7 @@
         </div>
 
         <div class="section">
-          <label>Bucket Owner</label>
+          <label>Owner</label>
 
           <WalletChoice v-if="ownerInWallets" :wallet="wallet" />
           <div v-else>{{ bucket.owner }}</div>

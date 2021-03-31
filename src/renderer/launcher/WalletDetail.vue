@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-3">
+  <div class="pa-5">
     <div style="max-width: 1000px; width: 100%; margin: 20px auto">
       <div v-if="wallet">
         <v-layout justify-center>

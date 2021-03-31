@@ -10,10 +10,10 @@
         <v-layout column fill-height justify-center>
           <span
             class="text-truncate"
-            :class="compact ? 'body-2' : 'subheading'"
+            :class="compact ? 'body-2' : 'subheading bold'"
             >{{ wallet.name }}</span
           >
-          <AddressLabel abbrev class="text-truncate caption">{{
+          <AddressLabel abbrev class="mt-2 text-truncate caption">{{
             wallet.address
           }}</AddressLabel>
         </v-layout>
