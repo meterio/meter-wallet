@@ -40,7 +40,8 @@
         <v-layout>
           <span class="caption grey--text">Amount</span>
           <v-spacer />
-          <Amount sym="MTRG" prepend="-">{{ amount }}</Amount>
+          <Amount v-if="token == 1" sym="MTRG" prepend="-">{{ amount }}</Amount>
+          <Amount v-else sym="MTR" prepend="-">{{ amount }}</Amount>
         </v-layout>
         <v-layout>
           <span class="caption grey--text">{{ fee ? "Fee" : "Est. fee" }}</span>
@@ -155,6 +156,13 @@ export default class TxActivityItem extends Vue {
         .toString(16)
     );
   }
+
+  get token() {
+    return this.item.data.message && this.item.data.message.length > 0
+      ? this.item.data.message[0].token
+      : 0;
+  }
+
   get walletName() {
     const wallets = this.$store.state.wallets as entities.Wallet[];
     const wallet = wallets.find((w) => w.address === this.signer);

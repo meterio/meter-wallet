@@ -1,9 +1,17 @@
 <template>
   <div>
-    <v-snackbar v-model="snack.open" top :timeout="60000" color="info" style="top: 72px;">
-      {{snack.message}}
-      <v-btn flat small dark @click="snack.action">{{snack.actionName}}</v-btn>
-      <v-btn dark icon @click="snack.open=false">
+    <v-snackbar
+      v-model="snack.open"
+      top
+      :timeout="60000"
+      color="info"
+      style="top: 72px"
+    >
+      {{ snack.message }}
+      <v-btn flat small dark @click="snack.action">{{
+        snack.actionName
+      }}</v-btn>
+      <v-btn dark icon @click="snack.open = false">
         <v-icon small>close</v-icon>
       </v-btn>
     </v-snackbar>
@@ -26,19 +34,19 @@ export default class Vendor extends Vue {
     open: false,
     message: "",
     actionName: "",
-    action: () => {}
+    action: () => {},
   };
 
   @State wallets!: entities.Wallet[];
 
   isAddressOwned(addr: string) {
     const temp = addr.toLowerCase();
-    return !!this.wallets.find(w => w.address.toLowerCase() === temp);
+    return !!this.wallets.find((w) => w.address.toLowerCase() === temp);
   }
 
   getArgWallets(addr?: string) {
     if (addr) {
-      let local = this.wallets.find(item => {
+      let local = this.wallets.find((item) => {
         return item.address.toLowerCase() === addr;
       });
       if (!!local) {
@@ -46,8 +54,8 @@ export default class Vendor extends Vue {
           {
             sectionName: "Local",
             key: "local",
-            list: this.wallets.slice()
-          }
+            list: this.wallets.slice(),
+          },
         ];
       }
     }
@@ -57,7 +65,7 @@ export default class Vendor extends Vue {
       temp.push({
         sectionName: "Local",
         key: "local",
-        list: this.wallets.slice()
+        list: this.wallets.slice(),
       });
     }
     return [...temp];
@@ -73,9 +81,9 @@ export default class Vendor extends Vue {
         await this.precheck(caller.webContentsId);
         return this.signCert(msg, options, caller.referer);
       },
-      isAddressOwned: addr => {
+      isAddressOwned: (addr) => {
         return Promise.resolve(this.isAddressOwned(addr));
-      }
+      },
     };
   }
 
@@ -91,7 +99,7 @@ export default class Vendor extends Vue {
         this.snack.open = false;
         BUS.$emit("open-tab", {
           href: "sync://wallets/local",
-          mode: "inplace-builtin"
+          mode: "inplace-builtin",
         });
       };
       throw new Error("no wallet available");
@@ -133,7 +141,7 @@ export default class Vendor extends Vue {
         suggestedGas: option.gas || 0,
         txComment: option.comment || "",
         dependsOn: option.dependsOn || null,
-        delegationHandler: option.delegationHandler
+        delegationHandler: option.delegationHandler,
       });
 
       // PREFS.store.put({
@@ -155,8 +163,8 @@ export default class Vendor extends Vue {
           estimatedFee: result.estimatedFee,
           link: option.link || "",
           raw: result.rawTx,
-          receipt: null
-        }
+          receipt: null,
+        },
       });
       remote.app.EXTENSION.txer.enqueue(
         result.txid,
@@ -164,7 +172,7 @@ export default class Vendor extends Vue {
         NODE_CONFIG.url
       );
       new Notification("Tx Signed", {
-        body: result.txid
+        body: result.txid,
       }).onclick = () => {
         const href = getExploreUrl(
           this.$store.getters.explorer,
@@ -176,7 +184,7 @@ export default class Vendor extends Vue {
 
       return {
         txid: result.txid,
-        signer: result.signer
+        signer: result.signer,
       };
     } finally {
       this.dialogOpened = false;
@@ -206,7 +214,7 @@ export default class Vendor extends Vue {
         // enforce using wallet
         wallets: walletsCollection,
         selectedWallet: enforcedWallet,
-        domain: UrlUtils.hostnameOf(referer.url)
+        domain: UrlUtils.hostnameOf(referer.url),
       });
 
       // PREFS.store.put({
@@ -221,7 +229,7 @@ export default class Vendor extends Vue {
             Certificate.encode({
               ...arg,
               ...result.annex,
-              signature: result.signature
+              signature: result.signature,
             })
           )
           .toString("hex");
@@ -238,12 +246,12 @@ export default class Vendor extends Vue {
           signer: result.annex.signer,
           domain: result.annex.domain,
           signature: result.signature,
-          link: option.link || ""
-        }
+          link: option.link || "",
+        },
       });
 
       new Notification("Cert Signed", {
-        body: `${result.annex.domain}: ${arg.purpose}`
+        body: `${result.annex.domain}: ${arg.purpose}`,
       });
       return result;
     } finally {

@@ -71,6 +71,7 @@
             <td>{{ props.item.candidate | shortAddr }}</td>
             <td>
               <router-link
+                v-if="props.item.candidateName != '-'"
                 :to="{
                   name: 'candidate-detail',
                   params: { addr: props.item.candidate },
@@ -86,7 +87,7 @@
             <td>
               {{
                 props.item.unbounded
-                  ? "Mature at" + props.item.matureFromNow
+                  ? "Mature " + props.item.matureFromNow
                   : props.item.state
               }}
             </td>
@@ -160,6 +161,7 @@ export default class BucketList extends Vue {
 
   filterSelection = "buckets owned by me";
   loading = true;
+  running = false;
 
   get ownedBuckets() {
     return this.buckets
@@ -227,7 +229,6 @@ export default class BucketList extends Vue {
   }
 
   rowsPerPage = [50, 100, 200, { text: "All", value: -1 }];
-  timer: NodeJS.Timeout = {} as any;
 
   headers = [
     { text: "Bucket ID", value: "id", sortable: true },
@@ -250,27 +251,18 @@ export default class BucketList extends Vue {
     const candidates = await flex.meter.candidates();
     this.$store.commit("updateCandidates", candidates);
     this.loading = false;
+    if (this.running) {
+      setTimeout(this.refresh, 5000);
+    }
   }
 
   async created() {
+    this.running = true;
     await this.refresh();
-    this.startInterval();
   }
 
   destroyed() {
-    this.stopInterval();
-  }
-
-  startInterval() {
-    clearInterval(this.timer);
-    const self = this;
-    this.timer = setInterval(function () {
-      self.refresh();
-    }, 5000);
-  }
-
-  stopInterval() {
-    clearInterval(this.timer);
+    this.running = false;
   }
 }
 </script>

@@ -55,12 +55,7 @@
             <v-btn flat icon small color="green" v-on:click.native="refresh">
               <v-icon>cached</v-icon>
             </v-btn>
-            <v-btn
-              depressed
-              small
-              color="primary"
-              :to="{ name: 'auction-bid' }"
-            >
+            <v-btn depressed color="primary" :to="{ name: 'auction-bid' }">
               <v-icon small class="mr-1" style="color: white">add</v-icon>
               Auction Bid</v-btn
             >
@@ -114,8 +109,8 @@ export default class PresentAuction extends Vue {
 
   search = "";
   rowsPerPage = [20, 50, { text: "All", value: -1 }];
-  timer: NodeJS.Timeout = {} as any;
   loading = true;
+  running = false;
 
   get estPrice() {
     return new BigNumber(this.presentAuction.receivedMTR)
@@ -150,12 +145,12 @@ export default class PresentAuction extends Vue {
   ];
 
   async created() {
+    this.running = true;
     await this.refresh();
-    this.startInterval();
   }
 
   async destroyed() {
-    this.stopInterval();
+    this.running = false;
   }
 
   jumpToInsight(addr: string) {
@@ -171,18 +166,9 @@ export default class PresentAuction extends Vue {
     const present = await flex.meter.auction();
     this.$store.commit("updatePresentAuction", present);
     this.loading = false;
-  }
-
-  startInterval() {
-    clearInterval(this.timer);
-    const self = this;
-    this.timer = setInterval(function () {
-      self.refresh();
-    }, 5000);
-  }
-
-  stopInterval() {
-    clearInterval(this.timer);
+    if (this.running) {
+      setTimeout(this.refresh, 5000);
+    }
   }
 }
 </script>
