@@ -6,15 +6,15 @@
         <v-layout justify-space-between>
           <div>
             <div class="my-2">
-              MTRG on Auction:
-              <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
+              STPD on Auction:
+              <Amount sym="STPD">{{ presentAuction.releasedMTRG }}</Amount>
             </div>
             <div class="my-2">
               Received bids:
-              <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
+              <Amount sym="STPT">{{ presentAuction.receivedMTR }}</Amount>
             </div>
             <div class="my-2">
-              Estimate Price: <Amount sym="MTR">{{ estPrice }}</Amount>
+              Estimate Price: <Amount sym="STPT">{{ estPrice }}</Amount>
             </div>
           </div>
 
@@ -83,7 +83,7 @@
         <template slot="items" slot-scope="props">
           <td>{{ props.item.address }}</td>
           <td>
-            <Amount sym="MTR">{{ props.item.amount }}</Amount>
+            <Amount sym="STPT">{{ props.item.amount }}</Amount>
           </td>
           <td>{{ props.item.type }}</td>
           <td>{{ props.item.createdAt }}</td>

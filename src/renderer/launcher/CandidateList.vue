@@ -57,7 +57,7 @@
             <td>{{ props.item.ipAddr }}</td>
             <td>{{ props.item.commission }}%</td>
             <td>
-              <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
+              <Amount sym="STPD">{{ props.item.totalVotes }}</Amount>
             </td>
             <td>
               {{ props.item.buckets.length }}

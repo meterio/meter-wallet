@@ -40,13 +40,13 @@
         <v-layout>
           <span class="caption grey--text">Amount</span>
           <v-spacer />
-          <Amount v-if="token == 1" sym="MTRG" prepend="-">{{ amount }}</Amount>
-          <Amount v-else sym="MTR" prepend="-">{{ amount }}</Amount>
+          <Amount v-if="token == 1" sym="STPD" prepend="-">{{ amount }}</Amount>
+          <Amount v-else sym="STPT" prepend="-">{{ amount }}</Amount>
         </v-layout>
         <v-layout>
           <span class="caption grey--text">{{ fee ? "Fee" : "Est. fee" }}</span>
           <v-spacer />
-          <Amount sym=" MTR" prepend="-">{{ fee || estimatedFee }}</Amount>
+          <Amount sym=" STPT" prepend="-">{{ fee || estimatedFee }}</Amount>
         </v-layout>
 
         <v-layout>

@@ -68,9 +68,9 @@ export function describeClauses(clauses: Flex.Meter.Clause[]) {
     }
     if (clauses[0].data === "0x") {
       if (clauses[0].token === 1){
-      return "transfer MTRG";
+      return "transfer STPD";
       } else if (clauses[0].token === 0){
-        return "transfer MTR";
+        return "transfer STPT";
       } else{
         return "transfer";
       }

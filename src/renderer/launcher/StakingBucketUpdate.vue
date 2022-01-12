@@ -16,7 +16,7 @@
         <div class="section">
           <label>Current Amount</label>
           <div>
-            <Amount sym="MTRG">{{ bucket.value }}</Amount>
+            <Amount sym="STPD">{{ bucket.value }}</Amount>
           </div>
         </div>
 
@@ -56,7 +56,7 @@ export default class StakingBucketUpdate extends Mixins(AccountLoader) {
   wallets!: entities.Wallet[];
   amount = "0";
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   marker = true;
 
   wallet: entities.Wallet = {} as any;

@@ -15,18 +15,18 @@
           <td>{{ props.item.startHeight }}</td>
           <td>{{ props.item.endHeight }}</td>
           <td>
-            <Amount sym="MTR">{{ props.item.receivedMTR }}</Amount>
+            <Amount sym="STPT">{{ props.item.receivedMTR }}</Amount>
           </td>
           <td>
-            <Amount sym="MTR">{{ props.item.actualPrice }}</Amount>
+            <Amount sym="STPT">{{ props.item.actualPrice }}</Amount>
           </td>
           <td>
-            <Amount sym="MTRG">{{
+            <Amount sym="STPD">{{
               props.item.releasedMTRG - props.item.leftoverMTRG
             }}</Amount>
           </td>
           <td>
-            <Amount sym="MTRG">{{ props.item.leftoverMTRG }}</Amount>
+            <Amount sym="STPD">{{ props.item.leftoverMTRG }}</Amount>
           </td>
           <td>{{ props.item.createdAt }}</td>
         </template>

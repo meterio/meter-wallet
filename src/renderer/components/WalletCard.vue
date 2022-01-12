@@ -25,10 +25,10 @@
         align-end
         :style="{ 'line-height': compact ? '120%' : 'inherit' }"
       >
-        <Amount sym="MTRG">{{ mtrgBalance }}</Amount>
-        <Amount sym="MTR">{{ mtrBalance }}</Amount>
+        <Amount sym="STPD">{{ mtrgBalance }}</Amount>
+        <Amount sym="STPT">{{ mtrBalance }}</Amount>
         <hr />
-        <Amount sym="MTRG" :bounded="true">{{ boundMTRGBalance }}</Amount>
+        <Amount sym="STPD" :bounded="true">{{ boundMTRGBalance }}</Amount>
       </v-layout>
     </v-card-text>
   </v-card>

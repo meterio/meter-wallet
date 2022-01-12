@@ -29,7 +29,7 @@
         <div class="section">
           <label>Total Votes</label>
           <div>
-            <Amount sym="MTRG">{{ candidate.totalVotes }}</Amount>
+            <Amount sym="STPD">{{ candidate.totalVotes }}</Amount>
           </div>
         </div>
 

@@ -79,16 +79,16 @@
             <v-text-field
               validate-on-blur
               type="number"
-              label="Locked MTR Amount"
-              suffix="MTR"
+              label="Locked STPT Amount"
+              suffix="STPT"
               :rules="amountRules"
               v-model="mtrLocked"
             />
             <v-text-field
               validate-on-blur
               type="number"
-              label="Locked MTRG Amount"
-              suffix="MTRG"
+              label="Locked STPD Amount"
+              suffix="STPD"
               :rules="amountRules"
               v-model="mtrgLocked"
             />

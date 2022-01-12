@@ -25,12 +25,12 @@
       <v-card-text class="pa-0 pt-2">
         <v-layout column>
           <v-layout justify-space-between>
-            <Amount sym="MTR">{{ mtrBalance }}</Amount>
-            <Amount sym="MTRG">{{ mtrgBalance }}</Amount>
+            <Amount sym="STPT">{{ mtrBalance }}</Amount>
+            <Amount sym="STPD">{{ mtrgBalance }}</Amount>
           </v-layout>
           <v-layout justify-space-between>
             <span></span>
-            <Amount sym="MTRG" :bounded="true">{{ boundMTRGBalance }}</Amount>
+            <Amount sym="STPD" :bounded="true">{{ boundMTRGBalance }}</Amount>
           </v-layout>
         </v-layout>
       </v-card-text>

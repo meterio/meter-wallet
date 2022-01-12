@@ -28,7 +28,7 @@
               <li>
                 To avoid abusing the bridge and cover the ETH gas cost. We
                 currently charge a fee of 0.5% transfer amount with a minimum 10
-                MTRG or 20 MTR (depend on which token is being mapped). This fee
+                STPD or 20 STPT (depend on which token is being mapped). This fee
                 is subject to change.
               </li>
               <li>
@@ -120,10 +120,10 @@ export default class BridgeTransfer extends Vue {
   from = 0;
   errMsg = "";
   tokenItems = [
-    { symbol: "MTRG", fullname: "Meter Governance Token" },
-    { symbol: "MTR", fullname: "Meter Token" },
+    { symbol: "STPD", fullname: "STP DAO" },
+    { symbol: "STPT", fullname: "STP Token" },
   ];
-  token = { symbol: "MTR", fullname: "Meter Token" };
+  token = { symbol: "STPT", fullname: "STP Token" };
   showHistory = false;
   history: {
     addr: string;
@@ -191,7 +191,7 @@ export default class BridgeTransfer extends Vue {
     }
     let toll = 0;
     const floatFee = new BigNumber(this.amount).multipliedBy(0.005);
-    const flatFee = this.token.symbol === "MTRG" ? 10 : 20;
+    const flatFee = this.token.symbol === "STPD" ? 10 : 20;
     if (floatFee.isGreaterThan(flatFee)) {
       toll = floatFee.toNumber();
     } else {
@@ -207,7 +207,7 @@ export default class BridgeTransfer extends Vue {
   ) {
     const acc = await flex.meter.account(wallet.address).get();
     console.log(acc);
-    if (token === "MTRG") {
+    if (token === "STPD") {
       console.log(
         "balance: ",
         new BigNumber(acc.balance).dividedBy(1e18).toFixed()
@@ -216,7 +216,7 @@ export default class BridgeTransfer extends Vue {
         .dividedBy(1e18)
         .isGreaterThanOrEqualTo(new BigNumber(amount));
       return res;
-    } else if (token === "MTR") {
+    } else if (token === "STPT") {
       const res = new BigNumber(acc.energy)
         .dividedBy(1e18)
         .isGreaterThanOrEqualTo(new BigNumber(amount));
@@ -266,7 +266,7 @@ export default class BridgeTransfer extends Vue {
     );
     if (capacityReached) {
       this.errMsg =
-        "MTRG capacity is reached, please make a transfer with smaller amount";
+        "STPD capacity is reached, please make a transfer with smaller amount";
       return;
     }
     const b = await this.hasEnoughBalance(
@@ -290,7 +290,7 @@ export default class BridgeTransfer extends Vue {
           .times(this.amount!)
           .integerValue()
           .toString(16);
-      let tokenValue = this.token.symbol == "MTRG" ? 1 : 0;
+      let tokenValue = this.token.symbol == "STPD" ? 1 : 0;
 
       await flex.vendor
         .sign("tx")

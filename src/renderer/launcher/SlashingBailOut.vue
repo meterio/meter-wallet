@@ -27,7 +27,7 @@
             <div class="section">
               <label>Bail Amount</label>
               <div>
-                <Amount sym="MTRG">{{ jailed.bailAmount }}</Amount>
+                <Amount sym="STPD">{{ jailed.bailAmount }}</Amount>
               </div>
             </div>
             <div class="section">
@@ -72,7 +72,7 @@ export default class SlashingBailOut extends Vue {
   jailed: entities.Jailed = {} as any;
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
 
   readonly addressRules = [
     (v: string) => !!v || "Input address here",

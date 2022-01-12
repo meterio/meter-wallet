@@ -117,10 +117,10 @@
                 <v-list-tile-content>
                   <v-layout column style="width: 100%">
                     <v-flex class="text-xs-right">
-                      <Amount sym="MTRG">{{ mtrgBalance }}</Amount>
+                      <Amount sym="STPD">{{ mtrgBalance }}</Amount>
                     </v-flex>
                     <v-flex class="text-xs-right">
-                      <Amount sym="MTR">{{ mtrBalance }}</Amount>
+                      <Amount sym="STPT">{{ mtrBalance }}</Amount>
                     </v-flex>
                   </v-layout>
                 </v-list-tile-content>

@@ -97,10 +97,10 @@ export default class Transfer extends Mixins(AccountLoader) {
   to = "";
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   items = [
-    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" },
+    { text: "STP DAO (STPD)", value: "STPD" },
+    { text: "STP Token (STPT)", value: "STPT" },
   ];
   showHistory = false;
   history: {
@@ -115,11 +115,11 @@ export default class Transfer extends Mixins(AccountLoader) {
 
   maxAmount() {
     if (this.marker) {
-      if (this.token === "MTRG") {
+      if (this.token === "STPD") {
         this.amount = this.account
           ? new BigNumber(this.account.balance).dividedBy(1e18).toFixed()
           : "0";
-      } else if (this.token === "MTR") {
+      } else if (this.token === "STPT") {
         if (!this.account) {
           this.amount = "0";
           return;
@@ -185,7 +185,7 @@ export default class Transfer extends Mixins(AccountLoader) {
       const value = new BigNumber("1" + "0".repeat(18))
         .times(this.amount!)
         .toFixed();
-      let tokenValue = this.token == "MTRG" ? 1 : 0;
+      let tokenValue = this.token == "STPD" ? 1 : 0;
       console.log("TOKEN_VAL=", tokenValue);
 
       await flex.vendor

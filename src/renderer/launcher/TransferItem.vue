@@ -46,10 +46,10 @@
                 <br />
                 <p class="mt-2 pr-1 body-2 grey--text text--darken-4">
                   {{ isIn ? "+" : "-" }}
-                  <Amount v-if="item.token == 1" sym="MTRG">{{
+                  <Amount v-if="item.token == 1" sym="STPD">{{
                     item.amount
                   }}</Amount>
-                  <Amount v-if="item.token == 0" sym="MTR">{{
+                  <Amount v-if="item.token == 0" sym="STPT">{{
                     item.amount
                   }}</Amount>
                 </p>

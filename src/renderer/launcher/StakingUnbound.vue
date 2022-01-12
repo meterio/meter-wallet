@@ -22,7 +22,7 @@
         <div class="section">
           <label> Bucket Amount </label>
           <div class="content">
-            <Amount sym="MTRG">{{ bucket.value }}</Amount>
+            <Amount sym="STPD">{{ bucket.value }}</Amount>
           </div>
         </div>
       </v-card-text>

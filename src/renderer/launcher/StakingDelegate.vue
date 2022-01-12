@@ -17,7 +17,7 @@
         <div class="section">
           <label>Bucket Amount</label>
           <div>
-            <Amount sym="MTRG">{{ bucket.value }}</Amount>
+            <Amount sym="STPD">{{ bucket.value }}</Amount>
           </div>
         </div>
 
@@ -36,7 +36,7 @@
             item-value="value"
             :autofocus="true"
           ></v-select>
-          <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+<!--          <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>-->
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -67,7 +67,7 @@ export default class StakingDelegate extends Vue {
 
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   autobid = true;
 
   optionVal = 1;

@@ -66,7 +66,7 @@
               v-model="commission"
               suffix="%"
             ></v-text-field>
-            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+<!--            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>-->
 
             <v-textarea
               ref="pubkey"
@@ -106,14 +106,14 @@ export default class StakingCandidate extends Mixins(AccountLoader) {
   port = "8670";
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   commission = 10.0;
   autobid = true;
   marker = true;
   /*
   items = [
-    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" }
+    { text: "STP DAO (STPD)", value: "STPD" },
+    { text: "STP Token (STPT)", value: "STPT" }
   ];
   */
   readonly addressRules = [
@@ -132,7 +132,7 @@ export default class StakingCandidate extends Mixins(AccountLoader) {
     (v: string) => new BigNumber(v).gt(0) || "Invalid amount",
     (v: string) =>
       new BigNumber(v).gte(2000) ||
-      "Amount too small to be candidate (2000 MTRG at least)",
+      "Amount too small to be candidate (2000 STPD at least)",
   ];
 
   readonly nameRules = [(v: string) => !!v || "Input name here"];

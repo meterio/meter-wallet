@@ -14,10 +14,10 @@
           }}</AddressLabel>
         </span>
         <v-spacer />
-        <Amount v-if="clause.token == 1" sym="MTRG" class="body-1">{{
+        <Amount v-if="clause.token == 1" sym="STPD" class="body-1">{{
           clause.value
         }}</Amount>
-        <Amount v-if="clause.token == 0" sym="MTR" class="body-1">{{
+        <Amount v-if="clause.token == 0" sym="STPT" class="body-1">{{
           clause.value
         }}</Amount>
       </v-layout>

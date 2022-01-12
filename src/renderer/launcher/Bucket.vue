@@ -23,14 +23,14 @@
         <div class="section">
           <label>Votes</label>
           <div>
-            <Amount sym="MTRG">{{ bucket.votes }}</Amount>
+            <Amount sym="STPD">{{ bucket.votes }}</Amount>
           </div>
         </div>
 
         <div class="section">
           <label>Bonus Votes</label>
           <div>
-            <Amount sym="MTRG">{{ bucket.bonus }}</Amount>
+            <Amount sym="STPD">{{ bucket.bonus }}</Amount>
           </div>
         </div>
 

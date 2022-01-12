@@ -16,21 +16,21 @@
             <div>{{ presentAuction.auctionID }}</div>
           </div>
           <div class="section">
-            <label>MTRG on Auction</label>
+            <label>STPD on Auction</label>
             <div>
-              <Amount sym="MTRG">{{ presentAuction.releasedMTRG }}</Amount>
+              <Amount sym="STPD">{{ presentAuction.releasedMTRG }}</Amount>
             </div>
           </div>
           <div class="section">
-            <label>Received MTR</label>
+            <label>Received STPT</label>
             <div>
-              <Amount sym="MTR">{{ presentAuction.receivedMTR }}</Amount>
+              <Amount sym="STPT">{{ presentAuction.receivedMTR }}</Amount>
             </div>
           </div>
           <div class="section">
             <label>Expected Price</label>
             <div>
-              <Amount sym="MTR">{{ expectedPrice }}</Amount>
+              <Amount sym="STPT">{{ expectedPrice }}</Amount>
             </div>
           </div>
 
@@ -48,9 +48,9 @@
           </v-form>
 
           <div class="section">
-            <label>Estimated result MTRG with current price</label>
+            <label>Estimated result STPD with current price</label>
             <div>
-              <Amount sym="MTRG">{{ expectedReceive }}</Amount>
+              <Amount sym="STPD">{{ expectedReceive }}</Amount>
             </div>
           </div>
         </v-card-text>
@@ -81,7 +81,7 @@ export default class StakingBound extends Mixins(AccountLoader) {
   amount = "0";
   from = 0;
   errMsg = "";
-  token = "MTR";
+  token = "STPT";
 
   bidderAddr = "";
   marker = true;
@@ -117,7 +117,7 @@ export default class StakingBound extends Mixins(AccountLoader) {
 
   maxAmount() {
     if (this.marker) {
-      if (this.token === "MTR") {
+      if (this.token === "STPT") {
         if (!this.account) {
           this.amount = "0";
           return;

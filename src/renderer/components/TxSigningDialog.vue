@@ -36,7 +36,7 @@
               <i>{{ estimation.error }}</i>
             </Tip>
             <Tip v-if="insufficientMTR" class="ma-1" type="warning">
-              <strong>Insufficient MTR balance</strong>
+              <strong>Insufficient STPT balance</strong>
             </Tip>
             <Tip v-if="estimation.reverted" class="ma-1" type="warning">
               <strong>Transaction may fail/revert</strong>
@@ -226,10 +226,10 @@
                 <v-layout>
                   <span class="caption grey--text">Total value</span>
                   <v-spacer />
-                  <Amount v-if="token == '1'" prepend="-" sym="MTRG">{{
+                  <Amount v-if="token == '1'" prepend="-" sym="STPD">{{
                     value.toString(10)
                   }}</Amount>
-                  <Amount v-if="token == '0'" prepend="-" sym="MTR">{{
+                  <Amount v-if="token == '0'" prepend="-" sym="STPT">{{
                     value.toString(10)
                   }}</Amount>
                 </v-layout>
@@ -237,7 +237,7 @@
                   <span class="caption grey--text">Estimated fee</span>
                   <v-spacer />
                   <Tooltip bottom :disabled="!(estimation.gas > 0)">
-                    <Amount prepend="-" sym="MTR" slot="activator">{{
+                    <Amount prepend="-" sym="STPT" slot="activator">{{
                       fee.toString(10)
                     }}</Amount>
                     <span>Estimated gas {{ estimation.gas }}</span>

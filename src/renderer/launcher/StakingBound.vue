@@ -27,7 +27,7 @@
               v-model="optionVal"
               disabled
             ></v-select>
-            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+<!--            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>-->
             <v-select :items="items" label="Token" v-model="token"></v-select>
             <v-text-field
               validate-on-blur
@@ -61,10 +61,10 @@ export default class StakingBound extends Vue {
   amount = "";
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   items = [
-    { text: "Meter Governance Token (MTRG)", value: "MTRG" },
-    { text: "Meter Token", value: "MTR" },
+    { text: "STP DAO (STPD)", value: "STPD" },
+    { text: "STP Token (STPT)", value: "STPT" },
   ];
   optionVal = 1;
   options = [

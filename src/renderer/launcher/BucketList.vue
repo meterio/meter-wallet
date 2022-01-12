@@ -81,7 +81,7 @@
               </router-link>
             </td>
             <td>
-              <Amount sym="MTRG">{{ props.item.totalVotes }}</Amount>
+              <Amount sym="STPD">{{ props.item.totalVotes }}</Amount>
             </td>
             <td>{{ props.item.type }}</td>
             <td>

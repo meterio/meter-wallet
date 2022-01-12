@@ -16,9 +16,9 @@
       />
     </transition>
     <v-layout style="position: absolute; left: 0; top: 0; background: #fafafa">
-      <v-btn flat to="/bridge/transfer" class="mr-1">
-        <v-icon small style="margin-right: 3px">mdi-bridge</v-icon>Bridge
-      </v-btn>
+<!--      <v-btn flat to="/bridge/transfer" class="mr-1">-->
+<!--        <v-icon small style="margin-right: 3px">mdi-bridge</v-icon>Bridge-->
+<!--      </v-btn>-->
 
       <v-btn v-if="enableScriptEngine" flat class="mx-0 mr-1" to="/candidates">
         <v-icon small style="margin-right: 3px">mdi-account-multiple</v-icon
@@ -29,16 +29,16 @@
         <v-icon small style="margin-right: 3px">mdi-lock-outline</v-icon>Staking
       </v-btn>
 
-      <v-btn
-        v-if="enableScriptEngine"
-        flat
-        class="mx-0"
-        to="/auction/present"
-        :input-value="$route.path.startsWith('/auction')"
-      >
-        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon
-        >Auction
-      </v-btn>
+<!--      <v-btn-->
+<!--        v-if="enableScriptEngine"-->
+<!--        flat-->
+<!--        class="mx-0"-->
+<!--        to="/auction/present"-->
+<!--        :input-value="$route.path.startsWith('/auction')"-->
+<!--      >-->
+<!--        <v-icon small mr-5 style="margin-right: 3px">mdi-timelapse</v-icon-->
+<!--        >Auction-->
+<!--      </v-btn>-->
     </v-layout>
 
     <v-layout style="position: absolute; right: 0; top: 0; background: #fafafa">

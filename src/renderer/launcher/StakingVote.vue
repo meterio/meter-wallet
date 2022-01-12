@@ -49,7 +49,7 @@
               ></v-select>
             </div>
 
-            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+<!--            <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>-->
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -124,10 +124,10 @@ export default class StakingBound extends Mixins(AccountLoader) {
   amount = "";
   from = 0;
   errMsg = "";
-  token = "MTRG";
+  token = "STPD";
   source = "bound";
   items = [
-    { text: "MTRG balance", value: "bound" },
+    { text: "STPD balance", value: "bound" },
     { text: "Existing bucket", value: "delegate" },
   ];
   optionVal = 1;
@@ -154,7 +154,7 @@ export default class StakingBound extends Mixins(AccountLoader) {
             b.id.substr(b.id.length - 6) +
             " (" +
             new BigNumber(b.votes).dividedBy(1e18).toFixed() +
-            " MTRG)",
+            " STPD)",
           value: b.id,
         };
       });

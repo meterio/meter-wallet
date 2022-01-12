@@ -50,7 +50,7 @@
             v-model="commission"
             suffix="%"
           ></v-text-field>
-          <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>
+<!--          <v-checkbox label="Enable auto-bid" v-model="autobid"> </v-checkbox>-->
 
           <v-textarea
             ref="pubkey"
